@@ -1,41 +1,62 @@
 const APP_WALLET_ADDRESS = "ВАШ_PKOIN_АДРЕС_КОШЕЛЬКА";
 let currentUser = null;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Ожидаем полную готовность DOM и загрузку SDK
+window.addEventListener('load', () => {
   initBastyonSdk();
 });
 
 async function initBastyonSdk() {
-  const sdk = window.BastyonSdk || window.pktSdk;
+  // Выполняем до 10 попыток найти объект SDK в объекте window
+  let attempts = 0;
+  let sdk = window.BastyonSdk || window.pktSdk;
+
+  while (!sdk && attempts < 10) {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    sdk = window.BastyonSdk || window.pktSdk;
+    attempts++;
+  }
+
   if (!sdk) {
-    console.warn("Bastyon SDK не найден, запуск в автономном режиме.");
+    console.warn("Bastyon SDK не найден. Запуск локального режима.");
     return;
   }
 
   try {
-    await sdk.init();
+    // Инициализируем SDK
+    if (typeof sdk.init === 'function') {
+      await sdk.init();
+    }
+
+    // Запрашиваем аккаунт и баланс
     const accountInfo = await sdk.get.account();
     const balanceInfo = await sdk.get.balance();
 
     currentUser = {
-      address: accountInfo.address,
-      name: accountInfo.name || "Игрок Bastyon",
-      avatar: accountInfo.avatar || "https://bastyon.com/images/user.png",
-      balance: balanceInfo ? balanceInfo.balance : 0
+      address: accountInfo?.address || "",
+      name: accountInfo?.name || "Игрок Bastyon",
+      avatar: accountInfo?.avatar || "https://bastyon.com/images/user.png",
+      balance: balanceInfo?.balance || 0
     };
 
-    document.getElementById('user-avatar').src = currentUser.avatar;
-    document.getElementById('user-name').innerText = currentUser.name;
-    document.getElementById('user-balance').innerText = `${currentUser.balance} PKOIN`;
+    // Обновляем UI
+    const avatarEl = document.getElementById('user-avatar');
+    const nameEl = document.getElementById('user-name');
+    const balanceEl = document.getElementById('user-balance');
+
+    if (avatarEl) avatarEl.src = currentUser.avatar;
+    if (nameEl) nameEl.innerText = currentUser.name;
+    if (balanceEl) balanceEl.innerText = `${currentUser.balance} PKOIN`;
+
   } catch (e) {
-    console.error("Ошибка при работе с Bastyon SDK:", e);
+    console.error("Ошибка инициализации Bastyon SDK:", e);
   }
 }
 
 async function createPvpMatch() {
   const sdk = window.BastyonSdk || window.pktSdk;
   if (!sdk) {
-    alert("SDK недоступен");
+    alert("SDK не инициализирован.");
     return;
   }
 
@@ -43,11 +64,11 @@ async function createPvpMatch() {
     const tx = await sdk.payment({
       address: APP_WALLET_ADDRESS,
       amount: 1.0,
-      comment: "RPS PvP Game Bet 1 PKOIN"
+      comment: "RPS Bet 1 PKOIN"
     });
 
     if (tx) {
-      alert("Ставка 1 PKOIN принята!");
+      alert("Ставка принята!");
     }
   } catch (e) {
     alert("Ошибка платежа: " + e.message);
