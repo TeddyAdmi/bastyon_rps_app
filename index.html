@@ -3,106 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Камень Ножницы Бумага | Bastyon Mini-App</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Bastyon SDK -->
-  <script src="https://bastyon.com/js/pocketnet/sdk.js"></script>
+  <title>Rock Paper Scissors PKOIN</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+    }
+    button {
+      background: #ffaa00;
+      border: none;
+      padding: 10px 20px;
+      color: #000;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
-  <header class="app-header">
-    <div class="logo">🪨✂️📄 Bastyon RPS</div>
-    <div id="user-profile" class="user-profile">
-      <button id="connect-btn" class="btn btn-primary" onclick="connectWallet()">Подключить кошелек</button>
-      <div id="profile-info" class="profile-info" style="display: none;">
-        <img id="user-avatar" src="" alt="Avatar" class="avatar">
-        <div class="user-details">
-          <span id="user-name" class="username">...</span>
-          <span id="user-balance" class="balance">0 PKOIN</span>
-        </div>
+  <div class="card">
+    <div class="user-info">
+      <img id="user-avatar" class="avatar" src="https://bastyon.com/images/user.png" alt="Avatar">
+      <div>
+        <div id="user-name">Загрузка...</div>
+        <div id="user-balance">0 PKOIN</div>
       </div>
     </div>
-  </header>
-
-  <main class="container">
-
-    <section class="banner">
-      <h2>Удвой свои PKOIN в Bastyon!</h2>
-      <p>Играй в «Камень, Ножницы, Бумага». Прокачай навыки с компьютером или сразись с реальным игроком на 1 PKOIN.</p>
-    </section>
-
-    <!-- Выбор комнаты -->
-    <div class="tabs">
-      <button id="tab-free" class="tab-btn active" onclick="switchRoom('free')">🎮 Комната 1: Тренировка (Бесплатно)</button>
-      <button id="tab-pvp" class="tab-btn" onclick="switchRoom('pvp')">⚔️ Комната 2: Ставка 1 PKOIN (PvP)</button>
-    </div>
-
-    <!-- Комната 1: Тренировка (PvE) -->
-    <div id="room-free" class="room-card">
-      <h3>Бесплатная игра с компьютером</h3>
-      <p class="description">Сделайте выбор, чтобы протестировать механику и подготовиться к игре на PKOIN.</p>
-      
-      <div class="game-choices">
-        <button class="choice-btn" onclick="playFree('rock')">🪨<span>Камень</span></button>
-        <button class="choice-btn" onclick="playFree('scissors')">✂️<span>Ножницы</span></button>
-        <button class="choice-btn" onclick="playFree('paper')">📄<span>Бумага</span></button>
-      </div>
-
-      <div id="free-result" class="result-box" style="display: none;">
-        <div class="matchup">
-          <div>Вы: <span id="free-player-choice">--</span></div>
-          <div class="vs">VS</div>
-          <div>Бот: <span id="free-bot-choice">--</span></div>
-        </div>
-        <div id="free-outcome" class="outcome-text"></div>
-      </div>
-    </div>
-
-    <!-- Комната 2: PvP на 1 PKOIN -->
-    <div id="room-pvp" class="room-card" style="display: none;">
-      <h3>PvP Дуэль (Ставка 1 PKOIN)</h3>
-      <p class="description">Победитель получает 1.9 PKOIN (выигрыш 2 PKOIN minus 5% комиссия сервиса).</p>
-
-      <div class="online-status">
-        <span class="status-dot green"></span> В сети игроков в комнате: <strong id="online-count">1</strong>
-      </div>
-
-      <!-- Создание / Присоединение -->
-      <div id="pvp-lobby">
-        <div class="lobby-actions">
-          <button class="btn btn-action" onclick="createPvpMatch()">
-            ➕ Создать матч (1 PKOIN)
-          </button>
-          <button class="btn btn-secondary" onclick="refreshLobby()">🔄 Обновить список</button>
-        </div>
-
-        <h4>Открытые матчи:</h4>
-        <div id="open-matches-list" class="matches-list">
-          <div class="no-matches">Ищется активный соперник...</div>
-        </div>
-      </div>
-
-      <!-- Активный матч -->
-      <div id="active-match" class="active-match-box" style="display: none;">
-        <div class="timer-box">
-          ⏱️ Оставшееся время матча: <span id="timer">24:00:00</span>
-        </div>
-        <p>Выберите ваш секретный ход:</p>
-        <div class="game-choices">
-          <button class="choice-btn" onclick="makePvpMove('rock')">🪨<span>Камень</span></button>
-          <button class="choice-btn" onclick="makePvpMove('scissors')">✂️<span>Ножницы</span></button>
-          <button class="choice-btn" onclick="makePvpMove('paper')">📄<span>Бумага</span></button>
-        </div>
-        <div id="pvp-status-msg" class="status-msg"></div>
-      </div>
-
-    </div>
-
-  </main>
-
-  <footer class="app-footer">
-    <p>Камень Ножницы Бумага mini-app для Bastyon / Pocketnet Platform</p>
-  </footer>
+    <h2>Камень Ножницы Бумага</h2>
+    <button onclick="createPvpMatch()">Сделать ставку 1 PKOIN</button>
+  </div>
 
   <script src="app.js"></script>
 </body>
