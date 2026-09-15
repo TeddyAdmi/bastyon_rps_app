@@ -1,0 +1,7 @@
+{
+  "id": "rps.bastyon.app",
+  "name": "Камень Ножницы Бумага",
+  "description": "Удваивай PKOIN в Bastyon! Игра КНБ с тренировкой с ботом и PvP ставками на 1 PKOIN.",
+  "author": "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs",
+  "permissions": ["account", "payment"]
+}
