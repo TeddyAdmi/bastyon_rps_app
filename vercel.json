@@ -1,17 +1,13 @@
 {
-  "version": 2,
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "*" },
-        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://bastyon.com https://*.bastyon.com;" }
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' https://bastyon.com https://*.pocketnet.app"
+        }
       ]
     }
-  ],
-  "rewrites": [
-    { "source": "/b_manifest", "destination": "/b_manifest.json" }
   ]
 }
