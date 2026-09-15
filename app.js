@@ -1,4 +1,4 @@
-const APP_WALLET_ADDRESS = "ВАШ_PKOIN_АДРЕС_КОШЕЛЬКА";
+const APP_WALLET_ADDRESS = "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs";
 let currentUser = null;
 
 // Ожидаем полную готовность DOM и загрузку SDK
