@@ -1,76 +1,83 @@
 const APP_WALLET_ADDRESS = "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs";
 let currentUser = null;
 
-// Ожидаем полную готовность DOM и загрузку SDK
-window.addEventListener('load', () => {
-  initBastyonSdk();
+// Запасной аватар в формате SVG Data-URI, который не блокируется браузером
+const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='%23ffaa00'><circle cx='12' cy='8' r='4'/><path d='M12 14c-6.1 0-8 4-8 4v2h16v-2s-1.9-4-8-4z'/></svg>";
+
+document.addEventListener('DOMContentLoaded', () => {
+  initBastyonApp();
 });
 
-async function initBastyonSdk() {
-  // Выполняем до 10 попыток найти объект SDK в объекте window
-  let attempts = 0;
-  let sdk = window.BastyonSdk || window.pktSdk;
+function initBastyonApp() {
+  // 1. Слушаем сообщение от родительской платформы Bastyon (если она внедряет SDK через postMessage)
+  window.addEventListener('message', (event) => {
+    if (event.data && (event.data.type === 'bastyon-sdk-init' || event.data.BastyonSdk)) {
+      startSdk();
+    }
+  });
 
-  while (!sdk && attempts < 10) {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    sdk = window.BastyonSdk || window.pktSdk;
-    attempts++;
-  }
+  // 2. Циклический опрос наличия SDK в течение 10 секунд
+  let checkCount = 0;
+  const interval = setInterval(() => {
+    checkCount++;
+    const sdk = window.BastyonSdk || window.pktSdk || (window.parent && window.parent.BastyonSdk);
 
-  if (!sdk) {
-    console.warn("Bastyon SDK не найден. Запуск локального режима.");
-    return;
-  }
+    if (sdk) {
+      clearInterval(interval);
+      startSdk(sdk);
+    } else if (checkCount >= 50) { // 50 * 200ms = 10 секунд
+      clearInterval(interval);
+      console.warn("Bastyon SDK не обнаружен после 10 сек. Запуск автономного UI.");
+      showFallbackUI();
+    }
+  }, 200);
+}
 
+async function startSdk(sdkInstance) {
+  const sdk = sdkInstance || window.BastyonSdk || window.pktSdk;
   try {
-    // Инициализируем SDK
     if (typeof sdk.init === 'function') {
       await sdk.init();
     }
 
-    // Запрашиваем аккаунт и баланс
-    const accountInfo = await sdk.get.account();
-    const balanceInfo = await sdk.get.balance();
+    const account = await sdk.get.account();
+    const balance = await sdk.get.balance();
 
     currentUser = {
-      address: accountInfo?.address || "",
-      name: accountInfo?.name || "Игрок Bastyon",
-      avatar: accountInfo?.avatar || "https://bastyon.com/images/user.png",
-      balance: balanceInfo?.balance || 0
+      address: account?.address || "",
+      name: account?.name || "Игрок Bastyon",
+      avatar: account?.avatar || DEFAULT_AVATAR,
+      balance: balance?.balance || 0
     };
 
-    // Обновляем UI
-    const avatarEl = document.getElementById('user-avatar');
-    const nameEl = document.getElementById('user-name');
-    const balanceEl = document.getElementById('user-balance');
-
-    if (avatarEl) avatarEl.src = currentUser.avatar;
-    if (nameEl) nameEl.innerText = currentUser.name;
-    if (balanceEl) balanceEl.innerText = `${currentUser.balance} PKOIN`;
-
-  } catch (e) {
-    console.error("Ошибка инициализации Bastyon SDK:", e);
+    updateUI();
+  } catch (err) {
+    console.error("Ошибка при получении данных из Bastyon SDK:", err);
+    showFallbackUI();
   }
 }
 
-async function createPvpMatch() {
-  const sdk = window.BastyonSdk || window.pktSdk;
-  if (!sdk) {
-    alert("SDK не инициализирован.");
-    return;
+function updateUI() {
+  if (!currentUser) return;
+  
+  const avatarImg = document.getElementById('user-avatar');
+  if (avatarImg) {
+    avatarImg.src = currentUser.avatar;
+    // Если аватар Bastyon заблокирован по CORS/ORB, ставим дефолтный SVG
+    avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
   }
 
-  try {
-    const tx = await sdk.payment({
-      address: APP_WALLET_ADDRESS,
-      amount: 1.0,
-      comment: "RPS Bet 1 PKOIN"
-    });
+  const nameEl = document.getElementById('user-name');
+  if (nameEl) nameEl.innerText = currentUser.name;
 
-    if (tx) {
-      alert("Ставка принята!");
-    }
-  } catch (e) {
-    alert("Ошибка платежа: " + e.message);
-  }
+  const balanceEl = document.getElementById('user-balance');
+  if (balanceEl) balanceEl.innerText = `${currentUser.balance} PKOIN`;
+}
+
+function showFallbackUI() {
+  const nameEl = document.getElementById('user-name');
+  if (nameEl) nameEl.innerText = "Автономный режим";
+  
+  const avatarImg = document.getElementById('user-avatar');
+  if (avatarImg) avatarImg.src = DEFAULT_AVATAR;
 }
