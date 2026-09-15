@@ -2,7 +2,7 @@
   "id": "rps.bastyon.app",
   "name": "Rock Paper Scissors PKOIN",
   "version": "1.0.0",
-  "description": "Удваивай PKOIN в Bastyon! Камень Ножницы Бумага с тренировкой и PvP ставками.",
+  "description": "Удваивай PKOIN в Bastyon! Игра КНБ с тренировкой с ботом и PvP ставками на 1 PKOIN.",
   "author": "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs",
   "permissions": ["account", "payment"]
 }
