@@ -1,23 +1,19 @@
-// Адрес для приема ставок и хранения 5% комиссии
-const APP_WALLET_ADDRESS = "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs";
-
+const APP_WALLET_ADDRESS = "ВАШ_PKOIN_АДРЕС_КОШЕЛЬКА";
 let currentUser = null;
 
-// Автоматическая загрузка профиля (1 клик)
 document.addEventListener('DOMContentLoaded', () => {
-  const sdk = window.BastyonSdk || window.pktSdk;
-  if (sdk) {
-    sdk.init().then(() => {
-      connectWallet();
-    });
-  }
+  initBastyonSdk();
 });
 
-async function connectWallet() {
+async function initBastyonSdk() {
   const sdk = window.BastyonSdk || window.pktSdk;
-  if (!sdk) return;
+  if (!sdk) {
+    console.warn("Bastyon SDK не найден, запуск в автономном режиме.");
+    return;
+  }
 
   try {
+    await sdk.init();
     const accountInfo = await sdk.get.account();
     const balanceInfo = await sdk.get.balance();
 
@@ -32,14 +28,16 @@ async function connectWallet() {
     document.getElementById('user-name').innerText = currentUser.name;
     document.getElementById('user-balance').innerText = `${currentUser.balance} PKOIN`;
   } catch (e) {
-    console.error("Ошибка подключения SDK:", e);
+    console.error("Ошибка при работе с Bastyon SDK:", e);
   }
 }
 
-// Создание PvP матча на 1 PKOIN
 async function createPvpMatch() {
   const sdk = window.BastyonSdk || window.pktSdk;
-  if (!sdk) return;
+  if (!sdk) {
+    alert("SDK недоступен");
+    return;
+  }
 
   try {
     const tx = await sdk.payment({
@@ -49,7 +47,7 @@ async function createPvpMatch() {
     });
 
     if (tx) {
-      alert("Ставка 1 PKOIN принята! Ожидание второго игрока (24 часа).");
+      alert("Ставка 1 PKOIN принята!");
     }
   } catch (e) {
     alert("Ошибка платежа: " + e.message);
