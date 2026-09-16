@@ -274,7 +274,7 @@ async function initBastyon() {
 
 
         /* =========================
-           PROFILE RPC
+           ADDRESS INFO
         ========================= */
 
         if (
@@ -283,20 +283,14 @@ async function initBastyon() {
             typeof sdk.rpc === "function"
         ) {
 
-            console.log("========== PROFILE TEST ==========");
-
-
-            /* TEST 1 */
+            console.log("========== ADDRESS INFO TEST ==========");
 
             try {
 
-                console.log("PROFILE TEST 1");
-
-                const result1 = await sdk.rpc(
-                    "getuserprofile",
+                const addressInfo = await sdk.rpc(
+                    "getaddressinfo",
                     [
-                        account.address,
-                        "basic"
+                        account.address
                     ],
                     {
                         cachetime: 0
@@ -304,57 +298,40 @@ async function initBastyon() {
                 );
 
                 console.log(
-                    "PROFILE TEST 1 RESULT:",
-                    result1
-                );
-
-            } catch (error1) {
-
-                console.error(
-                    "PROFILE TEST 1 ERROR:",
-                    error1
-                );
-
-            }
-
-
-            /* TEST 2 */
-
-            try {
-
-                console.log("PROFILE TEST 2");
-
-                const result2 = await sdk.rpc(
-                    "getuserprofile",
-                    [
-                        account.address,
-                        "detailed"
-                    ],
-                    {
-                        cachetime: 0
-                    }
+                    "ADDRESS INFO RESULT:",
+                    addressInfo
                 );
 
                 console.log(
-                    "PROFILE TEST 2 RESULT:",
-                    result2
+                    "ADDRESS INFO JSON:",
+                    JSON.stringify(addressInfo, null, 2)
                 );
 
-            } catch (error2) {
+                console.log(
+                    "ADDRESS INFO TYPE:",
+                    typeof addressInfo
+                );
+
+                console.log(
+                    "ADDRESS INFO IS ARRAY:",
+                    Array.isArray(addressInfo)
+                );
+
+            } catch (addressError) {
 
                 console.error(
-                    "PROFILE TEST 2 ERROR:",
-                    error2
+                    "ADDRESS INFO ERROR:",
+                    addressError
                 );
 
             }
 
 
-            /* TEST 3 */
+            /* =========================
+               USER STATE
+            ========================= */
 
             try {
-
-                console.log("USER STATE TEST");
 
                 const userState = await sdk.rpc(
                     "getuserstate",
@@ -369,6 +346,11 @@ async function initBastyon() {
                 console.log(
                     "USER STATE RESULT:",
                     userState
+                );
+
+                console.log(
+                    "USER STATE JSON:",
+                    JSON.stringify(userState, null, 2)
                 );
 
             } catch (stateError) {
