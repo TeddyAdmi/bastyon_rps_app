@@ -3,6 +3,5 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "pocketnet-proxy-api": "github:DaniilKimlb/pocketnet-proxy-api"
   }
 }
