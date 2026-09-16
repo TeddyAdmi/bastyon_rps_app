@@ -126,7 +126,7 @@
     <div class="profile-card">
       <img id="user-avatar" class="profile-avatar" src="https://bastyon.com/images/user.png" alt="Avatar" />
       <div class="profile-info">
-        <div id="user-name" class="profile-name">Загрузка имени...</div>
+        <div id="user-name" class="profile-name">Аноним</div>
         <div id="user-address" class="profile-address">Адрес: --</div>
         <div id="user-balance" class="profile-balance">0.0000 PKOIN</div>
       </div>
@@ -163,42 +163,58 @@
           sdk = new window.BastyonSdk();
           await sdk.init();
           
-          // 1. Получаем данные аккаунта (кошелек и баланс)
+          // 1. Запрашиваем данные аккаунта
           if (sdk.get && typeof sdk.get.account === 'function') {
             const account = await sdk.get.account();
+            console.log('Данные account:', account);
             
             if (account) {
-              // Адрес кошелька
+              // Адрес
               if (account.address) {
                 userAddress = account.address;
                 document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
               }
 
-              // Баланс с ровно 4 знаками после запятой
+              // Баланс с 4 знаками
               if (account.balance !== undefined && account.balance !== null) {
-                const numericBalance = Number(account.balance);
+                const numericBalance = parseFloat(account.balance) || 0;
                 document.getElementById('user-balance').innerText = `${numericBalance.toFixed(4)} PKOIN`;
               }
-            }
-          }
 
-          // 2. Запрашиваем публичный профиль пользователя (имя и аватар)
-          if (sdk.get && typeof sdk.get.user === 'function') {
-            try {
-              const userInfo = await sdk.get.user();
-              if (userInfo) {
-                if (userInfo.name) {
-                  document.getElementById('user-name').innerText = userInfo.name;
-                }
-                if (userInfo.avatar || userInfo.image) {
-                  document.getElementById('user-avatar').src = userInfo.avatar || userInfo.image;
+              // Имя из основного объекта account (если есть)
+              let foundName = account.name || account.label || (account.user && account.user.name);
+              let foundAvatar = account.avatar || account.image || (account.user && account.user.avatar);
+
+              if (foundName) {
+                document.getElementById('user-name').innerText = foundName;
+              }
+              if (foundAvatar) {
+                document.getElementById('user-avatar').src = foundAvatar;
+              }
+
+              // 2. Если имени нет в account, запрашиваем профиль по адресу через getuserprofile
+              if (!foundName && userAddress && typeof sdk.get.getuserprofile === 'function') {
+                try {
+                  const profiles = await sdk.get.getuserprofile([userAddress]);
+                  console.log('Данные профиля:', profiles);
+                  
+                  if (profiles && profiles.length > 0) {
+                    const profile = profiles[0];
+                    if (profile.name) {
+                      document.getElementById('user-name').innerText = profile.name;
+                    }
+                    if (profile.i) { // В Bastyon 'i' часто отвечает за иконку/аватар
+                      document.getElementById('user-avatar').src = profile.i;
+                    }
+                  }
+                } catch (pErr) {
+                  console.warn('Не удалось получить getuserprofile:', pErr);
                 }
               }
-            } catch (userErr) {
-              console.warn('Не удалось загрузить данные get.user():', userErr);
-              // Запасной вариант - заголовок с адресом
-              if (userAddress) {
-                document.getElementById('user-name').innerText = `Игрок (${userAddress.slice(0, 4)})`;
+
+              // Если имя так и не нашли, но есть адрес — выводим сокращенный адрес вместо "Загрузка..."
+              if (!foundName && document.getElementById('user-name').innerText === 'Аноним' && userAddress) {
+                document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 6)}`;
               }
             }
           }
