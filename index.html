@@ -22,15 +22,53 @@
       margin: 20px auto;
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-    .user-info {
-      font-size: 0.9em;
-      color: #aaa;
-      margin-bottom: 15px;
-      word-break: break-all;
-      background: #202020;
-      padding: 10px;
-      border-radius: 8px;
+    
+    /* Шапка профиля пользователя */
+    .profile-card {
+      display: flex;
+      align-items: center;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 20px;
+      gap: 12px;
+      text-align: left;
     }
+    .profile-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #333;
+      border: 2px solid #00ff88;
+    }
+    .profile-info {
+      flex: 1;
+      overflow: hidden;
+    }
+    .profile-name {
+      font-weight: bold;
+      font-size: 1.05em;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .profile-address {
+      font-size: 0.75em;
+      color: #888;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+    .profile-balance {
+      font-size: 0.9em;
+      font-weight: 600;
+      color: #00ff88;
+      margin-top: 4px;
+    }
+
+    /* Комнаты */
     .rooms {
       display: flex;
       gap: 10px;
@@ -50,6 +88,8 @@
       border-color: #00ff88;
       background: #1e3a29;
     }
+
+    /* Кнопки хода */
     .buttons {
       display: flex;
       justify-content: center;
@@ -67,6 +107,7 @@
     }
     .game-btn:hover { background: #444; transform: scale(1.05); }
     .game-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
     .result {
       font-size: 1.1em;
       font-weight: bold;
@@ -81,9 +122,14 @@
   <div class="card">
     <h1>🪨 ✂️ 📄 Игра КНБ</h1>
     
-    <div class="user-info">
-      <div id="address">Кошелек: загрузка...</div>
-      <div id="balance">Баланс: -- PKOIN</div>
+    <!-- Карточка профиля Bastyon -->
+    <div class="profile-card">
+      <img id="user-avatar" class="profile-avatar" src="https://bastyon.com/images/user.png" alt="Avatar" />
+      <div class="profile-info">
+        <div id="user-name" class="profile-name">Загрузка...</div>
+        <div id="user-address" class="profile-address">Адрес: --</div>
+        <div id="user-balance" class="profile-balance">0.00 PKOIN</div>
+      </div>
     </div>
 
     <!-- Выбор комнаты -->
@@ -106,8 +152,8 @@
   <script>
     let sdk = null;
     let userAddress = null;
-    let currentRoom = 'demo'; // 'demo' или 'pvp'
-    const BANK_ADDRESS = 'ВАШ_АДРЕС_КОШЕЛЬКА_ИЗ_BASTYON'; // <-- ВАЖНО: Укажите ваш кошелек-приемник ставок
+    let currentRoom = 'demo';
+    const BANK_ADDRESS = 'ВАШ_АДРЕС_КОШЕЛЬКА_ИЗ_BASTYON'; 
     const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -117,14 +163,31 @@
           sdk = new window.BastyonSdk();
           await sdk.init();
           
+          // Получение всех данных профиля из SDK
           if (sdk.get && typeof sdk.get.account === 'function') {
             const account = await sdk.get.account();
-            if (account && account.address) {
-              userAddress = account.address;
-              document.getElementById('address').innerText = `Кошелек: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
-            }
-            if (account && account.balance !== undefined) {
-              document.getElementById('balance').innerText = `Баланс: ${account.balance} PKOIN`;
+            
+            if (account) {
+              // 1. Имя пользователя
+              const name = account.name || (account.userInfo && account.userInfo.name) || 'Пользователь Bastyon';
+              document.getElementById('user-name').innerText = name;
+
+              // 2. Аватар пользователя
+              const avatarUrl = account.avatar || (account.userInfo && account.userInfo.image);
+              if (avatarUrl) {
+                document.getElementById('user-avatar').src = avatarUrl;
+              }
+
+              // 3. Адрес кошелька
+              if (account.address) {
+                userAddress = account.address;
+                document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+              }
+
+              // 4. Баланс PKOIN
+              if (account.balance !== undefined) {
+                document.getElementById('user-balance').innerText = `${account.balance} PKOIN`;
+              }
             }
           }
 
@@ -134,6 +197,7 @@
         } else {
           statusEl.style.color = '#ff4444';
           statusEl.innerText = 'Запущено вне Bastyon (Демо-режим)';
+          document.getElementById('user-name').innerText = 'Тестовый Игрок';
           enableButtons(true);
         }
       } catch (e) {
@@ -166,7 +230,6 @@
     async function makeMove(userChoice) {
       const resultEl = document.getElementById('result-text');
 
-      // Если комната со ставкой 1 PKOIN
       if (currentRoom === 'pvp') {
         if (!sdk || !sdk.payment) {
           alert('Оплата доступна только внутри приложения Bastyon!');
@@ -177,7 +240,6 @@
         resultEl.innerText = '⏳ Подтвердите транзакцию 1 PKOIN...';
 
         try {
-          // Вызов встроенного окна оплаты Bastyon
           const tx = await sdk.payment.make({
             address: BANK_ADDRESS,
             amount: 1,
@@ -185,12 +247,9 @@
             comment: 'Ставка в КНБ (1 PKOIN)'
           });
 
-          if (!tx || !tx.id) {
-            throw new Error('Транзакция отменена');
-          }
+          if (!tx || !tx.id) throw new Error('Транзакция отменена');
 
-          resultEl.innerText = 'Ставка принята! Идет поиск соперника...';
-          // Здесь вызывается бэкенд или имитируется PvP списание
+          resultEl.innerText = 'Ставка принята! Идет матч...';
           playPvpMatch(userChoice);
 
         } catch (err) {
@@ -200,7 +259,6 @@
           return;
         }
       } else {
-        // Обычный бесплатный ход с компьютером
         playDemoMatch(userChoice);
       }
     }
@@ -212,7 +270,6 @@
     }
 
     function playPvpMatch(userChoice) {
-      // Заглушка матча (в будущем связывается через бэкенд)
       setTimeout(() => {
         const keys = Object.keys(choices);
         const opponentChoice = keys[Math.floor(Math.random() * keys.length)];
