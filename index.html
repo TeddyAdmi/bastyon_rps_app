@@ -214,52 +214,79 @@ let balance = null;
 
 async function initBastyon() {
 
+    console.log("========== BASTYON START ==========");
+
     try {
 
         sdk = new BastyonSdk();
 
         await sdk.init();
 
+        console.log("BASTYON SDK INITIALIZED");
+
         sdk.emit("loaded");
 
-        /* ACCOUNT */
+
+        /* =====================================
+           ACCOUNT
+        ===================================== */
 
         account = await sdk.get.account();
 
+        console.log("BASTYON ACCOUNT:", account);
+
         if (account && account.address) {
 
-            document.getElementById("profileAddress").textContent =
-                account.address;
+            document.getElementById(
+                "profileAddress"
+            ).textContent = account.address;
 
-            document.getElementById("profileName").textContent =
-                "Игрок " + account.address.substring(0, 6);
-
+            document.getElementById(
+                "profileName"
+            ).textContent =
+                "Игрок " +
+                account.address.substring(0, 6);
         }
 
 
-        /* BALANCE */
+        /* =====================================
+           BALANCE
+        ===================================== */
 
         balance = await sdk.get.balance();
 
+        console.log("BASTYON BALANCE:", balance);
+
         if (balance) {
 
-            document.getElementById("profileBalance").textContent =
+            const amount =
                 Number(
-                    balance.actual ||
-                    balance.total ||
+                    balance.actual ??
+                    balance.total ??
                     0
-                ).toFixed(4) + " PKOIN";
+                );
 
+            document.getElementById(
+                "profileBalance"
+            ).textContent =
+                amount.toFixed(4) +
+                " PKOIN";
         }
 
 
-        /* PROFILE */
+        /* =====================================
+           PROFILE
+        ===================================== */
 
         if (
             account &&
             account.address &&
             typeof sdk.rpc === "function"
         ) {
+
+            console.log(
+                "========== PROFILE REQUEST =========="
+            );
 
             try {
 
@@ -268,6 +295,9 @@ async function initBastyon() {
                     {
                         address: account.address,
                         shortForm: "basic"
+                    },
+                    {
+                        cachetime: 0
                     }
                 );
 
@@ -277,11 +307,35 @@ async function initBastyon() {
                 );
 
 
-                const data =
-                    profile?.data ||
-                    profile?.result ||
-                    profile;
+                /* =================================
+                   PROFILE DATA
+                ================================= */
 
+                let data = profile;
+
+                if (
+                    profile &&
+                    profile.data
+                ) {
+                    data = profile.data;
+                }
+
+                if (
+                    profile &&
+                    profile.result
+                ) {
+                    data = profile.result;
+                }
+
+                console.log(
+                    "PROFILE DATA:",
+                    data
+                );
+
+
+                /* =================================
+                   NAME
+                ================================= */
 
                 if (data) {
 
@@ -289,14 +343,8 @@ async function initBastyon() {
                         data.name ||
                         data.nickname ||
                         data.nick ||
-                        data.username;
-
-
-                    const avatar =
-                        data.avatar ||
-                        data.image ||
-                        data.avatarurl ||
-                        data.avatarUrl;
+                        data.username ||
+                        data.caption;
 
 
                     if (name) {
@@ -307,8 +355,26 @@ async function initBastyon() {
 
                     }
 
+                }
 
-                    if (avatar) {
+
+                /* =================================
+                   AVATAR
+                ================================= */
+
+                if (data) {
+
+                    let avatar =
+                        data.avatar ||
+                        data.image ||
+                        data.avatarurl ||
+                        data.avatarUrl;
+
+
+                    if (
+                        avatar &&
+                        typeof avatar === "string"
+                    ) {
 
                         document.getElementById(
                             "avatar"
@@ -318,11 +384,11 @@ async function initBastyon() {
 
                 }
 
-            } catch (error) {
+            } catch (profileError) {
 
-                console.log(
+                console.error(
                     "PROFILE ERROR:",
-                    error
+                    profileError
                 );
 
             }
@@ -330,8 +396,18 @@ async function initBastyon() {
         }
 
 
-        document.getElementById("status").textContent =
+        /* =====================================
+           READY
+        ===================================== */
+
+        document.getElementById(
+            "status"
+        ).textContent =
             "Bastyon подключён";
+
+        console.log(
+            "========== BASTYON READY =========="
+        );
 
     } catch (error) {
 
@@ -340,9 +416,10 @@ async function initBastyon() {
             error
         );
 
-        document.getElementById("status").textContent =
+        document.getElementById(
+            "status"
+        ).textContent =
             "Ошибка подключения Bastyon";
-
     }
 
 }
@@ -363,27 +440,38 @@ function play(playerChoice) {
     const computerChoice =
         choices[
             Math.floor(
-                Math.random() * choices.length
+                Math.random() *
+                choices.length
             )
         ];
+
 
     let result = "";
 
 
-    if (playerChoice === computerChoice) {
+    if (
+        playerChoice ===
+        computerChoice
+    ) {
 
         result = "Ничья 🤝";
 
     } else if (
 
-        (playerChoice === "rock" &&
-            computerChoice === "scissors") ||
+        (
+            playerChoice === "rock" &&
+            computerChoice === "scissors"
+        ) ||
 
-        (playerChoice === "scissors" &&
-            computerChoice === "paper") ||
+        (
+            playerChoice === "scissors" &&
+            computerChoice === "paper"
+        ) ||
 
-        (playerChoice === "paper" &&
-            computerChoice === "rock")
+        (
+            playerChoice === "paper" &&
+            computerChoice === "rock"
+        )
 
     ) {
 
@@ -396,7 +484,10 @@ function play(playerChoice) {
     }
 
 
-    document.getElementById("result").innerHTML =
+    document.getElementById(
+        "result"
+    ).innerHTML =
+
         "Ваш ход: <b>" +
         playerChoice +
         "</b><br>" +
@@ -406,7 +497,6 @@ function play(playerChoice) {
         "</b><br><br>" +
 
         result;
-
 }
 
 
