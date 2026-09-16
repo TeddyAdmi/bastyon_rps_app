@@ -1,203 +1,209 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>КНБ — Bastyon</title>
 
-    <script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
+```
+<script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: #111827;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        background: #111827;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        .app {
-            width: 100%;
-            max-width: 480px;
-            padding: 20px;
-        }
+    .app {
+        width: 100%;
+        max-width: 480px;
+        padding: 20px;
+    }
 
-        .profile {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: #1f2937;
-            padding: 15px;
-            border-radius: 18px;
-            margin-bottom: 20px;
-        }
+    .profile {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #1f2937;
+        padding: 15px;
+        border-radius: 18px;
+        margin-bottom: 20px;
+    }
 
-        .avatar {
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #374151;
-        }
+    .avatar {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #374151;
+    }
 
-        .profile-info {
-            min-width: 0;
-            flex: 1;
-        }
+    .profile-info {
+        min-width: 0;
+        flex: 1;
+    }
 
-        .profile-name {
-            font-size: 18px;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+    .profile-name {
+        font-size: 18px;
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-        .profile-address {
-            margin-top: 4px;
-            font-size: 12px;
-            color: #9ca3af;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+    .profile-address {
+        margin-top: 4px;
+        font-size: 12px;
+        color: #9ca3af;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-        .balance {
-            margin-left: auto;
-            font-size: 14px;
-            white-space: nowrap;
-        }
+    .balance {
+        margin-left: auto;
+        font-size: 14px;
+        white-space: nowrap;
+    }
 
-        .title {
-            text-align: center;
-            font-size: 30px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
+    .title {
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
 
-        .subtitle {
-            text-align: center;
-            color: #9ca3af;
-            margin-bottom: 25px;
-        }
+    .subtitle {
+        text-align: center;
+        color: #9ca3af;
+        margin-bottom: 25px;
+    }
 
-        .choices {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
+    .choices {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+    }
 
-        .choice {
-            flex: 1;
-            border: 0;
-            border-radius: 18px;
-            padding: 20px 10px;
-            background: #1f2937;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    .choice {
+        flex: 1;
+        border: 0;
+        border-radius: 18px;
+        padding: 20px 10px;
+        background: #1f2937;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+    }
 
-        .choice:hover {
-            background: #374151;
-        }
+    .choice:hover {
+        background: #374151;
+    }
 
-        .choice-image {
-            font-size: 42px;
-            display: block;
-            margin-bottom: 8px;
-        }
+    .choice-image {
+        font-size: 42px;
+        display: block;
+        margin-bottom: 8px;
+    }
 
-        .result {
-            margin-top: 20px;
-            padding: 18px;
-            border-radius: 18px;
-            background: #1f2937;
-            text-align: center;
-            min-height: 60px;
-        }
+    .result {
+        margin-top: 20px;
+        padding: 18px;
+        border-radius: 18px;
+        background: #1f2937;
+        text-align: center;
+        min-height: 60px;
+    }
 
-        .status {
-            margin-top: 15px;
-            text-align: center;
-            color: #6ee7b7;
-            font-size: 13px;
-        }
-    </style>
+    .status {
+        margin-top: 15px;
+        text-align: center;
+        color: #6ee7b7;
+        font-size: 13px;
+    }
+</style>
+```
+
 </head>
 
 <body>
 
 <div class="app">
 
-    <div class="profile">
+```
+<div class="profile">
 
-        <img
-            id="avatar"
-            class="avatar"
-            src="https://i.imgur.com/6VBx3io.png"
-            alt="Avatar"
-        >
+    <img
+        id="avatar"
+        class="avatar"
+        src="https://i.imgur.com/6VBx3io.png"
+        alt="Avatar"
+    >
 
-        <div class="profile-info">
+    <div class="profile-info">
 
-            <div id="profileName" class="profile-name">
-                Подключение...
-            </div>
-
-            <div id="profileAddress" class="profile-address">
-                ...
-            </div>
-
+        <div id="profileName" class="profile-name">
+            Подключение...
         </div>
 
-        <div id="profileBalance" class="balance">
-            0 PKOIN
+        <div id="profileAddress" class="profile-address">
+            ...
         </div>
 
     </div>
 
-    <div class="title">
-        КНБ
+    <div id="profileBalance" class="balance">
+        0 PKOIN
     </div>
 
-    <div class="subtitle">
-        Камень • Ножницы • Бумага
-    </div>
+</div>
 
-    <div class="choices">
+<div class="title">
+    КНБ
+</div>
 
-        <button class="choice" onclick="play('rock')">
-            <span class="choice-image">🪨</span>
-            Камень
-        </button>
+<div class="subtitle">
+    Камень • Ножницы • Бумага
+</div>
 
-        <button class="choice" onclick="play('scissors')">
-            <span class="choice-image">✂️</span>
-            Ножницы
-        </button>
+<div class="choices">
 
-        <button class="choice" onclick="play('paper')">
-            <span class="choice-image">📄</span>
-            Бумага
-        </button>
+    <button class="choice" onclick="play('rock')">
+        <span class="choice-image">🪨</span>
+        Камень
+    </button>
 
-    </div>
+    <button class="choice" onclick="play('scissors')">
+        <span class="choice-image">✂️</span>
+        Ножницы
+    </button>
 
-    <div id="result" class="result">
-        Сделайте ход
-    </div>
+    <button class="choice" onclick="play('paper')">
+        <span class="choice-image">📄</span>
+        Бумага
+    </button>
 
-    <div id="status" class="status">
-        Подключение к Bastyon...
-    </div>
+</div>
+
+<div id="result" class="result">
+    Сделайте ход
+</div>
+
+<div id="status" class="status">
+    Подключение к Bastyon...
+</div>
+```
 
 </div>
 
@@ -208,9 +214,9 @@ let account = null;
 let balance = null;
 
 
-/* =========================================
+/* =========================
    BASTYON
-========================================= */
+========================= */
 
 async function initBastyon() {
 
@@ -227,71 +233,49 @@ async function initBastyon() {
         sdk.emit("loaded");
 
 
-        /* =====================================
+        /* =========================
            ACCOUNT
-        ===================================== */
+        ========================= */
 
         account = await sdk.get.account();
 
-        console.log(
-            "BASTYON ACCOUNT:",
-            account
-        );
+        console.log("BASTYON ACCOUNT:", account);
 
 
-        if (
-            account &&
-            account.address
-        ) {
+        if (account && account.address) {
 
-            document.getElementById(
-                "profileAddress"
-            ).textContent =
+            document.getElementById("profileAddress").textContent =
                 account.address;
 
-            document.getElementById(
-                "profileName"
-            ).textContent =
-                "Игрок " +
-                account.address.substring(0, 6);
+            document.getElementById("profileName").textContent =
+                "Игрок " + account.address.substring(0, 6);
 
         }
 
 
-        /* =====================================
+        /* =========================
            BALANCE
-        ===================================== */
+        ========================= */
 
         balance = await sdk.get.balance();
 
-        console.log(
-            "BASTYON BALANCE:",
-            balance
-        );
+        console.log("BASTYON BALANCE:", balance);
 
 
         if (balance) {
 
             const amount =
-                Number(
-                    balance.actual ??
-                    balance.total ??
-                    0
-                );
+                Number(balance.actual ?? balance.total ?? 0);
 
-
-            document.getElementById(
-                "profileBalance"
-            ).textContent =
-                amount.toFixed(4) +
-                " PKOIN";
+            document.getElementById("profileBalance").textContent =
+                amount.toFixed(4) + " PKOIN";
 
         }
 
 
-        /* =====================================
-           PROFILE
-        ===================================== */
+        /* =========================
+           PROFILE RPC
+        ========================= */
 
         if (
             account &&
@@ -299,88 +283,99 @@ async function initBastyon() {
             typeof sdk.rpc === "function"
         ) {
 
-            console.log(
-                "========== PROFILE REQUEST =========="
-            );
+            console.log("========== PROFILE TEST ==========");
 
+
+            /* TEST 1 */
 
             try {
 
-                const profile =
-                    await sdk.rpc(
-                        "getuserprofile",
-                        {
-                            address:
-                                account.address,
+                console.log("PROFILE TEST 1");
 
-                            shortForm:
-                                "basic"
-                        },
-                        {
-                            cachetime: 0
-                        }
-                    );
-
-
-                console.log(
-                    "PROFILE RESULT:",
-                    profile
+                const result1 = await sdk.rpc(
+                    "getuserprofile",
+                    [
+                        account.address,
+                        "basic"
+                    ],
+                    {
+                        cachetime: 0
+                    }
                 );
 
-
                 console.log(
-                    "PROFILE JSON:",
-                    JSON.stringify(
-                        profile,
-                        null,
-                        2
-                    )
+                    "PROFILE TEST 1 RESULT:",
+                    result1
                 );
 
-
-                console.log(
-                    "PROFILE TYPE:",
-                    typeof profile
-                );
-
-
-                console.log(
-                    "PROFILE IS ARRAY:",
-                    Array.isArray(profile)
-                );
-
-
-                if (
-                    Array.isArray(profile) &&
-                    profile.length > 0
-                ) {
-
-                    const data =
-                        profile[0];
-
-
-                    console.log(
-                        "PROFILE FIRST ITEM:",
-                        data
-                    );
-
-
-                    console.log(
-                        "PROFILE FIRST ITEM JSON:",
-                        JSON.stringify(
-                            data,
-                            null,
-                            2
-                        )
-                    );
-
-                }
-
-            } catch (profileError) {
+            } catch (error1) {
 
                 console.error(
-                    "PROFILE ERROR:",
-                    profileError
+                    "PROFILE TEST 1 ERROR:",
+                    error1
+                );
+
+            }
+
+
+            /* TEST 2 */
+
+            try {
+
+                console.log("PROFILE TEST 2");
+
+                const result2 = await sdk.rpc(
+                    "getuserprofile",
+                    [
+                        account.address,
+                        "detailed"
+                    ],
+                    {
+                        cachetime: 0
+                    }
+                );
+
+                console.log(
+                    "PROFILE TEST 2 RESULT:",
+                    result2
+                );
+
+            } catch (error2) {
+
+                console.error(
+                    "PROFILE TEST 2 ERROR:",
+                    error2
+                );
+
+            }
+
+
+            /* TEST 3 */
+
+            try {
+
+                console.log("USER STATE TEST");
+
+                const userState = await sdk.rpc(
+                    "getuserstate",
+                    [
+                        account.address
+                    ],
+                    {
+                        cachetime: 0
+                    }
+                );
+
+                console.log(
+                    "USER STATE RESULT:",
+                    userState
+                );
+
+            } catch (stateError) {
+
+                console.error(
+                    "USER STATE ERROR:",
+                    stateError
                 );
 
             }
@@ -388,19 +383,13 @@ async function initBastyon() {
         }
 
 
-        /* =====================================
-           READY
-        ===================================== */
-
-        document.getElementById(
-            "status"
-        ).textContent =
+        document.getElementById("status").textContent =
             "Bastyon подключён";
-
 
         console.log(
             "========== BASTYON READY =========="
         );
+
 
     } catch (error) {
 
@@ -409,10 +398,7 @@ async function initBastyon() {
             error
         );
 
-
-        document.getElementById(
-            "status"
-        ).textContent =
+        document.getElementById("status").textContent =
             "Ошибка подключения Bastyon";
 
     }
@@ -420,9 +406,9 @@ async function initBastyon() {
 }
 
 
-/* =========================================
+/* =========================
    GAME
-========================================= */
+========================= */
 
 function play(playerChoice) {
 
@@ -432,60 +418,47 @@ function play(playerChoice) {
         "paper"
     ];
 
-
     const computerChoice =
         choices[
             Math.floor(
-                Math.random() *
-                choices.length
+                Math.random() * choices.length
             )
         ];
-
 
     let result = "";
 
 
-    if (
-        playerChoice ===
-        computerChoice
-    ) {
+    if (playerChoice === computerChoice) {
 
-        result =
-            "Ничья 🤝";
+        result = "Ничья 🤝";
 
-    } else if (
+    }
 
-        (
-            playerChoice === "rock" &&
-            computerChoice === "scissors"
-        ) ||
+    else if (
 
-        (
-            playerChoice === "scissors" &&
-            computerChoice === "paper"
-        ) ||
+        (playerChoice === "rock" &&
+         computerChoice === "scissors") ||
 
-        (
-            playerChoice === "paper" &&
-            computerChoice === "rock"
-        )
+        (playerChoice === "scissors" &&
+         computerChoice === "paper") ||
+
+        (playerChoice === "paper" &&
+         computerChoice === "rock")
 
     ) {
 
-        result =
-            "Вы выиграли! 🎉";
+        result = "Вы выиграли! 🎉";
 
-    } else {
+    }
 
-        result =
-            "Вы проиграли";
+    else {
+
+        result = "Вы проиграли";
 
     }
 
 
-    document.getElementById(
-        "result"
-    ).innerHTML =
+    document.getElementById("result").innerHTML =
 
         "Ваш ход: <b>" +
         playerChoice +
@@ -499,10 +472,6 @@ function play(playerChoice) {
 
 }
 
-
-/* =========================================
-   START
-========================================= */
 
 initBastyon();
 
