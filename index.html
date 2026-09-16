@@ -213,11 +213,6 @@ let sdk = null;
 let account = null;
 let balance = null;
 
-
-/* =========================
-   BASTYON
-========================= */
-
 async function initBastyon() {
 
     console.log("========== BASTYON START ==========");
@@ -232,15 +227,9 @@ async function initBastyon() {
 
         sdk.emit("loaded");
 
-
-        /* =========================
-           ACCOUNT
-        ========================= */
-
         account = await sdk.get.account();
 
         console.log("BASTYON ACCOUNT:", account);
-
 
         if (account && account.address) {
 
@@ -252,15 +241,9 @@ async function initBastyon() {
 
         }
 
-
-        /* =========================
-           BALANCE
-        ========================= */
-
         balance = await sdk.get.balance();
 
         console.log("BASTYON BALANCE:", balance);
-
 
         if (balance) {
 
@@ -272,64 +255,11 @@ async function initBastyon() {
 
         }
 
-
-        /* =========================
-           ADDRESS INFO
-        ========================= */
-
         if (
             account &&
             account.address &&
             typeof sdk.rpc === "function"
         ) {
-
-            console.log("========== ADDRESS INFO TEST ==========");
-
-            try {
-
-                const addressInfo = await sdk.rpc(
-                    "getaddressinfo",
-                    [
-                        account.address
-                    ],
-                    {
-                        cachetime: 0
-                    }
-                );
-
-                console.log(
-                    "ADDRESS INFO RESULT:",
-                    addressInfo
-                );
-
-                console.log(
-                    "ADDRESS INFO JSON:",
-                    JSON.stringify(addressInfo, null, 2)
-                );
-
-                console.log(
-                    "ADDRESS INFO TYPE:",
-                    typeof addressInfo
-                );
-
-                console.log(
-                    "ADDRESS INFO IS ARRAY:",
-                    Array.isArray(addressInfo)
-                );
-
-            } catch (addressError) {
-
-                console.error(
-                    "ADDRESS INFO ERROR:",
-                    addressError
-                );
-
-            }
-
-
-            /* =========================
-               USER STATE
-            ========================= */
 
             try {
 
@@ -348,11 +278,6 @@ async function initBastyon() {
                     userState
                 );
 
-                console.log(
-                    "USER STATE JSON:",
-                    JSON.stringify(userState, null, 2)
-                );
-
             } catch (stateError) {
 
                 console.error(
@@ -364,14 +289,10 @@ async function initBastyon() {
 
         }
 
-
         document.getElementById("status").textContent =
             "Bastyon подключён";
 
-        console.log(
-            "========== BASTYON READY =========="
-        );
-
+        console.log("========== BASTYON READY ==========");
 
     } catch (error) {
 
@@ -386,11 +307,6 @@ async function initBastyon() {
     }
 
 }
-
-
-/* =========================
-   GAME
-========================= */
 
 function play(playerChoice) {
 
@@ -409,14 +325,11 @@ function play(playerChoice) {
 
     let result = "";
 
-
     if (playerChoice === computerChoice) {
 
         result = "Ничья 🤝";
 
-    }
-
-    else if (
+    } else if (
 
         (playerChoice === "rock" &&
          computerChoice === "scissors") ||
@@ -431,29 +344,22 @@ function play(playerChoice) {
 
         result = "Вы выиграли! 🎉";
 
-    }
-
-    else {
+    } else {
 
         result = "Вы проиграли";
 
     }
 
-
     document.getElementById("result").innerHTML =
-
         "Ваш ход: <b>" +
         playerChoice +
         "</b><br>" +
-
         "Ход компьютера: <b>" +
         computerChoice +
         "</b><br><br>" +
-
         result;
 
 }
-
 
 initBastyon();
 
