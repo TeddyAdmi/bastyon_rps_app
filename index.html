@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Игра КНБ</title>
+
   <script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
 
   <style>
@@ -44,6 +45,7 @@
       object-fit: cover;
       background-color: #333;
       border: 2px solid #00ff88;
+      flex-shrink: 0;
     }
 
     .profile-info {
@@ -154,9 +156,17 @@
       />
 
       <div class="profile-info">
-        <div id="user-name" class="profile-name">Загрузка...</div>
-        <div id="user-address" class="profile-address">Адрес: --</div>
-        <div id="user-balance" class="profile-balance">0.0000 PKOIN</div>
+        <div id="user-name" class="profile-name">
+          Загрузка...
+        </div>
+
+        <div id="user-address" class="profile-address">
+          Адрес: --
+        </div>
+
+        <div id="user-balance" class="profile-balance">
+          Загрузка баланса...
+        </div>
       </div>
 
     </div>
@@ -165,16 +175,14 @@
       <button
         class="room-btn active"
         id="mode-demo"
-        onclick="selectRoom('demo')"
-      >
+        onclick="selectRoom('demo')">
         🤖 Демо (0 PKOIN)
       </button>
 
       <button
         class="room-btn"
         id="mode-pvp"
-        onclick="selectRoom('pvp')"
-      >
+        onclick="selectRoom('pvp')">
         ⚔️ Игроки (1 PKOIN)
       </button>
     </div>
@@ -185,8 +193,7 @@
         class="game-btn"
         onclick="makeMove('rock')"
         id="btn-rock"
-        disabled
-      >
+        disabled>
         🪨
       </button>
 
@@ -194,8 +201,7 @@
         class="game-btn"
         onclick="makeMove('scissors')"
         id="btn-scissors"
-        disabled
-      >
+        disabled>
         ✂️
       </button>
 
@@ -203,8 +209,7 @@
         class="game-btn"
         onclick="makeMove('paper')"
         id="btn-paper"
-        disabled
-      >
+        disabled>
         📄
       </button>
 
@@ -220,6 +225,7 @@
 
   </div>
 
+
   <script>
 
     let sdk = null;
@@ -230,7 +236,8 @@
       'PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs';
 
     const DEFAULT_AVATAR =
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s1.79-4 4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
 
     const choices = {
       rock: '🪨 Камень',
@@ -241,16 +248,20 @@
 
     function enableButtons(enable) {
 
-      ['btn-rock', 'btn-scissors', 'btn-paper']
-        .forEach(id => {
+      [
+        'btn-rock',
+        'btn-scissors',
+        'btn-paper'
+      ].forEach(id => {
 
-          const btn = document.getElementById(id);
+        const btn = document.getElementById(id);
 
-          if (btn) {
-            btn.disabled = !enable;
-          }
+        if (btn) {
+          btn.disabled = !enable;
+        }
 
-        });
+      });
+
     }
 
 
@@ -272,10 +283,16 @@
         room === 'demo'
           ? 'Режим с Ботом: Бесплатная игра.'
           : 'Режим 1 PKOIN: Оплата при каждом ходе!';
+
     }
 
 
-    // Загрузка имени и аватара пользователя
+    /*
+     * ==========================================
+     * ЗАГРУЗКА ПРОФИЛЯ
+     * ==========================================
+     */
+
     async function loadProfileInfo(address) {
 
       const avatarImg =
@@ -284,74 +301,176 @@
       const nameEl =
         document.getElementById('user-name');
 
-      if (!address || !sdk) {
+      if (!address) {
         return;
       }
 
       try {
 
+        /*
+         * Сначала ставим имя по адресу,
+         * чтобы пользователь не видел "Загрузка..."
+         */
+
+        nameEl.innerText =
+          `Игрок ${address.slice(0, 4)}`;
+
+        avatarImg.src = DEFAULT_AVATAR;
+
+
+        /*
+         * Используем RPC Bastyon.
+         *
+         * Новый формат:
+         *
+         * getuserprofile({
+         *   address: address,
+         *   shortForm: "basic"
+         * })
+         */
+
         let profile = null;
 
-        if (typeof sdk.rpc === 'function') {
 
-          const res =
-            await sdk.rpc(
-              'getuserprofile',
-              [[address]]
+        if (sdk && typeof sdk.rpc === 'function') {
+
+          try {
+
+            const response =
+              await sdk.rpc(
+                'getuserprofile',
+                {
+                  address: address,
+                  shortForm: 'basic'
+                }
+              );
+
+            console.log(
+              'Bastyon profile response:',
+              response
             );
 
-          profile =
-            Array.isArray(res)
-              ? res[0]
-              : res;
-        }
+            if (Array.isArray(response)) {
+              profile = response[0];
+            } else if (
+              response &&
+              Array.isArray(response.data)
+            ) {
+              profile = response.data[0];
+            } else if (
+              response &&
+              response.data
+            ) {
+              profile = response.data;
+            } else {
+              profile = response;
+            }
 
+          } catch (rpcError) {
 
-        if (profile) {
-
-          const name =
-            profile.name ||
-            profile.pName;
-
-          nameEl.innerText =
-            (name && name.trim())
-              ? name
-              : `Игрок ${address.slice(0, 4)}`;
-
-
-          if (profile.i) {
-
-            const url =
-              profile.i.startsWith('http')
-                ? profile.i
-                : `https://pocketnet.app/ipfs/${profile.i.replace(/^\//, '')}`;
-
-            avatarImg.src = url;
-
-            avatarImg.onerror = () => {
-              avatarImg.src = DEFAULT_AVATAR;
-            };
-
-          } else {
-
-            avatarImg.src = DEFAULT_AVATAR;
+            console.warn(
+              'Profile RPC error:',
+              rpcError
+            );
 
           }
 
-        } else {
-
-          nameEl.innerText =
-            `Игрок ${address.slice(0, 4)}`;
-
-          avatarImg.src =
-            DEFAULT_AVATAR;
         }
 
-      } catch (e) {
 
-        console.warn(
+        /*
+         * Если профиль получен,
+         * пробуем найти имя.
+         */
+
+        if (profile) {
+
+          console.log(
+            'Bastyon profile:',
+            profile
+          );
+
+
+          const name =
+            profile.name ||
+            profile.pName ||
+            profile.nickname ||
+            profile.nick ||
+            profile.n;
+
+
+          if (
+            typeof name === 'string' &&
+            name.trim()
+          ) {
+
+            nameEl.innerText =
+              name.trim();
+
+          }
+
+
+          /*
+           * Ищем изображение профиля.
+           */
+
+          const image =
+            profile.i ||
+            profile.image ||
+            profile.avatar ||
+            profile.avatarUrl;
+
+
+          if (
+            typeof image === 'string' &&
+            image.length > 0
+          ) {
+
+            let avatarUrl = image;
+
+
+            /*
+             * Если Bastyon уже вернул
+             * полный URL — используем его.
+             */
+
+            if (
+              !avatarUrl.startsWith('http://') &&
+              !avatarUrl.startsWith('https://') &&
+              !avatarUrl.startsWith('data:')
+            ) {
+
+              avatarUrl =
+                'https://pocketnet.app/ipfs/' +
+                avatarUrl.replace(/^\/+/, '');
+
+            }
+
+
+            avatarImg.src = avatarUrl;
+
+
+            avatarImg.onerror = function() {
+
+              console.warn(
+                'Не удалось загрузить аватар:',
+                avatarUrl
+              );
+
+              avatarImg.src =
+                DEFAULT_AVATAR;
+
+            };
+
+          }
+
+        }
+
+      } catch (error) {
+
+        console.error(
           'Ошибка загрузки профиля:',
-          e
+          error
         );
 
         nameEl.innerText =
@@ -359,32 +478,66 @@
 
         avatarImg.src =
           DEFAULT_AVATAR;
+
       }
+
     }
 
 
-    // Получение аккаунта и баланса Bastyon
+    /*
+     * ==========================================
+     * АККАУНТ + БАЛАНС
+     * ==========================================
+     */
+
     async function loadBastyonUserData() {
 
       try {
+
+        /*
+         * Получаем аккаунт Bastyon.
+         */
 
         if (
           sdk.get &&
           typeof sdk.get.account === 'function'
         ) {
 
-          const acc =
+          const account =
             await sdk.get.account();
 
-          if (acc) {
+          console.log(
+            'Bastyon account:',
+            account
+          );
 
-            userAddress =
-              typeof acc === 'string'
-                ? acc
-                : (acc.address || acc.addr);
+
+          if (account) {
+
+            if (
+              typeof account === 'string'
+            ) {
+
+              userAddress =
+                account;
+
+            } else {
+
+              userAddress =
+                account.address ||
+                account.addr ||
+                null;
+
+            }
+
           }
+
         }
 
+
+        /*
+         * Показываем адрес.
+         */
 
         if (userAddress) {
 
@@ -393,7 +546,14 @@
           ).innerText =
             `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
 
-          await loadProfileInfo(userAddress);
+
+          /*
+           * Загружаем имя и аватар.
+           */
+
+          await loadProfileInfo(
+            userAddress
+          );
 
         } else {
 
@@ -401,8 +561,23 @@
             'user-address'
           ).innerText =
             'Адрес: Гость';
+
+          document.getElementById(
+            'user-name'
+          ).innerText =
+            'Гость';
+
         }
 
+
+        /*
+         * ======================================
+         * БАЛАНС PKOIN
+         * ======================================
+         *
+         * В актуальном Bastyon SDK
+         * get.balance() возвращает число.
+         */
 
         if (
           sdk.get &&
@@ -411,48 +586,102 @@
 
           try {
 
-            const bal =
+            const balance =
               await sdk.get.balance();
 
-            const cleanBal =
-              (
-                typeof bal === 'object' &&
-                bal !== null
+            console.log(
+              'Bastyon balance:',
+              balance
+            );
+
+
+            let numericBalance;
+
+
+            if (
+              typeof balance === 'number'
+            ) {
+
+              numericBalance =
+                balance;
+
+            } else if (
+              typeof balance === 'string'
+            ) {
+
+              numericBalance =
+                parseFloat(balance);
+
+            } else if (
+              balance &&
+              typeof balance === 'object'
+            ) {
+
+              numericBalance =
+                Number(
+                  balance.balance ??
+                  balance.confirmed ??
+                  balance.amount ??
+                  0
+                );
+
+            } else {
+
+              numericBalance = 0;
+
+            }
+
+
+            if (
+              !Number.isFinite(
+                numericBalance
               )
-                ? (
-                    bal.balance ||
-                    bal.confirmed ||
-                    0
-                  )
-                : (
-                    parseFloat(bal) || 0
-                  );
+            ) {
+
+              numericBalance = 0;
+
+            }
+
 
             document.getElementById(
               'user-balance'
             ).innerText =
-              `${Number(cleanBal).toFixed(4)} PKOIN`;
+              `${numericBalance.toFixed(4)} PKOIN`;
 
-          } catch (bErr) {
+          } catch (balanceError) {
 
-            console.warn(
-              'Balance error:',
-              bErr
+            console.error(
+              'Ошибка получения баланса:',
+              balanceError
             );
+
+            document.getElementById(
+              'user-balance'
+            ).innerText =
+              'Баланс недоступен';
+
           }
+
         }
 
-      } catch (err) {
+      } catch (error) {
 
         console.error(
           'Ошибка аккаунта:',
-          err
+          error
         );
+
       }
+
     }
 
 
-    // Запуск Bastyon SDK
+    /*
+     * ==========================================
+     * ЗАПУСК BASTYON SDK
+     * ==========================================
+     */
+
     document.addEventListener(
       'DOMContentLoaded',
       async () => {
@@ -472,6 +701,7 @@
           enableButtons(true);
 
           return;
+
         }
 
 
@@ -480,8 +710,15 @@
           sdk =
             new window.BastyonSdk();
 
+
           await sdk.init();
 
+
+          /*
+           * Нам сейчас нужен только account.
+           *
+           * payment пока не трогаем.
+           */
 
           if (
             sdk.permissions &&
@@ -491,65 +728,125 @@
             try {
 
               await sdk.permissions.request([
-                'account',
-                'payment',
-                'rpc'
+                'account'
               ]);
 
-            } catch (pErr) {
+            } catch (permissionError) {
 
               console.warn(
-                'Permissions warning:',
-                pErr
+                'Permission warning:',
+                permissionError
               );
+
             }
+
           }
 
+
+          /*
+           * Загружаем:
+           * аккаунт
+           * имя
+           * аватар
+           * баланс
+           */
 
           await loadBastyonUserData();
 
 
-          if (typeof sdk.on === 'function') {
+          /*
+           * Следим за изменением баланса.
+           */
+
+          if (
+            typeof sdk.on === 'function'
+          ) {
 
             sdk.on(
               'balance',
               (newBalance) => {
 
-                const num =
-                  (
-                    typeof newBalance === 'object' &&
-                    newBalance !== null
-                  )
-                    ? (
-                        newBalance.balance ||
-                        0
-                      )
-                    : (
-                        parseFloat(newBalance) ||
-                        0
-                      );
+                console.log(
+                  'Balance event:',
+                  newBalance
+                );
+
+
+                let balance = 0;
+
+
+                if (
+                  typeof newBalance === 'number'
+                ) {
+
+                  balance =
+                    newBalance;
+
+                } else if (
+                  typeof newBalance === 'string'
+                ) {
+
+                  balance =
+                    parseFloat(
+                      newBalance
+                    );
+
+                } else if (
+                  newBalance &&
+                  typeof newBalance === 'object'
+                ) {
+
+                  balance =
+                    Number(
+                      newBalance.balance ??
+                      newBalance.confirmed ??
+                      newBalance.amount ??
+                      0
+                    );
+
+                }
+
+
+                if (
+                  !Number.isFinite(balance)
+                ) {
+
+                  balance = 0;
+
+                }
+
 
                 document.getElementById(
                   'user-balance'
                 ).innerText =
-                  `${Number(num).toFixed(4)} PKOIN`;
+                  `${balance.toFixed(4)} PKOIN`;
+
               }
             );
+
           }
 
 
+          /*
+           * Сообщаем Bastyon,
+           * что приложение готово.
+           */
+
           sdk.emit('loaded');
+
 
           statusEl.innerText =
             '● Подключено к Bastyon';
 
+
           enableButtons(true);
 
-        } catch (err) {
+
+        } catch (error) {
 
           console.error(
             'SDK Error:',
-            err
+            error
           );
 
           statusEl.style.color =
@@ -557,28 +854,44 @@
 
           statusEl.innerText =
             '❌ Ошибка SDK: ' +
-            (err.message || 'Ошибка');
+            (
+              error.message ||
+              'Ошибка'
+            );
 
           enableButtons(true);
+
         }
 
       }
     );
 
 
-    // Оплата ставки
+    /*
+     * ==========================================
+     * ПЛАТЁЖ
+     * ==========================================
+     *
+     * ПОКА НЕ МЕНЯЕМ.
+     * Вернёмся к нему после профиля.
+     */
+
     async function makePayment() {
 
       const paymentData = {
 
-        address: BANK_ADDRESS,
+        address:
+          BANK_ADDRESS,
 
-        amount: 1,
+        amount:
+          1,
 
-        currency: 'PKOIN',
+        currency:
+          'PKOIN',
 
         comment:
           'Ставка в КНБ (1 PKOIN)'
+
       };
 
 
@@ -611,11 +924,19 @@
       } else {
 
         throw new Error(
-          'Метод оплаты недоступен. Проверьте манифест и права приложения.'
+          'Метод оплаты недоступен'
         );
+
       }
+
     }
 
+
+    /*
+     * ==========================================
+     * ИГРА
+     * ==========================================
+     */
 
     async function makeMove(userChoice) {
 
@@ -625,7 +946,9 @@
         );
 
 
-      if (currentRoom === 'pvp') {
+      if (
+        currentRoom === 'pvp'
+      ) {
 
         if (!sdk) {
 
@@ -634,10 +957,12 @@
           );
 
           return;
+
         }
 
 
         enableButtons(false);
+
 
         resultEl.innerText =
           '⏳ Подтвердите транзакцию 1 PKOIN...';
@@ -657,6 +982,7 @@
             throw new Error(
               'Транзакция отменена'
             );
+
           }
 
 
@@ -664,7 +990,10 @@
             'Ставка принята! Идет матч...';
 
 
-          playPvpMatch(userChoice);
+          playPvpMatch(
+            userChoice
+          );
+
 
         } catch (err) {
 
@@ -673,26 +1002,39 @@
             err
           );
 
+
           resultEl.innerText =
             '❌ Оплата не выполнена: ' +
-            (err.message || 'Отменено');
+            (
+              err.message ||
+              'Отменено'
+            );
+
 
           enableButtons(true);
 
           return;
+
         }
 
       } else {
 
-        playDemoMatch(userChoice);
+        playDemoMatch(
+          userChoice
+        );
+
       }
+
     }
 
 
-    function playDemoMatch(userChoice) {
+    function playDemoMatch(
+      userChoice
+    ) {
 
       const keys =
         Object.keys(choices);
+
 
       const botChoice =
         keys[
@@ -702,38 +1044,49 @@
           )
         ];
 
+
       showResult(
         userChoice,
         botChoice,
         'Бот'
       );
+
     }
 
 
-    function playPvpMatch(userChoice) {
+    function playPvpMatch(
+      userChoice
+    ) {
 
-      setTimeout(() => {
+      setTimeout(
+        () => {
 
-        const keys =
-          Object.keys(choices);
+          const keys =
+            Object.keys(choices);
 
-        const opponentChoice =
-          keys[
-            Math.floor(
-              Math.random() *
-              keys.length
-            )
-          ];
 
-        showResult(
-          userChoice,
-          opponentChoice,
-          'Соперник'
-        );
+          const opponentChoice =
+            keys[
+              Math.floor(
+                Math.random() *
+                keys.length
+              )
+            ];
 
-        enableButtons(true);
 
-      }, 1500);
+          showResult(
+            userChoice,
+            opponentChoice,
+            'Соперник'
+          );
+
+
+          enableButtons(true);
+
+        },
+        1500
+      );
+
     }
 
 
@@ -747,7 +1100,8 @@
 
 
       if (
-        userChoice === opponentChoice
+        userChoice ===
+        opponentChoice
       ) {
 
         resultMessage =
@@ -779,6 +1133,7 @@
 
         resultMessage =
           `💥 ${opponentName} победил! ${choices[opponentChoice]} бьет ${choices[userChoice]}`;
+
       }
 
 
@@ -786,6 +1141,7 @@
         'result-text'
       ).innerText =
         resultMessage;
+
     }
 
   </script>
