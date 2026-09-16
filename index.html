@@ -18,7 +18,7 @@
       background: #2a2a2a;
       border-radius: 12px;
       padding: 20px;
-      max-width: 400px;
+      max-width: 420px;
       margin: 20px auto;
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
@@ -27,6 +27,28 @@
       color: #aaa;
       margin-bottom: 15px;
       word-break: break-all;
+      background: #202020;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .rooms {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .room-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      background: #333;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .room-btn.active {
+      border-color: #00ff88;
+      background: #1e3a29;
     }
     .buttons {
       display: flex;
@@ -34,7 +56,7 @@
       gap: 10px;
       margin: 20px 0;
     }
-    button {
+    .game-btn {
       font-size: 2em;
       padding: 10px 15px;
       border: none;
@@ -43,24 +65,15 @@
       cursor: pointer;
       transition: transform 0.1s, background 0.2s;
     }
-    button:hover {
-      background: #444;
-      transform: scale(1.1);
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    .game-btn:hover { background: #444; transform: scale(1.05); }
+    .game-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .result {
-      font-size: 1.2em;
+      font-size: 1.1em;
       font-weight: bold;
       margin-top: 15px;
       min-height: 1.5em;
     }
-    #status {
-      color: #00ff88;
-      font-size: 0.85em;
-    }
+    #status { color: #00ff88; font-size: 0.85em; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -69,22 +82,32 @@
     <h1>🪨 ✂️ 📄 Игра КНБ</h1>
     
     <div class="user-info">
-      <div id="address">Адрес: загрузка...</div>
+      <div id="address">Кошелек: загрузка...</div>
       <div id="balance">Баланс: -- PKOIN</div>
     </div>
 
-    <div class="buttons">
-      <button onclick="play('rock')" id="btn-rock" disabled>🪨</button>
-      <button onclick="play('scissors')" id="btn-scissors" disabled>✂️</button>
-      <button onclick="play('paper')" id="btn-paper" disabled>📄</button>
+    <!-- Выбор комнаты -->
+    <div class="rooms">
+      <button class="room-btn active" id="mode-demo" onclick="selectRoom('demo')">🤖 Демо (0 PKOIN)</button>
+      <button class="room-btn" id="mode-pvp" onclick="selectRoom('pvp')">⚔️ Игроки (1 PKOIN)</button>
     </div>
 
-    <div class="result" id="result-text">Сделайте ваш ход!</div>
+    <!-- Игровое поле -->
+    <div class="buttons">
+      <button class="game-btn" onclick="makeMove('rock')" id="btn-rock" disabled>🪨</button>
+      <button class="game-btn" onclick="makeMove('scissors')" id="btn-scissors" disabled>✂️</button>
+      <button class="game-btn" onclick="makeMove('paper')" id="btn-paper" disabled>📄</button>
+    </div>
+
+    <div class="result" id="result-text">Выберите режим и сделайте ваш ход!</div>
     <p id="status">Загрузка Bastyon SDK...</p>
   </div>
 
   <script>
     let sdk = null;
+    let userAddress = null;
+    let currentRoom = 'demo'; // 'demo' или 'pvp'
+    const BANK_ADDRESS = 'ВАШ_АДРЕС_КОШЕЛЬКА_ИЗ_BASTYON'; // <-- ВАЖНО: Укажите ваш кошелек-приемник ставок
     const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -94,35 +117,45 @@
           sdk = new window.BastyonSdk();
           await sdk.init();
           
-          // Получаем данные аккаунта пользователя
           if (sdk.get && typeof sdk.get.account === 'function') {
             const account = await sdk.get.account();
             if (account && account.address) {
-              document.getElementById('address').innerText = `Кошелек: ${account.address.slice(0, 6)}...${account.address.slice(-4)}`;
+              userAddress = account.address;
+              document.getElementById('address').innerText = `Кошелек: ${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
             }
             if (account && account.balance !== undefined) {
               document.getElementById('balance').innerText = `Баланс: ${account.balance} PKOIN`;
             }
           }
 
-          // Уведомляем Bastyon, что мини-приложение загружено
           sdk.emit('loaded');
           statusEl.innerText = '● Успешно подключено к Bastyon';
-          
-          // Активируем кнопки
           enableButtons(true);
         } else {
           statusEl.style.color = '#ff4444';
-          statusEl.innerText = 'Bastyon SDK не найден';
+          statusEl.innerText = 'Запущено вне Bastyon (Демо-режим)';
+          enableButtons(true);
         }
       } catch (e) {
-        console.error('Ошибка инициализации SDK:', e);
+        console.error('Ошибка SDK:', e);
         statusEl.style.color = '#ff4444';
         statusEl.innerText = 'Ошибка инициализации SDK';
-        // Активируем кнопки для тестирования в обычном браузере
         enableButtons(true);
       }
     });
+
+    function selectRoom(room) {
+      currentRoom = room;
+      document.getElementById('mode-demo').classList.toggle('active', room === 'demo');
+      document.getElementById('mode-pvp').classList.toggle('active', room === 'pvp');
+      
+      const resultText = document.getElementById('result-text');
+      if (room === 'demo') {
+        resultText.innerText = 'Режим с Ботом: Бесплатная игра.';
+      } else {
+        resultText.innerText = 'Режим 1 PKOIN: Оплата при каждом ходе!';
+      }
+    }
 
     function enableButtons(enable) {
       document.getElementById('btn-rock').disabled = !enable;
@@ -130,22 +163,77 @@
       document.getElementById('btn-paper').disabled = !enable;
     }
 
-    function play(userChoice) {
+    async function makeMove(userChoice) {
+      const resultEl = document.getElementById('result-text');
+
+      // Если комната со ставкой 1 PKOIN
+      if (currentRoom === 'pvp') {
+        if (!sdk || !sdk.payment) {
+          alert('Оплата доступна только внутри приложения Bastyon!');
+          return;
+        }
+
+        enableButtons(false);
+        resultEl.innerText = '⏳ Подтвердите транзакцию 1 PKOIN...';
+
+        try {
+          // Вызов встроенного окна оплаты Bastyon
+          const tx = await sdk.payment.make({
+            address: BANK_ADDRESS,
+            amount: 1,
+            currency: 'PKOIN',
+            comment: 'Ставка в КНБ (1 PKOIN)'
+          });
+
+          if (!tx || !tx.id) {
+            throw new Error('Транзакция отменена');
+          }
+
+          resultEl.innerText = 'Ставка принята! Идет поиск соперника...';
+          // Здесь вызывается бэкенд или имитируется PvP списание
+          playPvpMatch(userChoice);
+
+        } catch (err) {
+          console.error('Ошибка платежа:', err);
+          resultEl.innerText = '❌ Оплата отменена или произошла ошибка.';
+          enableButtons(true);
+          return;
+        }
+      } else {
+        // Обычный бесплатный ход с компьютером
+        playDemoMatch(userChoice);
+      }
+    }
+
+    function playDemoMatch(userChoice) {
       const keys = Object.keys(choices);
       const botChoice = keys[Math.floor(Math.random() * keys.length)];
-      
+      showResult(userChoice, botChoice, 'Бот');
+    }
+
+    function playPvpMatch(userChoice) {
+      // Заглушка матча (в будущем связывается через бэкенд)
+      setTimeout(() => {
+        const keys = Object.keys(choices);
+        const opponentChoice = keys[Math.floor(Math.random() * keys.length)];
+        showResult(userChoice, opponentChoice, 'Соперник');
+        enableButtons(true);
+      }, 1500);
+    }
+
+    function showResult(userChoice, opponentChoice, opponentName) {
       let resultMessage = '';
 
-      if (userChoice === botChoice) {
+      if (userChoice === opponentChoice) {
         resultMessage = `Ничья! Оба выбрали ${choices[userChoice]}`;
       } else if (
-        (userChoice === 'rock' && botChoice === 'scissors') ||
-        (userChoice === 'scissors' && botChoice === 'paper') ||
-        (userChoice === 'paper' && botChoice === 'rock')
+        (userChoice === 'rock' && opponentChoice === 'scissors') ||
+        (userChoice === 'scissors' && opponentChoice === 'paper') ||
+        (userChoice === 'paper' && opponentChoice === 'rock')
       ) {
-        resultMessage = `🎉 Вы выиграли! ${choices[userChoice]} бьет ${choices[botChoice]}`;
+        resultMessage = `🎉 Вы выиграли! ${choices[userChoice]} бьет ${choices[opponentChoice]}`;
       } else {
-        resultMessage = `💥 Вы проиграли! ${choices[botChoice]} бьет ${choices[userChoice]}`;
+        resultMessage = `💥 ${opponentName} победил! ${choices[opponentChoice]} бьет ${choices[userChoice]}`;
       }
 
       document.getElementById('result-text').innerText = resultMessage;
