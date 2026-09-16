@@ -6,9 +6,12 @@ export default async function handler(req, res) {
 
         if (!address) {
             return res.status(400).json({
+                success: false,
                 error: "Address is required"
             });
         }
+
+        console.log("PROFILE REQUEST:", address);
 
         const api = await getPocketNetProxyInstance();
 
@@ -16,6 +19,8 @@ export default async function handler(req, res) {
             address: address,
             shortForm: "basic"
         });
+
+        console.log("PROFILE RESULT:", result);
 
         return res.status(200).json({
             success: true,
@@ -30,7 +35,7 @@ export default async function handler(req, res) {
             success: false,
             error: error instanceof Error
                 ? error.message
-                : "Unknown error"
+                : String(error)
         });
     }
 }
