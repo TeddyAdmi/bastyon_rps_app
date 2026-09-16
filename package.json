@@ -1,4 +1,3 @@
-```json
 {
   "name": "bastyon-rps-app",
   "version": "1.0.0",
@@ -8,4 +7,3 @@
     "pocketnet-proxy-api": "https://github.com/DaniilKimlb/pocketnet-proxy-api.git"
   }
 }
-```
