@@ -151,205 +151,254 @@
 
   <script>
     let sdk = null;
-    let userAddress = null;
-    let currentRoom = 'demo';
-    const BANK_ADDRESS = 'PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs'; 
-    const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
-    const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
+  let userAddress = null;
+  let currentRoom = 'demo';
+  const BANK_ADDRESS = 'PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs'; 
+  const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+  const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
 
-    function enableButtons(enable) {
-      const rockBtn = document.getElementById('btn-rock');
-      const scissorsBtn = document.getElementById('btn-scissors');
-      const paperBtn = document.getElementById('btn-paper');
+  function enableButtons(enable) {
+    const rockBtn = document.getElementById('btn-rock');
+    const scissorsBtn = document.getElementById('btn-scissors');
+    const paperBtn = document.getElementById('btn-paper');
 
-      if (rockBtn) rockBtn.disabled = !enable;
-      if (scissorsBtn) scissorsBtn.disabled = !enable;
-      if (paperBtn) paperBtn.disabled = !enable;
+    if (rockBtn) rockBtn.disabled = !enable;
+    if (scissorsBtn) scissorsBtn.disabled = !enable;
+    if (paperBtn) paperBtn.disabled = !enable;
+  }
+
+  function selectRoom(room) {
+    currentRoom = room;
+    document.getElementById('mode-demo').classList.toggle('active', room === 'demo');
+    document.getElementById('mode-pvp').classList.toggle('active', room === 'pvp');
+    document.getElementById('result-text').innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
+  }
+
+  // Резервный метод получения профиля прямо через REST API Bastyon
+  async function fetchProfileDirect(address) {
+    try {
+      const response = await fetch('https://pocketnet.app/api/rpc/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          method: 'getuserprofile',
+          parameters: [[address]]
+        })
+      });
+      const data = await response.json();
+      if (data && data.result && data.result[0]) {
+        return data.result[0];
+      }
+    } catch (e) {
+      console.warn('Ошибка прямого REST запроса профиля:', e);
     }
+    return null;
+  }
 
-    function selectRoom(room) {
-      currentRoom = room;
-      document.getElementById('mode-demo').classList.toggle('active', room === 'demo');
-      document.getElementById('mode-pvp').classList.toggle('active', room === 'pvp');
-      document.getElementById('result-text').innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
-    }
-
-    async function loadBastyonUserData() {
-      try {
-        if (sdk.get && typeof sdk.get.account === 'function') {
+  async function loadBastyonUserData() {
+    try {
+      // 1. Получаем адрес пользователя
+      if (sdk.get && typeof sdk.get.account === 'function') {
+        try {
           const acc = await sdk.get.account();
-          if (acc && acc.address) {
-            userAddress = acc.address;
+          if (acc && (acc.address || acc.addr)) {
+            userAddress = acc.address || acc.addr;
           }
+        } catch (e) {
+          console.warn('Не удалось получить адрес через sdk.get.account:', e);
         }
+      }
 
-        if (!userAddress) {
-          userAddress = BANK_ADDRESS;
+      if (!userAddress) {
+        // Запасной способ из локального контекста SDK
+        if (sdk.context && sdk.context.currentAccount) {
+          userAddress = sdk.context.currentAccount.address;
         }
+      }
 
+      if (userAddress) {
         document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+      } else {
+        document.getElementById('user-address').innerText = 'Адрес: Гость';
+      }
 
-        if (sdk.get && typeof sdk.get.balance === 'function') {
+      // 2. Получаем баланс PKOIN
+      if (sdk.get && typeof sdk.get.balance === 'function') {
+        try {
+          const bal = await sdk.get.balance();
+          const cleanBal = typeof bal === 'object' ? (bal.balance || bal.confirmed || 0) : parseFloat(bal);
+          document.getElementById('user-balance').innerText = `${Number(cleanBal).toFixed(4)} PKOIN`;
+        } catch (bErr) {
+          console.warn('Ошибка sdk.get.balance:', bErr);
+        }
+      }
+
+      // 3. Получаем никнейм и аватар
+      if (userAddress) {
+        let profile = null;
+
+        // Попытка 1: Через SDK RPC
+        if (sdk.rpc) {
           try {
-            const bal = await sdk.get.balance();
-            const cleanBal = parseFloat(bal) || 0;
-            document.getElementById('user-balance').innerText = `${cleanBal.toFixed(4)} PKOIN`;
-          } catch (bErr) {
-            console.warn('Ошибка sdk.get.balance:', bErr);
+            let res = null;
+            if (typeof sdk.rpc === 'function') {
+              res = await sdk.rpc('getuserprofile', [[userAddress]]);
+            } else if (sdk.rpc.getuserprofile) {
+              res = await sdk.rpc.getuserprofile([userAddress]);
+            }
+            if (res && res[0]) profile = res[0];
+          } catch (e) {
+            console.warn('SDK RPC getuserprofile не ответил, пробуем REST...', e);
           }
         }
 
-        if (userAddress && sdk.rpc) {
-          try {
-            let profiles = null;
-            
-            if (typeof sdk.rpc === 'function') {
-              profiles = await sdk.rpc('getuserprofile', [[userAddress]]);
-            } else if (sdk.rpc.getuserprofile) {
-              profiles = await sdk.rpc.getuserprofile([userAddress]);
-            }
+        // Попытка 2: Прямой REST запрос (если SDK RPC не сработал)
+        if (!profile) {
+          profile = await fetchProfileDirect(userAddress);
+        }
 
-            if (profiles && profiles[0]) {
-              const p = profiles[0];
-              
-              const realName = p.name || p.pName;
-              if (realName && realName.trim() !== '') {
-                document.getElementById('user-name').innerText = realName;
-              } else {
-                document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
-              }
-
-              const avatarUrl = p.i || p.avatar;
-              if (avatarUrl) {
-                const avatarImg = document.getElementById('user-avatar');
-                avatarImg.src = avatarUrl;
-                avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
-              }
-            } else {
-              document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
-            }
-          } catch (prErr) {
-            console.warn('Ошибка RPC getuserprofile:', prErr);
+        // Обновляем UI на основе найденных данных
+        if (profile) {
+          // Имя пользователя может находиться в разных полях
+          const userName = profile.name || profile.pName || profile.nickname;
+          if (userName && userName.trim() !== '') {
+            document.getElementById('user-name').innerText = userName;
+          } else {
             document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
           }
-        }
 
-      } catch (err) {
-        console.error('Ошибка при получении данных пользователя:', err);
+          // Аватарка
+          const avatarUrl = profile.i || profile.avatar || profile.image;
+          const avatarImg = document.getElementById('user-avatar');
+          if (avatarUrl && avatarUrl.startsWith('http')) {
+            avatarImg.src = avatarUrl;
+            avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
+          } else {
+            avatarImg.src = DEFAULT_AVATAR;
+          }
+        } else {
+          document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
+        }
       }
+
+    } catch (err) {
+      console.error('Ошибка в процессе загрузки данных профиля:', err);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const statusEl = document.getElementById('status');
+
+    if (!window.BastyonSdk) {
+      statusEl.style.color = '#ff4444';
+      statusEl.innerText = '❌ SDK не обнаружен (Запущено вне Bastyon)';
+      enableButtons(true);
+      return;
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      const statusEl = document.getElementById('status');
+    try {
+      sdk = new window.BastyonSdk();
+      await sdk.init();
 
-      if (!window.BastyonSdk) {
-        statusEl.style.color = '#ff4444';
-        statusEl.innerText = '❌ SDK не обнаружен (Запущено вне Bastyon)';
-        enableButtons(true);
+      if (sdk.permissions && typeof sdk.permissions.request === 'function') {
+        try {
+          await sdk.permissions.request(['account', 'payment', 'rpc']);
+        } catch (pErr) {
+          console.warn('Запрос прав:', pErr);
+        }
+      }
+
+      // Загружаем данные пользователя
+      await loadBastyonUserData();
+
+      // Слушаем изменение баланса в реальном времени
+      if (typeof sdk.on === 'function') {
+        sdk.on('balance', (newBalance) => {
+          const num = typeof newBalance === 'object' ? (newBalance.balance || 0) : parseFloat(newBalance);
+          document.getElementById('user-balance').innerText = `${Number(num).toFixed(4)} PKOIN`;
+        });
+      }
+
+      sdk.emit('loaded');
+      statusEl.innerText = '● Подключено к Bastyon';
+      enableButtons(true);
+
+    } catch (err) {
+      console.error('Ошибка инициализации SDK:', err);
+      statusEl.style.color = '#ff4444';
+      statusEl.innerText = '❌ Ошибка SDK: ' + (err.message || 'Неизвестная ошибка');
+      enableButtons(true);
+    }
+  });
+
+  async function makeMove(userChoice) {
+    const resultEl = document.getElementById('result-text');
+
+    if (currentRoom === 'pvp') {
+      if (!sdk || !sdk.payment) {
+        alert('Оплата доступна только внутри приложения Bastyon!');
         return;
       }
 
+      enableButtons(false);
+      resultEl.innerText = '⏳ Подтвердите транзакцию 1 PKOIN...';
+
       try {
-        sdk = new window.BastyonSdk();
-        await sdk.init();
+        const tx = await sdk.payment.make({
+          address: BANK_ADDRESS,
+          amount: 1,
+          currency: 'PKOIN',
+          comment: 'Ставка в КНБ (1 PKOIN)'
+        });
 
-        if (sdk.permissions && typeof sdk.permissions.request === 'function') {
-          try {
-            await sdk.permissions.request(['account', 'payment', 'rpc']);
-          } catch (pErr) {
-            console.warn('Запрос прав отклонен или не требуется:', pErr);
-          }
-        }
+        if (!tx || !tx.id) throw new Error('Транзакция отменена');
 
-        await loadBastyonUserData();
-
-        if (typeof sdk.on === 'function') {
-          sdk.on('balance', (newBalance) => {
-            const num = parseFloat(newBalance) || 0;
-            document.getElementById('user-balance').innerText = `${num.toFixed(4)} PKOIN`;
-          });
-        }
-
-        sdk.emit('loaded');
-        statusEl.innerText = '● Подключено к Bastyon';
-        enableButtons(true);
+        resultEl.innerText = 'Ставка принята! Идет матч...';
+        playPvpMatch(userChoice);
 
       } catch (err) {
-        console.error('Ошибка инициализации SDK:', err);
-        statusEl.style.color = '#ff4444';
-        statusEl.innerText = '❌ Ошибка SDK: ' + (err.message || 'Неизвестная ошибка');
+        console.error('Ошибка платежа:', err);
+        resultEl.innerText = '❌ Оплата отменена или произошла ошибка.';
         enableButtons(true);
+        return;
       }
-    });
-
-    async function makeMove(userChoice) {
-      const resultEl = document.getElementById('result-text');
-
-      if (currentRoom === 'pvp') {
-        if (!sdk || !sdk.payment) {
-          alert('Оплата доступна только внутри приложения Bastyon!');
-          return;
-        }
-
-        enableButtons(false);
-        resultEl.innerText = '⏳ Подтвердите транзакцию 1 PKOIN...';
-
-        try {
-          const tx = await sdk.payment.make({
-            address: BANK_ADDRESS,
-            amount: 1,
-            currency: 'PKOIN',
-            comment: 'Ставка в КНБ (1 PKOIN)'
-          });
-
-          if (!tx || !tx.id) throw new Error('Транзакция отменена');
-
-          resultEl.innerText = 'Ставка принята! Идет матч...';
-          playPvpMatch(userChoice);
-
-        } catch (err) {
-          console.error('Ошибка платежа:', err);
-          resultEl.innerText = '❌ Оплата отменена или произошла ошибка.';
-          enableButtons(true);
-          return;
-        }
-      } else {
-        playDemoMatch(userChoice);
-      }
+    } else {
+      playDemoMatch(userChoice);
     }
+  }
 
-    function playDemoMatch(userChoice) {
+  function playDemoMatch(userChoice) {
+    const keys = Object.keys(choices);
+    const botChoice = keys[Math.floor(Math.random() * keys.length)];
+    showResult(userChoice, botChoice, 'Бот');
+  }
+
+  function playPvpMatch(userChoice) {
+    setTimeout(() => {
       const keys = Object.keys(choices);
-      const botChoice = keys[Math.floor(Math.random() * keys.length)];
-      showResult(userChoice, botChoice, 'Бот');
+      const opponentChoice = keys[Math.floor(Math.random() * keys.length)];
+      showResult(userChoice, opponentChoice, 'Соперник');
+      enableButtons(true);
+    }, 1500);
+  }
+
+  function showResult(userChoice, opponentChoice, opponentName) {
+    let resultMessage = '';
+
+    if (userChoice === opponentChoice) {
+      resultMessage = `Ничья! Оба выбрали ${choices[userChoice]}`;
+    } else if (
+      (userChoice === 'rock' && opponentChoice === 'scissors') ||
+      (userChoice === 'scissors' && opponentChoice === 'paper') ||
+      (userChoice === 'paper' && opponentChoice === 'rock')
+    ) {
+      resultMessage = `🎉 Вы выиграли! ${choices[userChoice]} бьет ${choices[opponentChoice]}`;
+    } else {
+      resultMessage = `💥 ${opponentName} победил! ${choices[opponentChoice]} бьет ${choices[userChoice]}`;
     }
 
-    function playPvpMatch(userChoice) {
-      setTimeout(() => {
-        const keys = Object.keys(choices);
-        const opponentChoice = keys[Math.floor(Math.random() * keys.length)];
-        showResult(userChoice, opponentChoice, 'Соперник');
-        enableButtons(true);
-      }, 1500);
-    }
-
-    function showResult(userChoice, opponentChoice, opponentName) {
-      let resultMessage = '';
-
-      if (userChoice === opponentChoice) {
-        resultMessage = `Ничья! Оба выбрали ${choices[userChoice]}`;
-      } else if (
-        (userChoice === 'rock' && opponentChoice === 'scissors') ||
-        (userChoice === 'scissors' && opponentChoice === 'paper') ||
-        (userChoice === 'paper' && opponentChoice === 'rock')
-      ) {
-        resultMessage = `🎉 Вы выиграли! ${choices[userChoice]} бьет ${choices[opponentChoice]}`;
-      } else {
-        resultMessage = `💥 ${opponentName} победил! ${choices[opponentChoice]} бьет ${choices[userChoice]}`;
-      }
-
-      document.getElementById('result-text').innerText = resultMessage;
-    }
+    document.getElementById('result-text').innerText = resultMessage;
+  }
   </script>
 </body>
 </html>
