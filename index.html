@@ -156,16 +156,14 @@ body {
     color: #65d68b;
     font-size: 13px;
 }
-
-.debug {
-    display: none;
-}
 </style>
 </head>
 
 <body>
 
 <div class="app">
+
+    <!-- ПРОФИЛЬ -->
 
     <div class="profile">
 
@@ -195,10 +193,14 @@ body {
     </div>
 
 
+    <!-- ЗАГОЛОВОК -->
+
     <div class="title">
         КНБ
     </div>
 
+
+    <!-- КОМНАТЫ -->
 
     <div class="rooms">
 
@@ -215,6 +217,8 @@ body {
     </div>
 
 
+    <!-- ИГРА -->
+
     <div class="game-card">
 
         <div class="game-title">
@@ -223,22 +227,52 @@ body {
 
         <div class="choices">
 
+            <!-- КАМЕНЬ СЛЕВА -->
+
             <button class="choice" onclick="play('rock')">
-                <div class="choice-icon">🪨</div>
-                <div class="choice-name">Камень</div>
+
+                <div class="choice-icon">
+                    🪨
+                </div>
+
+                <div class="choice-name">
+                    Камень
+                </div>
+
             </button>
+
+
+            <!-- НОЖНИЦЫ ПО ЦЕНТРУ -->
 
             <button class="choice" onclick="play('scissors')">
-                <div class="choice-icon">✂️</div>
-                <div class="choice-name">Ножницы</div>
+
+                <div class="choice-icon">
+                    ✂️
+                </div>
+
+                <div class="choice-name">
+                    Ножницы
+                </div>
+
             </button>
 
+
+            <!-- БУМАГА СПРАВА -->
+
             <button class="choice" onclick="play('paper')">
-                <div class="choice-icon">📄</div>
-                <div class="choice-name">Бумага</div>
+
+                <div class="choice-icon">
+                    📄
+                </div>
+
+                <div class="choice-name">
+                    Бумага
+                </div>
+
             </button>
 
         </div>
+
 
         <div id="result" class="result">
             Сделай свой выбор
@@ -269,424 +303,338 @@ const DEFAULT_AVATAR =
 
 
 /* =========================================================
-   УСТАНОВКА ПРОФИЛЯ НА ЭКРАН
+   ПОКАЗ ПРОФИЛЯ
 ========================================================= */
 
 function setProfile(name, avatar) {
 
     if (name) {
-        document.getElementById("profileName").textContent = name;
+
+        document.getElementById("profileName").textContent =
+            name;
     }
+
 
     if (avatar) {
 
         let image = avatar;
 
-        /*
-         * Если Bastyon вернул только IPFS hash
-         */
+
         if (
             typeof image === "string" &&
             !image.startsWith("http") &&
             !image.startsWith("data:")
         ) {
-            image = "https://pocketnet.app/ipfs/" + image;
+
+            image =
+                "https://pocketnet.app/ipfs/" +
+                image;
         }
 
-        document.getElementById("avatar").src = image;
+
+        document.getElementById("avatar").src =
+            image;
     }
 }
 
 
 /* =========================================================
-   ПОИСК ИМЕНИ В ЛЮБОМ ОБЪЕКТЕ
-========================================================= */
-
-function findName(obj) {
-
-    if (!obj || typeof obj !== "object") {
-        return null;
-    }
-
-    const keys = [
-        "name",
-        "pName",
-        "nickname",
-        "nick",
-        "username",
-        "userName",
-        "displayName",
-        "display_name",
-        "n"
-    ];
-
-    for (const key of keys) {
-
-        if (
-            obj[key] &&
-            typeof obj[key] === "string" &&
-            obj[key].trim() !== ""
-        ) {
-            return obj[key];
-        }
-    }
-
-    return null;
-}
-
-
-/* =========================================================
-   ПОИСК АВАТАРА
-========================================================= */
-
-function findAvatar(obj) {
-
-    if (!obj || typeof obj !== "object") {
-        return null;
-    }
-
-    const keys = [
-        "i",
-        "image",
-        "avatar",
-        "avatarUrl",
-        "avatar_url",
-        "photo",
-        "photoUrl",
-        "picture"
-    ];
-
-    for (const key of keys) {
-
-        if (
-            obj[key] &&
-            typeof obj[key] === "string" &&
-            obj[key].trim() !== ""
-        ) {
-            return obj[key];
-        }
-    }
-
-    return null;
-}
-
-
-/* =========================================================
-   РЕКУРСИВНЫЙ ПОИСК ПРОФИЛЯ
-========================================================= */
-
-function searchProfileObject(obj) {
-
-    if (!obj || typeof obj !== "object") {
-        return null;
-    }
-
-    const name = findName(obj);
-    const avatar = findAvatar(obj);
-
-    if (name || avatar) {
-        return {
-            name: name,
-            avatar: avatar
-        };
-    }
-
-    for (const key of Object.keys(obj)) {
-
-        try {
-
-            if (
-                obj[key] &&
-                typeof obj[key] === "object"
-            ) {
-
-                const result = searchProfileObject(obj[key]);
-
-                if (result && (result.name || result.avatar)) {
-                    return result;
-                }
-
-            }
-
-        } catch (e) {}
-
-    }
-
-    return null;
-}
-
-
-/* =========================================================
-   ЗАГРУЗКА ПРОФИЛЯ ЧЕРЕЗ RPC
-========================================================= */
-
-async function loadProfileRPC(address) {
-
-    console.log("========== PROFILE RPC ==========");
-    console.log("Запрашиваем профиль:", address);
-
-    try {
-
-        if (!sdk || typeof sdk.rpc !== "function") {
-
-            console.error("sdk.rpc отсутствует");
-
-            return false;
-        }
-
-
-        const response = await sdk.rpc(
-            "getuserprofile",
-            {
-                address: address,
-                shortForm: "basic"
-            }
-        );
-
-
-        console.log("PROFILE RESPONSE:", response);
-        console.log("PROFILE JSON:", JSON.stringify(response));
-
-
-        const profile = searchProfileObject(response);
-
-
-        console.log("PROFILE FOUND:", profile);
-
-
-        if (profile) {
-
-            if (profile.name) {
-                setProfile(profile.name, null);
-            }
-
-            if (profile.avatar) {
-                setProfile(null, profile.avatar);
-            }
-
-            if (profile.name || profile.avatar) {
-                return true;
-            }
-        }
-
-
-    } catch (error) {
-
-        console.error("PROFILE RPC ERROR:", error);
-
-    }
-
-    return false;
-}
-
-
-/* =========================================================
-   ВТОРОЙ СПОСОБ — USERSTATE
-========================================================= */
-
-async function loadProfileUserState() {
-
-    console.log("========== USERSTATE ==========");
-
-    try {
-
-        if (
-            !sdk.helpers ||
-            typeof sdk.helpers.userstate !== "function"
-        ) {
-
-            console.log("helpers.userstate отсутствует");
-
-            return false;
-        }
-
-
-        const state = await sdk.helpers.userstate();
-
-
-        console.log("USERSTATE RESPONSE:", state);
-        console.log("USERSTATE JSON:", JSON.stringify(state));
-
-
-        const profile = searchProfileObject(state);
-
-
-        console.log("USERSTATE PROFILE:", profile);
-
-
-        if (profile) {
-
-            if (profile.name) {
-                setProfile(profile.name, null);
-            }
-
-            if (profile.avatar) {
-                setProfile(null, profile.avatar);
-            }
-
-            if (profile.name || profile.avatar) {
-                return true;
-            }
-        }
-
-    } catch (error) {
-
-        console.error("USERSTATE ERROR:", error);
-
-    }
-
-    return false;
-}
-
-
-/* =========================================================
-   ОСНОВНАЯ ЗАГРУЗКА BASTYON
+   ЗАГРУЗКА BASTYON
 ========================================================= */
 
 async function loadBastyonUserData() {
 
     try {
 
+        console.log("========== BASTYON START ==========");
+
+
+        /* -------------------------------------------------
+           СОЗДАЁМ SDK
+        ------------------------------------------------- */
+
         sdk = new BastyonSdk();
+
 
         await sdk.init();
 
-        sdk.emit("loaded");
 
         console.log("BASTYON SDK INITIALIZED");
 
 
-        /* =========================
+        /*
+         * Сообщаем Bastyon,
+         * что приложение загрузилось.
+         */
+
+        sdk.emit("loaded");
+
+
+        /* -------------------------------------------------
            ACCOUNT
-        ========================= */
+        ------------------------------------------------- */
 
-        account = await sdk.get.account();
+        account =
+            await sdk.get.account();
 
-        console.log("BASTYON ACCOUNT:", account);
+
+        console.log(
+            "BASTYON ACCOUNT:",
+            account
+        );
 
 
-        if (!account || !account.address) {
+        if (
+            !account ||
+            !account.address
+        ) {
 
-            document.getElementById("profileName").textContent =
+            document.getElementById(
+                "profileName"
+            ).textContent =
                 "Не авторизован";
 
-            document.getElementById("profileAddress").textContent =
+
+            document.getElementById(
+                "profileAddress"
+            ).textContent =
                 "Bastyon account не найден";
+
+
+            document.getElementById(
+                "profileBalance"
+            ).textContent =
+                "Баланс недоступен";
+
+
+            document.getElementById(
+                "status"
+            ).textContent =
+                "● Не подключено";
+
 
             return;
         }
 
 
-        const address = account.address;
+        /* -------------------------------------------------
+           АДРЕС
+        ------------------------------------------------- */
+
+        const address =
+            account.address;
 
 
-        document.getElementById("profileAddress").textContent =
+        let shortAddress =
             address.substring(0, 10) +
             "..." +
-            address.substring(address.length - 6);
+            address.substring(
+                address.length - 6
+            );
 
 
-        /* =========================
+        document.getElementById(
+            "profileAddress"
+        ).textContent =
+            shortAddress;
+
+
+        /* -------------------------------------------------
+           ИМЯ
+        -------------------------------------------------
+
+        Пока SDK официально не отдаёт нам
+        профиль через доступный Mini App API.
+
+        Поэтому показываем адрес пользователя,
+        а не делаем ошибочный sdk.rpc().
+        ------------------------------------------------- */
+
+        document.getElementById(
+            "profileName"
+        ).textContent =
+            "Игрок " +
+            address.substring(0, 6);
+
+
+        /* -------------------------------------------------
+           АВАТАР
+        ------------------------------------------------- */
+
+        document.getElementById(
+            "avatar"
+        ).src =
+            DEFAULT_AVATAR;
+
+
+        /* -------------------------------------------------
            BALANCE
-        ========================= */
+        ------------------------------------------------- */
 
         try {
 
-            const balance = await sdk.get.balance();
+            const balance =
+                await sdk.get.balance();
 
-            console.log("BASTYON BALANCE:", balance);
+
+            console.log(
+                "BASTYON BALANCE:",
+                balance
+            );
 
 
             let amount = 0;
 
 
-            if (typeof balance === "number") {
+            if (
+                typeof balance === "number"
+            ) {
 
-                amount = balance;
+                amount =
+                    balance;
 
-            } else if (balance && typeof balance === "object") {
+            } else if (
+                balance &&
+                typeof balance === "object"
+            ) {
 
                 amount =
                     balance.actual ??
                     balance.total ??
+                    balance.tempbalance ??
                     0;
             }
 
 
-            document.getElementById("profileBalance").textContent =
-                Number(amount).toFixed(4) + " PKOIN";
+            document.getElementById(
+                "profileBalance"
+            ).textContent =
+                Number(amount).toFixed(4) +
+                " PKOIN";
 
-        } catch (error) {
 
-            console.error("BALANCE ERROR:", error);
+        } catch (balanceError) {
 
-            document.getElementById("profileBalance").textContent =
+            console.error(
+                "BALANCE ERROR:",
+                balanceError
+            );
+
+
+            document.getElementById(
+                "profileBalance"
+            ).textContent =
                 "Баланс недоступен";
         }
 
 
-        /* =========================
-           PROFILE
-        ========================= */
+        /* -------------------------------------------------
+           ПОЛНАЯ ИНФОРМАЦИЯ ОБ SDK
+        ------------------------------------------------- */
 
-        document.getElementById("profileName").textContent =
-            "Загрузка профиля...";
-
-
-        let profileLoaded =
-            await loadProfileRPC(address);
+        console.log(
+            "BASTYON SDK OBJECT:",
+            sdk
+        );
 
 
-        /*
-         * Если RPC не дал имя/аватар —
-         * пробуем userstate
-         */
+        console.log(
+            "BASTYON SDK GET:",
+            sdk.get
+        );
 
-        if (!profileLoaded) {
 
-            profileLoaded =
-                await loadProfileUserState();
-        }
+        console.log(
+            "BASTYON SDK HELPERS:",
+            sdk.helpers
+        );
 
 
         /*
-         * Если вообще ничего не получили
+         * Проверяем доступные методы SDK.
+         * Это поможет нам следующим шагом найти
+         * официальный способ получить имя и аватар.
          */
 
-        if (!profileLoaded) {
+        try {
 
-            document.getElementById("profileName").textContent =
-                "Игрок " + address.substring(0, 6);
+            if (sdk.get) {
 
-            document.getElementById("avatar").src =
-                DEFAULT_AVATAR;
+                console.log(
+                    "SDK.GET KEYS:",
+                    Object.keys(sdk.get)
+                );
+            }
+
+
+            if (sdk.helpers) {
+
+                console.log(
+                    "SDK.HELPERS KEYS:",
+                    Object.keys(sdk.helpers)
+                );
+            }
+
+        } catch (debugError) {
 
             console.log(
-                "ПРОФИЛЬ НЕ ПОЛУЧЕН. ACCOUNT И BALANCE РАБОТАЮТ."
+                "SDK DEBUG ERROR:",
+                debugError
             );
         }
 
 
-        document.getElementById("status").textContent =
+        /* -------------------------------------------------
+           ГОТОВО
+        ------------------------------------------------- */
+
+        document.getElementById(
+            "status"
+        ).textContent =
             "● Подключено к Bastyon";
 
-        console.log("КНБ успешно запущена");
+
+        console.log(
+            "========== BASTYON READY =========="
+        );
+
 
     } catch (error) {
 
-        console.error("BASTYON ERROR:", error);
+        console.error(
+            "BASTYON ERROR:",
+            error
+        );
 
-        document.getElementById("profileName").textContent =
+
+        document.getElementById(
+            "profileName"
+        ).textContent =
             "Ошибка Bastyon";
 
-        document.getElementById("status").textContent =
+
+        document.getElementById(
+            "profileAddress"
+        ).textContent =
+            "Не удалось получить аккаунт";
+
+
+        document.getElementById(
+            "profileBalance"
+        ).textContent =
+            "Баланс недоступен";
+
+
+        document.getElementById(
+            "status"
+        ).textContent =
             "● Ошибка подключения";
     }
 }
 
 
 /* =========================================================
-   ИГРА
+   ИГРА КНБ
 ========================================================= */
 
 function play(player) {
@@ -697,53 +645,90 @@ function play(player) {
         "paper"
     ];
 
+
     const bot =
-        choices[Math.floor(Math.random() * choices.length)];
+        choices[
+            Math.floor(
+                Math.random() *
+                choices.length
+            )
+        ];
 
 
     let result = "";
 
 
-    if (player === bot) {
+    if (
+        player === bot
+    ) {
 
-        result = "🤝 Ничья!";
+        result =
+            "🤝 Ничья!";
 
     } else if (
 
-        (player === "rock" && bot === "scissors") ||
-        (player === "scissors" && bot === "paper") ||
-        (player === "paper" && bot === "rock")
+        (
+            player === "rock" &&
+            bot === "scissors"
+        ) ||
+
+        (
+            player === "scissors" &&
+            bot === "paper"
+        ) ||
+
+        (
+            player === "paper" &&
+            bot === "rock"
+        )
 
     ) {
 
-        result = "🎉 Ты победил!";
+        result =
+            "🎉 Ты победил!";
 
     } else {
 
-        result = "💥 Бот победил!";
+        result =
+            "💥 Бот победил!";
     }
 
 
     const names = {
-        rock: "🪨 Камень",
-        scissors: "✂️ Ножницы",
-        paper: "📄 Бумага"
+
+        rock:
+            "🪨 Камень",
+
+        scissors:
+            "✂️ Ножницы",
+
+        paper:
+            "📄 Бумага"
     };
 
 
-    document.getElementById("result").innerHTML =
+    document.getElementById(
+        "result"
+    ).innerHTML =
+
         result +
+
         "<br>" +
+
         "<small>" +
+
         names[player] +
+
         " против " +
+
         names[bot] +
+
         "</small>";
 }
 
 
 /* =========================================================
-   START
+   ЗАПУСК
 ========================================================= */
 
 loadBastyonUserData();
