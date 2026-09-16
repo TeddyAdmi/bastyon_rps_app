@@ -1,3 +1,4 @@
-"dependencies": {
-    "pocketnet-proxy-api": "github:DaniilKimlb/pocketnet-proxy-api"
+{
+  "name": "bastyon-rps-app",
+  "version": "1.0.0"
 }
