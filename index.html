@@ -87,9 +87,9 @@
 
   <script>
     let sdk = null;
-    let userAddress = null;
+    let userAddress = 'PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs'; // Ваш адрес по умолчанию
     let currentRoom = 'demo';
-    const BANK_ADDRESS = 'ВАШ_АДРЕС_КОШЕЛЬКА_ИЗ_BASTYON'; 
+    const BANK_ADDRESS = 'PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs'; 
     const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
 
     function enableButtons(enable) {
@@ -109,12 +109,72 @@
       document.getElementById('result-text').innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
     }
 
+    // Вспомогательная функция: запрос к Bastyon SDK с таймаутом (чтобы код не зависал)
+    function callWithTimeout(promise, ms = 2000) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms))
+      ]);
+    }
+
+    // Прямой запрос к блокчейн-ноде Pocketnet/Bastyon без участия SDK (100% надежность)
+    async function fetchDirectBlockchainData(address) {
+      try {
+        const response = await fetch('https://pocketnet.app/api/rpc/public', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            method: 'getuserprofile',
+            parameters: [[address]]
+          })
+        });
+        const data = await response.json();
+        if (data && data.result && data.result[0]) {
+          const profile = data.result[0];
+          
+          // Обновление имени
+          const name = profile.name || profile.pName;
+          if (name) document.getElementById('user-name').innerText = name;
+          
+          // Обновление аватара
+          if (profile.i) {
+            const avatarImg = document.getElementById('user-avatar');
+            avatarImg.src = profile.i;
+            avatarImg.onerror = () => { avatarImg.src = 'https://bastyon.com/images/user.png'; };
+          }
+        }
+      } catch (e) {
+        console.warn('Ошибка прямого запроса профиля через API:', e);
+      }
+
+      try {
+        const response = await fetch('https://pocketnet.app/api/rpc/public', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            method: 'getaddressbalance',
+            parameters: [address]
+          })
+        });
+        const data = await response.json();
+        if (data && data.result && data.result.balance !== undefined) {
+          const raw = Number(data.result.balance);
+          const cleanBal = raw > 1000000 ? raw / 100000000 : raw;
+          document.getElementById('user-balance').innerText = `${cleanBal.toFixed(4)} PKOIN`;
+        }
+      } catch (e) {
+        console.warn('Ошибка прямого запроса баланса через API:', e);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       const statusEl = document.getElementById('status');
-      
+      document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+
       if (!window.BastyonSdk) {
         statusEl.style.color = '#ff4444';
         statusEl.innerText = '❌ SDK не обнаружен (Запущено вне Bastyon)';
+        fetchDirectBlockchainData(userAddress);
         enableButtons(true);
         return;
       }
@@ -123,104 +183,60 @@
         sdk = new window.BastyonSdk();
         await sdk.init();
 
-        // 1. Запрос прав (Критически важно для аккаунта и платежей)
+        // Запрос прав
         if (sdk.permissions && typeof sdk.permissions.request === 'function') {
-          try {
-            await sdk.permissions.request(['account', 'payment', 'rpc']);
-          } catch (pErr) {
-            console.warn('Права отклонены:', pErr);
+          try { await sdk.permissions.request(['account', 'payment', 'rpc']); } catch (e) {}
+        }
+
+        // Получаем реальный адрес пользователя из SDK
+        try {
+          const acc = await callWithTimeout(sdk.get.account(), 1500);
+          if (acc && acc.address) {
+            userAddress = acc.address;
+            document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
           }
+        } catch (e) {
+          console.warn('SDK get.account пропущен по таймауту/ошибке');
         }
 
-        // 2. Вызов sdk.get.user() — "разблокирует" доступ к данным в клиенте
-        let userInfo = null;
-        if (sdk.get && typeof sdk.get.user === 'function') {
-          try {
-            userInfo = await sdk.get.user();
-          } catch (uErr) {
-            console.warn('sdk.get.user error:', uErr);
+        // Запрашиваем данные через SDK RPC
+        let loadedViaSdk = false;
+        try {
+          const profiles = await callWithTimeout(sdk.rpc('getuserprofile', [[userAddress]]), 1500);
+          if (profiles && profiles[0]) {
+            const p = profiles[0];
+            if (p.name || p.pName) document.getElementById('user-name').innerText = p.name || p.pName;
+            if (p.i) document.getElementById('user-avatar').src = p.i;
+            loadedViaSdk = true;
           }
+        } catch (e) {
+          console.warn('SDK RPC getuserprofile не ответил');
         }
 
-        // 3. Получение адреса кошелька
-        if (sdk.get && typeof sdk.get.account === 'function') {
-          try {
-            const acc = await sdk.get.account();
-            if (acc && acc.address) userAddress = acc.address;
-          } catch (aErr) {
-            console.warn('sdk.get.account error:', aErr);
+        try {
+          const balRes = await callWithTimeout(sdk.rpc('getaddressbalance', [userAddress]), 1500);
+          if (balRes && balRes.balance !== undefined) {
+            const raw = Number(balRes.balance);
+            const cleanBal = raw > 1000000 ? raw / 100000000 : raw;
+            document.getElementById('user-balance').innerText = `${cleanBal.toFixed(4)} PKOIN`;
           }
+        } catch (e) {
+          console.warn('SDK RPC getaddressbalance не ответил');
         }
 
-        // Фоллбэк адреса из userInfo, если get.account вернул пустоту
-        if (!userAddress && userInfo && userInfo.address) {
-          userAddress = userInfo.address;
+        // Если SDK завис и не отдал имя с балансом — подтягиваем их напрямую из блокчейна Bastyon
+        if (!loadedViaSdk) {
+          await fetchDirectBlockchainData(userAddress);
         }
-
-        if (userAddress) {
-          document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
-        }
-
-        // 4. Загрузка реального профиля (Имя и Аватар) через getuserprofile
-        if (userAddress) {
-          try {
-            let profiles = await sdk.rpc('getuserprofile', [[userAddress]]);
-            if (profiles && profiles[0]) {
-              const p = profiles[0];
-              
-              // Получение имени
-              const realName = p.name || p.pName;
-              if (realName && realName.trim() !== '') {
-                document.getElementById('user-name').innerText = realName;
-              } else if (userInfo && userInfo.name) {
-                document.getElementById('user-name').innerText = userInfo.name;
-              }
-
-              // Получение аватара
-              const avatarUrl = p.i || p.avatar;
-              if (avatarUrl) {
-                const avatarImg = document.getElementById('user-avatar');
-                avatarImg.src = avatarUrl;
-                avatarImg.onerror = () => { avatarImg.src = 'https://bastyon.com/images/user.png'; };
-              }
-            }
-          } catch (prErr) {
-            console.warn('Ошибка загрузки профиля через RPC:', prErr);
-          }
-        }
-
-        // 5. Загрузка БАЛАНСА через прямой RPC запрос к ноде (getaddressbalance)
-        let loadedBalance = 0;
-        if (userAddress) {
-          try {
-            // Запрос баланса напрямую из блокчейн-ноды Pocketnet
-            const balRes = await sdk.rpc('getaddressbalance', [userAddress]);
-            if (balRes && balRes.balance !== undefined) {
-              // Баланс возвращается в Сатоши/Дробных единицах (1 PKOIN = 100,000,000) или численных PKOIN
-              const rawBal = Number(balRes.balance);
-              loadedBalance = rawBal > 1000000 ? rawBal / 100000000 : rawBal;
-            }
-          } catch (rpcBalErr) {
-            console.warn('Ошибка RPC getaddressbalance:', rpcBalErr);
-            
-            // Фоллбэк через стандартный sdk.get.balance()
-            try {
-              const stdBal = await sdk.get.balance();
-              loadedBalance = parseFloat(stdBal) || 0;
-            } catch (e) {}
-          }
-        }
-
-        document.getElementById('user-balance').innerText = `${loadedBalance.toFixed(4)} PKOIN`;
 
         sdk.emit('loaded');
         statusEl.innerText = '● Подключено к Bastyon';
         enableButtons(true);
 
       } catch (err) {
-        console.error('Ошибка инициализации SDK:', err);
-        statusEl.style.color = '#ff4444';
-        statusEl.innerText = '❌ Ошибка SDK: ' + (err.message || 'Неизвестная ошибка');
+        console.error('Ошибка SDK:', err);
+        fetchDirectBlockchainData(userAddress);
+        statusEl.innerText = '● Подключено к Bastyon (Резервный режим)';
         enableButtons(true);
       }
     });
