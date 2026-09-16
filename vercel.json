@@ -1,20 +1,5 @@
 {
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "*" },
-        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://bastyon.com https://*.bastyon.com https://pocketnet.app https://*.pocketnet.app;" }
-      ]
-    },
-    {
-      "source": "/b_manifest.json",
-      "headers": [
-        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
-      ]
-    }
+  "redirects": [
+    { "source": "/(.*)", "destination": "https://https//..." }
   ]
 }
