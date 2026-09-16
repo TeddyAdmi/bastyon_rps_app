@@ -28,7 +28,6 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-
         console.error("PROFILE ERROR:", error);
 
         return res.status(500).json({
