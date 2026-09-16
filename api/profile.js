@@ -2,9 +2,7 @@
 import { getPocketNetProxyInstance } from "../lib/index.js";
 
 export default async function handler(req, res) {
-
     try {
-
         const address = req.query.address;
 
         if (!address) {
@@ -19,7 +17,7 @@ export default async function handler(req, res) {
         const api = await getPocketNetProxyInstance();
 
         const result = await api.rpc.getuserprofile({
-            address: address,
+            address: String(address),
             shortForm: "basic"
         });
 
@@ -31,7 +29,6 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-
         console.error("PROFILE ERROR:", error);
 
         return res.status(500).json({
@@ -40,8 +37,6 @@ export default async function handler(req, res) {
                 ? error.message
                 : String(error)
         });
-
     }
-
 }
 ```
