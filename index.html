@@ -1,1304 +1,754 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>КНБ</title>
-
-  <script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
-
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-
-    body {
-
-      margin: 0;
-
-      min-height: 100vh;
-
-      padding: 20px;
-
-      font-family: Arial, sans-serif;
-
-      background: #111;
-
-      color: white;
-
-    }
-
-
-    .card {
-
-      width: 100%;
-
-      max-width: 430px;
-
-      margin: 20px auto;
-
-      padding: 20px;
-
-      background: #222;
-
-      border-radius: 16px;
-
-      box-shadow:
-        0 8px 30px rgba(0,0,0,.45);
-
-    }
-
-
-    h1 {
-
-      margin:
-        0 0 20px;
-
-      text-align: center;
-
-      font-size: 25px;
-
-    }
-
-
-    /* PROFILE */
-
-    .profile-card {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 12px;
-
-      padding: 12px;
-
-      margin-bottom: 20px;
-
-      background: #181818;
-
-      border:
-        1px solid #333;
-
-      border-radius: 12px;
-
-    }
-
-
-    .profile-avatar {
-
-      width: 56px;
-
-      height: 56px;
-
-      flex-shrink: 0;
-
-      border-radius: 50%;
-
-      object-fit: cover;
-
-      background: #333;
-
-      border:
-        2px solid #00ff88;
-
-    }
-
-
-    .profile-info {
-
-      min-width: 0;
-
-      flex: 1;
-
-    }
-
-
-    .profile-name {
-
-      font-size: 17px;
-
-      font-weight: bold;
-
-      white-space: nowrap;
-
-      overflow: hidden;
-
-      text-overflow: ellipsis;
-
-    }
-
-
-    .profile-address {
-
-      margin-top: 4px;
-
-      font-size: 11px;
-
-      color: #777;
-
-      font-family: monospace;
-
-    }
-
-
-    .profile-balance {
-
-      margin-top: 5px;
-
-      font-size: 14px;
-
-      font-weight: bold;
-
-      color: #00ff88;
-
-    }
-
-
-    /* ROOMS */
-
-    .rooms {
-
-      display: flex;
-
-      gap: 10px;
-
-      margin-bottom: 25px;
-
-    }
-
-
-    .room-btn {
-
-      flex: 1;
-
-      padding: 12px 8px;
-
-      border:
-        2px solid #444;
-
-      border-radius: 10px;
-
-      background: #303030;
-
-      color: white;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-    }
-
-
-    .room-btn.active {
-
-      border-color: #00ff88;
-
-      background: #183a29;
-
-    }
-
-
-    /* GAME */
-
-    .buttons {
-
-      display: flex;
-
-      gap: 12px;
-
-      margin: 25px 0;
-
-    }
-
-
-    .game-btn {
-
-      flex: 1;
-
-      height: 110px;
-
-      border:
-        2px solid #444;
-
-      border-radius: 14px;
-
-      background: #303030;
-
-      color: white;
-
-      font-size: 50px;
-
-      cursor: pointer;
-
-      transition: .15s;
-
-    }
-
-
-    .game-btn:hover {
-
-      transform:
-        translateY(-3px);
-
-      border-color: #00ff88;
-
-      background: #383838;
-
-    }
-
-
-    .game-btn:disabled {
-
-      opacity: .35;
-
-      cursor: not-allowed;
-
-    }
-
-
-    .result {
-
-      min-height: 50px;
-
-      text-align: center;
-
-      font-size: 16px;
-
-      font-weight: bold;
-
-      line-height: 1.4;
-
-    }
-
-
-    #status {
-
-      margin-top: 20px;
-
-      text-align: center;
-
-      font-size: 13px;
-
-      color: #00ff88;
-
-    }
-
-  </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>КНБ — Камень Ножницы Бумага</title>
+
+<script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #101216;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+.app {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.profile {
+    background: #191c22;
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #292d35;
+    border: 2px solid #383d48;
+}
+
+.profile-info {
+    min-width: 0;
+}
+
+.profile-name {
+    font-size: 19px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.profile-address {
+    color: #8f96a3;
+    font-size: 12px;
+    margin-bottom: 5px;
+    word-break: break-all;
+}
+
+.profile-balance {
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 10px 0 18px;
+}
+
+.rooms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.room {
+    background: #191c22;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid #292d35;
+}
+
+.room-title {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.room-price {
+    color: #aab0ba;
+    font-size: 14px;
+}
+
+.game-card {
+    background: #191c22;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.game-title {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.choices {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.choice {
+    background: #252932;
+    border: 1px solid #353a45;
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 18px 8px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.choice:hover {
+    background: #303540;
+    transform: translateY(-2px);
+}
+
+.choice-icon {
+    font-size: 42px;
+    margin-bottom: 8px;
+}
+
+.choice-name {
+    font-size: 14px;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 14px;
+    background: #111318;
+    border-radius: 14px;
+    text-align: center;
+    min-height: 50px;
+}
+
+.status {
+    margin-top: 18px;
+    text-align: center;
+    color: #65d68b;
+    font-size: 13px;
+}
+
+.debug {
+    display: none;
+}
+</style>
 </head>
-
 
 <body>
 
+<div class="app">
 
-<div class="card">
+    <div class="profile">
 
+        <img
+            id="avatar"
+            class="avatar"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23292d35'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%238f96a3'/%3E%3Cpath d='M20 90c4-25 18-35 30-35s26 10 30 35' fill='%238f96a3'/%3E%3C/svg%3E"
+            alt="Avatar"
+        >
 
-  <h1>КНБ</h1>
+        <div class="profile-info">
 
+            <div id="profileName" class="profile-name">
+                Загрузка...
+            </div>
 
-  <!-- PROFILE -->
+            <div id="profileAddress" class="profile-address">
+                Подключение...
+            </div>
 
-  <div class="profile-card">
+            <div id="profileBalance" class="profile-balance">
+                Баланс: ...
+            </div>
 
-
-    <img
-      id="user-avatar"
-      class="profile-avatar"
-      alt="Avatar"
-    >
-
-
-    <div class="profile-info">
-
-
-      <div
-        id="user-name"
-        class="profile-name"
-      >
-        Загрузка...
-      </div>
-
-
-      <div
-        id="user-address"
-        class="profile-address"
-      >
-        Адрес: --
-      </div>
-
-
-      <div
-        id="user-balance"
-        class="profile-balance"
-      >
-        Загрузка...
-      </div>
-
+        </div>
 
     </div>
 
 
-  </div>
+    <div class="title">
+        КНБ
+    </div>
 
 
-  <!-- ROOMS -->
+    <div class="rooms">
 
-  <div class="rooms">
+        <div class="room">
+            <div class="room-title">🤖 Демо</div>
+            <div class="room-price">0 PKOIN</div>
+        </div>
 
+        <div class="room">
+            <div class="room-title">⚔️ Игроки</div>
+            <div class="room-price">1 PKOIN</div>
+        </div>
 
-    <button
-      id="mode-demo"
-      class="room-btn active"
-      onclick="selectRoom('demo')"
-    >
-
-      🤖 Демо
-
-      <br>
-
-      0 PKOIN
-
-    </button>
+    </div>
 
 
-    <button
-      id="mode-pvp"
-      class="room-btn"
-      onclick="selectRoom('pvp')"
-    >
+    <div class="game-card">
 
-      ⚔️ Игроки
+        <div class="game-title">
+            Выбери свой ход
+        </div>
 
-      <br>
+        <div class="choices">
 
-      1 PKOIN
+            <button class="choice" onclick="play('rock')">
+                <div class="choice-icon">🪨</div>
+                <div class="choice-name">Камень</div>
+            </button>
 
-    </button>
+            <button class="choice" onclick="play('scissors')">
+                <div class="choice-icon">✂️</div>
+                <div class="choice-name">Ножницы</div>
+            </button>
 
+            <button class="choice" onclick="play('paper')">
+                <div class="choice-icon">📄</div>
+                <div class="choice-name">Бумага</div>
+            </button>
 
-  </div>
+        </div>
 
+        <div id="result" class="result">
+            Сделай свой выбор
+        </div>
 
-  <!-- MOVES -->
-
-  <div class="buttons">
-
-
-    <button
-      id="btn-rock"
-      class="game-btn"
-      onclick="makeMove('rock')"
-      disabled
-    >
-      🪨
-    </button>
-
-
-    <button
-      id="btn-scissors"
-      class="game-btn"
-      onclick="makeMove('scissors')"
-      disabled
-    >
-      ✂️
-    </button>
+    </div>
 
 
-    <button
-      id="btn-paper"
-      class="game-btn"
-      onclick="makeMove('paper')"
-      disabled
-    >
-      📄
-    </button>
-
-
-  </div>
-
-
-  <div
-    id="result-text"
-    class="result"
-  >
-    Загрузка...
-  </div>
-
-
-  <div id="status">
-    Подключение к Bastyon...
-  </div>
-
+    <div id="status" class="status">
+        ● Подключение к Bastyon...
+    </div>
 
 </div>
 
 
 <script>
 
-
-/* ==================================================
-   VARIABLES
-================================================== */
-
 let sdk = null;
-
-let userAddress = null;
-
-let currentRoom = 'demo';
+let account = null;
 
 
-/* ==================================================
-   DEFAULT AVATAR
-================================================== */
+/* =========================================================
+   АВАТАР ПО УМОЛЧАНИЮ
+========================================================= */
 
 const DEFAULT_AVATAR =
-  "data:image/svg+xml;charset=UTF-8," +
-  encodeURIComponent(`
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 100 100">
-
-      <circle
-        cx="50"
-        cy="50"
-        r="50"
-        fill="#333"/>
-
-      <circle
-        cx="50"
-        cy="37"
-        r="18"
-        fill="#888"/>
-
-      <path
-        d="M20 90
-           C20 66 35 55 50 55
-           C65 55 80 66 80 90"
-        fill="#888"/>
-
-    </svg>
-  `);
+"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23292d35'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%238f96a3'/%3E%3Cpath d='M20 90c4-25 18-35 30-35s26 10 30 35' fill='%238f96a3'/%3E%3C/svg%3E";
 
 
-document.getElementById(
-  'user-avatar'
-).src = DEFAULT_AVATAR;
+/* =========================================================
+   УСТАНОВКА ПРОФИЛЯ НА ЭКРАН
+========================================================= */
 
+function setProfile(name, avatar) {
 
-/* ==================================================
-   BUTTONS
-================================================== */
-
-function enableButtons(enabled) {
-
-  [
-    'btn-rock',
-    'btn-scissors',
-    'btn-paper'
-  ].forEach(function(id) {
-
-    const button =
-      document.getElementById(id);
-
-    if (button) {
-
-      button.disabled =
-        !enabled;
-
+    if (name) {
+        document.getElementById("profileName").textContent = name;
     }
 
-  });
+    if (avatar) {
 
+        let image = avatar;
+
+        /*
+         * Если Bastyon вернул только IPFS hash
+         */
+        if (
+            typeof image === "string" &&
+            !image.startsWith("http") &&
+            !image.startsWith("data:")
+        ) {
+            image = "https://pocketnet.app/ipfs/" + image;
+        }
+
+        document.getElementById("avatar").src = image;
+    }
 }
 
 
-/* ==================================================
-   ACCOUNT
-================================================== */
+/* =========================================================
+   ПОИСК ИМЕНИ В ЛЮБОМ ОБЪЕКТЕ
+========================================================= */
 
-async function getAccount() {
+function findName(obj) {
 
-  try {
-
-    const account =
-      await sdk.get.account();
-
-
-    console.log(
-      'BASTYON ACCOUNT:',
-      account
-    );
-
-
-    if (!account) {
-
-      return null;
-
+    if (!obj || typeof obj !== "object") {
+        return null;
     }
 
+    const keys = [
+        "name",
+        "pName",
+        "nickname",
+        "nick",
+        "username",
+        "userName",
+        "displayName",
+        "display_name",
+        "n"
+    ];
 
-    if (
-      typeof account === 'string'
-    ) {
+    for (const key of keys) {
 
-      return account;
-
+        if (
+            obj[key] &&
+            typeof obj[key] === "string" &&
+            obj[key].trim() !== ""
+        ) {
+            return obj[key];
+        }
     }
-
-
-    return account.address || null;
-
-  }
-
-  catch (error) {
-
-    console.error(
-      'ACCOUNT ERROR:',
-      error
-    );
 
     return null;
-
-  }
-
 }
 
 
-/* ==================================================
-   BALANCE
-================================================== */
+/* =========================================================
+   ПОИСК АВАТАРА
+========================================================= */
 
-async function getBalance() {
+function findAvatar(obj) {
 
-  const element =
-    document.getElementById(
-      'user-balance'
-    );
-
-
-  try {
-
-    const balance =
-      await sdk.get.balance();
-
-
-    console.log(
-      'BASTYON BALANCE:',
-      balance
-    );
-
-
-    let value = 0;
-
-
-    if (
-      typeof balance === 'number'
-    ) {
-
-      value =
-        balance;
-
+    if (!obj || typeof obj !== "object") {
+        return null;
     }
 
-    else if (
-      balance &&
-      typeof balance === 'object'
-    ) {
+    const keys = [
+        "i",
+        "image",
+        "avatar",
+        "avatarUrl",
+        "avatar_url",
+        "photo",
+        "photoUrl",
+        "picture"
+    ];
 
-      value =
-        Number(
-          balance.total ??
-          balance.actual ??
-          balance.balance ??
-          0
-        );
+    for (const key of keys) {
 
-    }
-
-
-    if (
-      !Number.isFinite(value)
-    ) {
-
-      value = 0;
-
-    }
-
-
-    element.innerText =
-      value.toFixed(4) +
-      ' PKOIN';
-
-  }
-
-  catch (error) {
-
-    console.error(
-      'BALANCE ERROR:',
-      error
-    );
-
-
-    element.innerText =
-      'Баланс недоступен';
-
-  }
-
-}
-
-
-/* ==================================================
-   PROFILE
-================================================== */
-
-async function getProfile() {
-
-  if (!userAddress) {
-
-    return;
-
-  }
-
-
-  console.log(
-    'Запрашиваем профиль:',
-    userAddress
-  );
-
-
-  try {
-
-    /*
-     * Официальный RPC Bastyon:
-     * getuserprofile
-     */
-
-    const response =
-      await sdk.rpc(
-        'getuserprofile',
-        {
-          address: userAddress,
-          shortForm: 'basic'
+        if (
+            obj[key] &&
+            typeof obj[key] === "string" &&
+            obj[key].trim() !== ""
+        ) {
+            return obj[key];
         }
-      );
-
-
-    console.log(
-      'PROFILE RESPONSE:',
-      response
-    );
-
-
-    let profile = null;
-
-
-    if (
-      Array.isArray(response)
-    ) {
-
-      profile =
-        response[0];
-
     }
 
-    else if (
-      response &&
-      Array.isArray(response.data)
-    ) {
+    return null;
+}
 
-      profile =
-        response.data[0];
 
+/* =========================================================
+   РЕКУРСИВНЫЙ ПОИСК ПРОФИЛЯ
+========================================================= */
+
+function searchProfileObject(obj) {
+
+    if (!obj || typeof obj !== "object") {
+        return null;
     }
 
-    else if (
-      response &&
-      response.data
-    ) {
+    const name = findName(obj);
+    const avatar = findAvatar(obj);
 
-      profile =
-        response.data;
-
-    }
-
-    else {
-
-      profile =
-        response;
-
-    }
-
-
-    if (!profile) {
-
-      console.warn(
-        'Профиль пустой'
-      );
-
-      return;
-
-    }
-
-
-    console.log(
-      'PROFILE OBJECT:',
-      profile
-    );
-
-
-    /*
-     * NAME
-     */
-
-    const name =
-      profile.name ||
-      profile.pName ||
-      profile.nickname ||
-      profile.nick ||
-      profile.n;
-
-
-    if (
-      typeof name === 'string' &&
-      name.trim()
-    ) {
-
-      document.getElementById(
-        'user-name'
-      ).innerText =
-        name.trim();
-
-    }
-
-
-    /*
-     * AVATAR
-     */
-
-    const image =
-      profile.i ||
-      profile.image ||
-      profile.avatar ||
-      profile.avatarUrl;
-
-
-    if (
-      typeof image === 'string' &&
-      image.trim()
-    ) {
-
-      let url =
-        image.trim();
-
-
-      if (
-        !url.startsWith('http://') &&
-        !url.startsWith('https://') &&
-        !url.startsWith('data:')
-      ) {
-
-        url =
-          'https://pocketnet.app/ipfs/' +
-          url.replace(/^\/+/, '');
-
-      }
-
-
-      console.log(
-        'AVATAR URL:',
-        url
-      );
-
-
-      const avatar =
-        document.getElementById(
-          'user-avatar'
-        );
-
-
-      avatar.src =
-        url;
-
-
-      avatar.onerror =
-        function() {
-
-          console.warn(
-            'AVATAR LOAD ERROR:',
-            url
-          );
-
-
-          avatar.src =
-            DEFAULT_AVATAR;
-
+    if (name || avatar) {
+        return {
+            name: name,
+            avatar: avatar
         };
+    }
+
+    for (const key of Object.keys(obj)) {
+
+        try {
+
+            if (
+                obj[key] &&
+                typeof obj[key] === "object"
+            ) {
+
+                const result = searchProfileObject(obj[key]);
+
+                if (result && (result.name || result.avatar)) {
+                    return result;
+                }
+
+            }
+
+        } catch (e) {}
 
     }
 
-  }
-
-  catch (error) {
-
-    console.warn(
-      'PROFILE ERROR:',
-      error
-    );
-
-  }
-
+    return null;
 }
 
 
-/* ==================================================
-   LOAD USER
-================================================== */
+/* =========================================================
+   ЗАГРУЗКА ПРОФИЛЯ ЧЕРЕЗ RPC
+========================================================= */
 
-async function loadUser() {
+async function loadProfileRPC(address) {
 
-
-  userAddress =
-    await getAccount();
-
-
-  if (!userAddress) {
-
-    document.getElementById(
-      'user-name'
-    ).innerText =
-      'Гость';
-
-
-    document.getElementById(
-      'user-address'
-    ).innerText =
-      'Адрес: Гость';
-
-
-    return;
-
-  }
-
-
-  document.getElementById(
-    'user-address'
-  ).innerText =
-
-    userAddress.slice(0, 8) +
-    '...' +
-    userAddress.slice(-6);
-
-
-  /*
-   * Сначала адрес.
-   */
-
-  document.getElementById(
-    'user-name'
-  ).innerText =
-
-    'Игрок ' +
-    userAddress.slice(0, 6);
-
-
-  /*
-   * Затем профиль.
-   */
-
-  await getProfile();
-
-
-  /*
-   * Затем баланс.
-   */
-
-  await getBalance();
-
-}
-
-
-/* ==================================================
-   INIT
-================================================== */
-
-document.addEventListener(
-  'DOMContentLoaded',
-  async function() {
-
-
-    const status =
-      document.getElementById(
-        'status'
-      );
-
-
-    enableButtons(false);
-
-
-    if (!window.BastyonSdk) {
-
-      status.innerText =
-        '❌ SDK не найден';
-
-
-      status.style.color =
-        '#ff4444';
-
-
-      return;
-
-    }
-
+    console.log("========== PROFILE RPC ==========");
+    console.log("Запрашиваем профиль:", address);
 
     try {
 
+        if (!sdk || typeof sdk.rpc !== "function") {
 
-      sdk =
-        new window.BastyonSdk();
+            console.error("sdk.rpc отсутствует");
 
-
-      await sdk.init();
-
-
-      console.log(
-        'BASTYON SDK INITIALIZED'
-      );
+            return false;
+        }
 
 
-      /*
-       * Permission
-       */
-
-      try {
-
-        await sdk.permissions.request([
-          'account'
-        ]);
-
-      }
-
-      catch (error) {
-
-        console.warn(
-          'Permission:',
-          error
+        const response = await sdk.rpc(
+            "getuserprofile",
+            {
+                address: address,
+                shortForm: "basic"
+            }
         );
 
-      }
+
+        console.log("PROFILE RESPONSE:", response);
+        console.log("PROFILE JSON:", JSON.stringify(response));
 
 
-      /*
-       * USER
-       */
-
-      await loadUser();
+        const profile = searchProfileObject(response);
 
 
-      /*
-       * BALANCE EVENTS
-       */
-
-      if (
-        typeof sdk.on === 'function'
-      ) {
-
-        sdk.on(
-          'balance',
-          function(balance) {
-
-            let value = 0;
+        console.log("PROFILE FOUND:", profile);
 
 
-            if (
-              typeof balance === 'number'
-            ) {
+        if (profile) {
 
-              value =
-                balance;
-
+            if (profile.name) {
+                setProfile(profile.name, null);
             }
 
-            else if (
-              balance &&
-              typeof balance === 'object'
-            ) {
-
-              value =
-                Number(
-                  balance.total ??
-                  balance.actual ??
-                  balance.balance ??
-                  0
-                );
-
+            if (profile.avatar) {
+                setProfile(null, profile.avatar);
             }
 
-
-            if (
-              Number.isFinite(value)
-            ) {
-
-              document.getElementById(
-                'user-balance'
-              ).innerText =
-
-                value.toFixed(4) +
-                ' PKOIN';
-
+            if (profile.name || profile.avatar) {
+                return true;
             }
-
-          }
-        );
-
-      }
+        }
 
 
-      /*
-       * READY
-       */
+    } catch (error) {
 
-      sdk.emit('loaded');
-
-
-      status.innerText =
-        '● Подключено к Bastyon';
-
-
-      enableButtons(true);
-
-
-      console.log(
-        'КНБ успешно запущена'
-      );
-
+        console.error("PROFILE RPC ERROR:", error);
 
     }
 
-    catch (error) {
-
-      console.error(
-        'SDK ERROR:',
-        error
-      );
-
-
-      status.innerText =
-        '❌ Ошибка SDK';
-
-
-      status.style.color =
-        '#ff4444';
-
-
-      enableButtons(true);
-
-    }
-
-  });
-
-
-/* ==================================================
-   GAME
-================================================== */
-
-const choices = {
-
-  rock: '🪨 Камень',
-
-  scissors: '✂️ Ножницы',
-
-  paper: '📄 Бумага'
-
-};
-
-
-/* ==================================================
-   ROOM
-================================================== */
-
-function selectRoom(room) {
-
-  currentRoom =
-    room;
-
-
-  document
-    .getElementById('mode-demo')
-    .classList
-    .toggle(
-      'active',
-      room === 'demo'
-    );
-
-
-  document
-    .getElementById('mode-pvp')
-    .classList
-    .toggle(
-      'active',
-      room === 'pvp'
-    );
-
-
-  document.getElementById(
-    'result-text'
-  ).innerText =
-
-    room === 'demo'
-
-      ? 'Бесплатная игра с ботом'
-
-      : 'Игра с игроками — 1 PKOIN';
-
+    return false;
 }
 
 
-/* ==================================================
-   MOVE
-================================================== */
+/* =========================================================
+   ВТОРОЙ СПОСОБ — USERSTATE
+========================================================= */
 
-function makeMove(choice) {
+async function loadProfileUserState() {
 
+    console.log("========== USERSTATE ==========");
 
-  if (
-    currentRoom === 'pvp'
-  ) {
+    try {
 
-    document.getElementById(
-      'result-text'
-    ).innerText =
+        if (
+            !sdk.helpers ||
+            typeof sdk.helpers.userstate !== "function"
+        ) {
 
-      'Режим игроков подключим следующим этапом.';
+            console.log("helpers.userstate отсутствует");
 
-    return;
-
-  }
-
-
-  enableButtons(false);
+            return false;
+        }
 
 
-  const keys =
-    Object.keys(choices);
+        const state = await sdk.helpers.userstate();
 
 
-  const bot =
-    keys[
-      Math.floor(
-        Math.random() *
-        keys.length
-      )
+        console.log("USERSTATE RESPONSE:", state);
+        console.log("USERSTATE JSON:", JSON.stringify(state));
+
+
+        const profile = searchProfileObject(state);
+
+
+        console.log("USERSTATE PROFILE:", profile);
+
+
+        if (profile) {
+
+            if (profile.name) {
+                setProfile(profile.name, null);
+            }
+
+            if (profile.avatar) {
+                setProfile(null, profile.avatar);
+            }
+
+            if (profile.name || profile.avatar) {
+                return true;
+            }
+        }
+
+    } catch (error) {
+
+        console.error("USERSTATE ERROR:", error);
+
+    }
+
+    return false;
+}
+
+
+/* =========================================================
+   ОСНОВНАЯ ЗАГРУЗКА BASTYON
+========================================================= */
+
+async function loadBastyonUserData() {
+
+    try {
+
+        sdk = new BastyonSdk();
+
+        await sdk.init();
+
+        sdk.emit("loaded");
+
+        console.log("BASTYON SDK INITIALIZED");
+
+
+        /* =========================
+           ACCOUNT
+        ========================= */
+
+        account = await sdk.get.account();
+
+        console.log("BASTYON ACCOUNT:", account);
+
+
+        if (!account || !account.address) {
+
+            document.getElementById("profileName").textContent =
+                "Не авторизован";
+
+            document.getElementById("profileAddress").textContent =
+                "Bastyon account не найден";
+
+            return;
+        }
+
+
+        const address = account.address;
+
+
+        document.getElementById("profileAddress").textContent =
+            address.substring(0, 10) +
+            "..." +
+            address.substring(address.length - 6);
+
+
+        /* =========================
+           BALANCE
+        ========================= */
+
+        try {
+
+            const balance = await sdk.get.balance();
+
+            console.log("BASTYON BALANCE:", balance);
+
+
+            let amount = 0;
+
+
+            if (typeof balance === "number") {
+
+                amount = balance;
+
+            } else if (balance && typeof balance === "object") {
+
+                amount =
+                    balance.actual ??
+                    balance.total ??
+                    0;
+            }
+
+
+            document.getElementById("profileBalance").textContent =
+                Number(amount).toFixed(4) + " PKOIN";
+
+        } catch (error) {
+
+            console.error("BALANCE ERROR:", error);
+
+            document.getElementById("profileBalance").textContent =
+                "Баланс недоступен";
+        }
+
+
+        /* =========================
+           PROFILE
+        ========================= */
+
+        document.getElementById("profileName").textContent =
+            "Загрузка профиля...";
+
+
+        let profileLoaded =
+            await loadProfileRPC(address);
+
+
+        /*
+         * Если RPC не дал имя/аватар —
+         * пробуем userstate
+         */
+
+        if (!profileLoaded) {
+
+            profileLoaded =
+                await loadProfileUserState();
+        }
+
+
+        /*
+         * Если вообще ничего не получили
+         */
+
+        if (!profileLoaded) {
+
+            document.getElementById("profileName").textContent =
+                "Игрок " + address.substring(0, 6);
+
+            document.getElementById("avatar").src =
+                DEFAULT_AVATAR;
+
+            console.log(
+                "ПРОФИЛЬ НЕ ПОЛУЧЕН. ACCOUNT И BALANCE РАБОТАЮТ."
+            );
+        }
+
+
+        document.getElementById("status").textContent =
+            "● Подключено к Bastyon";
+
+        console.log("КНБ успешно запущена");
+
+    } catch (error) {
+
+        console.error("BASTYON ERROR:", error);
+
+        document.getElementById("profileName").textContent =
+            "Ошибка Bastyon";
+
+        document.getElementById("status").textContent =
+            "● Ошибка подключения";
+    }
+}
+
+
+/* =========================================================
+   ИГРА
+========================================================= */
+
+function play(player) {
+
+    const choices = [
+        "rock",
+        "scissors",
+        "paper"
     ];
 
-
-  setTimeout(
-    function() {
-
-      showResult(
-        choice,
-        bot
-      );
+    const bot =
+        choices[Math.floor(Math.random() * choices.length)];
 
 
-      enableButtons(true);
+    let result = "";
 
-    },
-    400
-  );
 
+    if (player === bot) {
+
+        result = "🤝 Ничья!";
+
+    } else if (
+
+        (player === "rock" && bot === "scissors") ||
+        (player === "scissors" && bot === "paper") ||
+        (player === "paper" && bot === "rock")
+
+    ) {
+
+        result = "🎉 Ты победил!";
+
+    } else {
+
+        result = "💥 Бот победил!";
+    }
+
+
+    const names = {
+        rock: "🪨 Камень",
+        scissors: "✂️ Ножницы",
+        paper: "📄 Бумага"
+    };
+
+
+    document.getElementById("result").innerHTML =
+        result +
+        "<br>" +
+        "<small>" +
+        names[player] +
+        " против " +
+        names[bot] +
+        "</small>";
 }
 
 
-/* ==================================================
-   RESULT
-================================================== */
+/* =========================================================
+   START
+========================================================= */
 
-function showResult(
-  user,
-  bot
-) {
-
-
-  let text = '';
-
-
-  if (
-    user === bot
-  ) {
-
-    text =
-      'Ничья! ' +
-      choices[user];
-
-  }
-
-
-  else if (
-
-    (
-      user === 'rock' &&
-      bot === 'scissors'
-    )
-
-    ||
-
-    (
-      user === 'scissors' &&
-      bot === 'paper'
-    )
-
-    ||
-
-    (
-      user === 'paper' &&
-      bot === 'rock'
-    )
-
-  ) {
-
-    text =
-      '🎉 Вы выиграли! ' +
-      choices[user] +
-      ' бьет ' +
-      choices[bot];
-
-  }
-
-
-  else {
-
-    text =
-      '💥 Бот победил! ' +
-      choices[bot] +
-      ' бьет ' +
-      choices[user];
-
-  }
-
-
-  document.getElementById(
-    'result-text'
-  ).innerText =
-    text;
-
-}
+loadBastyonUserData();
 
 </script>
 
 </body>
-
 </html>
-```
