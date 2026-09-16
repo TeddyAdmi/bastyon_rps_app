@@ -9,26 +9,10 @@ export default async function handler(req, res) {
             });
         }
 
-        const response = await fetch(
-            "https://pocketnet.app/api/node/getuserprofile",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    address: address,
-                    shortForm: "basic"
-                })
-            }
-        );
-
-        const text = await response.text();
-
-        return res.status(response.status).json({
-            success: response.ok,
-            status: response.status,
-            response: text
+        return res.status(200).json({
+            success: true,
+            address,
+            message: "PROFILE_API_WAITING_FOR_PROXY"
         });
 
     } catch (error) {
