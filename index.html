@@ -92,7 +92,7 @@
   <div class="card">
     <h1>🪨 ✂️ 📄 Игра КНБ</h1>
     
-    <!-- Профиль -->
+    <!-- Карточка профиля Bastyon -->
     <div class="profile-card">
       <img id="user-avatar" class="profile-avatar" src="https://bastyon.com/images/user.png" alt="Avatar" />
       <div class="profile-info">
@@ -108,7 +108,7 @@
       <button class="room-btn" id="mode-pvp" onclick="selectRoom('pvp')">⚔️ Игроки (1 PKOIN)</button>
     </div>
 
-    <!-- Кнопки -->
+    <!-- Кнопки хода -->
     <div class="buttons">
       <button class="game-btn" onclick="makeMove('rock')" id="btn-rock" disabled>🪨</button>
       <button class="game-btn" onclick="makeMove('scissors')" id="btn-scissors" disabled>✂️</button>
@@ -116,7 +116,7 @@
     </div>
 
     <div class="result" id="result-text">Выберите режим и сделайте ваш ход!</div>
-    <p id="status">Инициализация Bastyon SDK...</p>
+    <p id="status">Запуск Bastyon SDK...</p>
   </div>
 
   <script>
@@ -134,79 +134,61 @@
           sdk = new window.BastyonSdk();
           await sdk.init();
           
-          let userInfo = null;
-
-          // 1. Попытка запросить полные данные текущего пользователя приложения
-          if (sdk.get && typeof sdk.get.appuserinfo === 'function') {
+          // 1. Проверяем и запрашиваем разрешения на доступ к аккаунту и платежам
+          if (sdk.permissions) {
             try {
-              userInfo = await sdk.get.appuserinfo();
-            } catch (e) {
-              console.log('appuserinfo не ответил:', e);
+              const hasAccountPerm = await sdk.permissions.check({ permission: 'account' });
+              if (!hasAccountPerm) {
+                await sdk.permissions.request(['account', 'payment']);
+              }
+            } catch (pErr) {
+              console.log('Ошибка при запросе разрешений:', pErr);
             }
           }
 
-          // 2. Если appuserinfo не поддерживается, запрашиваем через getuserinfo/get.user
-          if (!userInfo && sdk.get && typeof sdk.get.user === 'function') {
-            try {
-              userInfo = await sdk.get.user();
-            } catch (e) {
-              console.log('get.user не ответил:', e);
-            }
-          }
-
-          // 3. Получаем данные кошелька (адрес и баланс)
-          let accountData = null;
+          // 2. Получаем адрес аккаунта
           if (sdk.get && typeof sdk.get.account === 'function') {
             try {
-              accountData = await sdk.get.account();
-            } catch (e) {
-              console.log('account не ответил:', e);
+              const account = await sdk.get.account();
+              if (account && account.address) {
+                userAddress = account.address;
+                document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+              }
+            } catch (aErr) {
+              console.warn('Ошибка get.account():', aErr);
             }
           }
 
-          // Сводка данных
-          const finalAddress = (userInfo && userInfo.address) || (accountData && accountData.address);
-          const finalName = (userInfo && (userInfo.name || userInfo.nickname)) || (accountData && accountData.name);
-          const finalAvatar = (userInfo && (userInfo.avatar || userInfo.image)) || (accountData && accountData.avatar);
-          const finalBalance = (accountData && accountData.balance !== undefined) ? accountData.balance : (userInfo && userInfo.balance);
-
-          // Заполнение адреса
-          if (finalAddress) {
-            userAddress = finalAddress;
-            document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+          // 3. Запрашиваем баланс
+          if (sdk.get && typeof sdk.get.balance === 'function') {
+            try {
+              const bal = await sdk.get.balance();
+              const numericBalance = parseFloat(bal) || 0;
+              document.getElementById('user-balance').innerText = `${numericBalance.toFixed(4)} PKOIN`;
+            } catch (bErr) {
+              console.warn('Ошибка get.balance():', bErr);
+            }
           }
 
-          // Заполнение имени
-          if (finalName) {
-            document.getElementById('user-name').innerText = finalName;
-          } else if (userAddress) {
-            // Если у пользователя нет установленного имени в профиле
-            document.getElementById('user-name').innerText = `Пользователь ${userAddress.slice(0, 4)}`;
-          }
-
-          // Заполнение аватара
-          if (finalAvatar) {
-            document.getElementById('user-avatar').src = finalAvatar;
-          }
-
-          // Заполнение баланса
-          if (finalBalance !== undefined && finalBalance !== null) {
-            const numBal = parseFloat(finalBalance) || 0;
-            document.getElementById('user-balance').innerText = `${numBal.toFixed(4)} PKOIN`;
-          }
-
-          // Если имя все еще не нашлось — запрашиваем профиль из сети напрямую по найденному адресу
-          if (!finalName && userAddress && sdk.get && typeof sdk.get.getuserprofile === 'function') {
+          // 4. Запрашиваем публичный профиль (Имя и Аватар) по адресу
+          if (userAddress && sdk.get && typeof sdk.get.getuserprofile === 'function') {
             try {
               const profiles = await sdk.get.getuserprofile([userAddress]);
-              if (profiles && profiles.length > 0 && profiles[0].name) {
-                document.getElementById('user-name').innerText = profiles[0].name;
-                if (profiles[0].i) document.getElementById('user-avatar').src = profiles[0].i;
+              if (profiles && profiles.length > 0) {
+                const p = profiles[0];
+                if (p.name) document.getElementById('user-name').innerText = p.name;
+                if (p.i) document.getElementById('user-avatar').src = p.i;
               }
-            } catch (err) {
-              console.warn('Не удалось загрузить публичный профиль:', err);
+            } catch (pErr) {
+              console.warn('Ошибка getuserprofile():', pErr);
             }
           }
+
+          // 5. Подписываемся на динамическое обновление баланса
+          sdk.on('balance', (newBalance) => {
+            const num = parseFloat(newBalance) || 0;
+            document.getElementById('user-balance').innerText = `${num.toFixed(4)} PKOIN`;
+          });
 
           sdk.emit('loaded');
           statusEl.innerText = '● Успешно подключено к Bastyon';
@@ -220,9 +202,9 @@
           enableButtons(true);
         }
       } catch (e) {
-        console.error('Ошибка инициализации:', e);
+        console.error('Ошибка SDK:', e);
         statusEl.style.color = '#ff4444';
-        statusEl.innerText = 'Ошибка SDK';
+        statusEl.innerText = 'Ошибка инициализации SDK';
         enableButtons(true);
       }
     });
@@ -231,9 +213,7 @@
       currentRoom = room;
       document.getElementById('mode-demo').classList.toggle('active', room === 'demo');
       document.getElementById('mode-pvp').classList.toggle('active', room === 'pvp');
-      
-      const resultText = document.getElementById('result-text');
-      resultText.innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
+      document.getElementById('result-text').innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
     }
 
     function enableButtons(enable) {
