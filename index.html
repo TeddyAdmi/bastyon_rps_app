@@ -23,7 +23,7 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
     
-    /* Шапка профиля пользователя */
+    /* Профиль пользователя */
     .profile-card {
       display: flex;
       align-items: center;
@@ -126,9 +126,9 @@
     <div class="profile-card">
       <img id="user-avatar" class="profile-avatar" src="https://bastyon.com/images/user.png" alt="Avatar" />
       <div class="profile-info">
-        <div id="user-name" class="profile-name">Загрузка...</div>
+        <div id="user-name" class="profile-name">Загрузка имени...</div>
         <div id="user-address" class="profile-address">Адрес: --</div>
-        <div id="user-balance" class="profile-balance">0.00 PKOIN</div>
+        <div id="user-balance" class="profile-balance">0.0000 PKOIN</div>
       </div>
     </div>
 
@@ -163,30 +163,42 @@
           sdk = new window.BastyonSdk();
           await sdk.init();
           
-          // Получение всех данных профиля из SDK
+          // 1. Получаем данные аккаунта (кошелек и баланс)
           if (sdk.get && typeof sdk.get.account === 'function') {
             const account = await sdk.get.account();
             
             if (account) {
-              // 1. Имя пользователя
-              const name = account.name || (account.userInfo && account.userInfo.name) || 'Пользователь Bastyon';
-              document.getElementById('user-name').innerText = name;
-
-              // 2. Аватар пользователя
-              const avatarUrl = account.avatar || (account.userInfo && account.userInfo.image);
-              if (avatarUrl) {
-                document.getElementById('user-avatar').src = avatarUrl;
-              }
-
-              // 3. Адрес кошелька
+              // Адрес кошелька
               if (account.address) {
                 userAddress = account.address;
                 document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
               }
 
-              // 4. Баланс PKOIN
-              if (account.balance !== undefined) {
-                document.getElementById('user-balance').innerText = `${account.balance} PKOIN`;
+              // Баланс с ровно 4 знаками после запятой
+              if (account.balance !== undefined && account.balance !== null) {
+                const numericBalance = Number(account.balance);
+                document.getElementById('user-balance').innerText = `${numericBalance.toFixed(4)} PKOIN`;
+              }
+            }
+          }
+
+          // 2. Запрашиваем публичный профиль пользователя (имя и аватар)
+          if (sdk.get && typeof sdk.get.user === 'function') {
+            try {
+              const userInfo = await sdk.get.user();
+              if (userInfo) {
+                if (userInfo.name) {
+                  document.getElementById('user-name').innerText = userInfo.name;
+                }
+                if (userInfo.avatar || userInfo.image) {
+                  document.getElementById('user-avatar').src = userInfo.avatar || userInfo.image;
+                }
+              }
+            } catch (userErr) {
+              console.warn('Не удалось загрузить данные get.user():', userErr);
+              // Запасной вариант - заголовок с адресом
+              if (userAddress) {
+                document.getElementById('user-name').innerText = `Игрок (${userAddress.slice(0, 4)})`;
               }
             }
           }
@@ -198,6 +210,7 @@
           statusEl.style.color = '#ff4444';
           statusEl.innerText = 'Запущено вне Bastyon (Демо-режим)';
           document.getElementById('user-name').innerText = 'Тестовый Игрок';
+          document.getElementById('user-balance').innerText = '10.0000 PKOIN';
           enableButtons(true);
         }
       } catch (e) {
