@@ -126,7 +126,7 @@
     <h1>🪨 ✂️ 📄 Игра КНБ</h1>
     
     <div class="profile-card">
-      <img id="user-avatar" class="profile-avatar" src="https://bastyon.com/images/user.png" alt="Avatar" crossorigin="anonymous" />
+      <img id="user-avatar" class="profile-avatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" alt="Avatar" />
       <div class="profile-info">
         <div id="user-name" class="profile-name">Загрузка...</div>
         <div id="user-address" class="profile-address">Адрес: --</div>
@@ -154,6 +154,7 @@
     let userAddress = null;
     let currentRoom = 'demo';
     const BANK_ADDRESS = 'PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs'; 
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
     const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
 
     function enableButtons(enable) {
@@ -175,7 +176,6 @@
 
     async function loadBastyonUserData() {
       try {
-        // 1. Получение аккаунта через SDK
         if (sdk.get && typeof sdk.get.account === 'function') {
           const acc = await sdk.get.account();
           if (acc && acc.address) {
@@ -189,7 +189,6 @@
 
         document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
 
-        // 2. Получение баланса
         if (sdk.get && typeof sdk.get.balance === 'function') {
           try {
             const bal = await sdk.get.balance();
@@ -200,7 +199,6 @@
           }
         }
 
-        // 3. Получение профиля (Имя и Аватар) через SDK RPC
         if (userAddress && sdk.rpc) {
           try {
             let profiles = null;
@@ -225,7 +223,7 @@
               if (avatarUrl) {
                 const avatarImg = document.getElementById('user-avatar');
                 avatarImg.src = avatarUrl;
-                avatarImg.onerror = () => { avatarImg.src = 'https://bastyon.com/images/user.png'; };
+                avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
               }
             } else {
               document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
@@ -255,7 +253,6 @@
         sdk = new window.BastyonSdk();
         await sdk.init();
 
-        // Запрос прав у Bastyon
         if (sdk.permissions && typeof sdk.permissions.request === 'function') {
           try {
             await sdk.permissions.request(['account', 'payment', 'rpc']);
@@ -266,7 +263,6 @@
 
         await loadBastyonUserData();
 
-        // Подписка на обновление баланса
         if (typeof sdk.on === 'function') {
           sdk.on('balance', (newBalance) => {
             const num = parseFloat(newBalance) || 0;
