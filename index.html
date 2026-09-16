@@ -121,175 +121,84 @@
 
   <script>
     let sdk = null;
-    let userAddress = null;
-    let currentRoom = 'demo';
-    const BANK_ADDRESS = 'ВАШ_АДРЕС_КОШЕЛЬКА_ИЗ_BASTYON'; 
-    const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
+let userAddress = null;
+let currentRoom = 'demo';
+const BANK_ADDRESS = 'ВАШ_АДРЕС_КОШЕЛЬКА_ИЗ_BASTYON'; 
+const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      const statusEl = document.getElementById('status');
+document.addEventListener('DOMContentLoaded', async () => {
+  const statusEl = document.getElementById('status');
+  
+  try {
+    if (window.BastyonSdk) {
+      sdk = new window.BastyonSdk();
+      await sdk.init();
       
+      // 1. Принудительный запрос прав у клиента Bastyon
       try {
-        if (window.BastyonSdk) {
-          sdk = new window.BastyonSdk();
-          await sdk.init();
-          
-          // 1. Проверяем и запрашиваем разрешения на доступ к аккаунту и платежам
-          if (sdk.permissions) {
-            try {
-              const hasAccountPerm = await sdk.permissions.check({ permission: 'account' });
-              if (!hasAccountPerm) {
-                await sdk.permissions.request(['account', 'payment']);
-              }
-            } catch (pErr) {
-              console.log('Ошибка при запросе разрешений:', pErr);
-            }
-          }
-
-          // 2. Получаем адрес аккаунта
-          if (sdk.get && typeof sdk.get.account === 'function') {
-            try {
-              const account = await sdk.get.account();
-              if (account && account.address) {
-                userAddress = account.address;
-                document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
-              }
-            } catch (aErr) {
-              console.warn('Ошибка get.account():', aErr);
-            }
-          }
-
-          // 3. Запрашиваем баланс
-          if (sdk.get && typeof sdk.get.balance === 'function') {
-            try {
-              const bal = await sdk.get.balance();
-              const numericBalance = parseFloat(bal) || 0;
-              document.getElementById('user-balance').innerText = `${numericBalance.toFixed(4)} PKOIN`;
-            } catch (bErr) {
-              console.warn('Ошибка get.balance():', bErr);
-            }
-          }
-
-          // 4. Запрашиваем публичный профиль (Имя и Аватар) по адресу
-          if (userAddress && sdk.get && typeof sdk.get.getuserprofile === 'function') {
-            try {
-              const profiles = await sdk.get.getuserprofile([userAddress]);
-              if (profiles && profiles.length > 0) {
-                const p = profiles[0];
-                if (p.name) document.getElementById('user-name').innerText = p.name;
-                if (p.i) document.getElementById('user-avatar').src = p.i;
-              }
-            } catch (pErr) {
-              console.warn('Ошибка getuserprofile():', pErr);
-            }
-          }
-
-          // 5. Подписываемся на динамическое обновление баланса
-          sdk.on('balance', (newBalance) => {
-            const num = parseFloat(newBalance) || 0;
-            document.getElementById('user-balance').innerText = `${num.toFixed(4)} PKOIN`;
-          });
-
-          sdk.emit('loaded');
-          statusEl.innerText = '● Успешно подключено к Bastyon';
-          enableButtons(true);
-
-        } else {
-          statusEl.style.color = '#ff4444';
-          statusEl.innerText = 'Запущено вне Bastyon (Демо-режим)';
-          document.getElementById('user-name').innerText = 'Тестовый Игрок';
-          document.getElementById('user-balance').innerText = '10.0000 PKOIN';
-          enableButtons(true);
-        }
-      } catch (e) {
-        console.error('Ошибка SDK:', e);
-        statusEl.style.color = '#ff4444';
-        statusEl.innerText = 'Ошибка инициализации SDK';
-        enableButtons(true);
+        await sdk.permissions.request(['account', 'payment']);
+      } catch (pErr) {
+        console.log('Пользователь отклонил запрос прав:', pErr);
       }
-    });
 
-    function selectRoom(room) {
-      currentRoom = room;
-      document.getElementById('mode-demo').classList.toggle('active', room === 'demo');
-      document.getElementById('mode-pvp').classList.toggle('active', room === 'pvp');
-      document.getElementById('result-text').innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
-    }
-
-    function enableButtons(enable) {
-      document.getElementById('btn-rock').disabled = !enable;
-      document.getElementById('btn-scissors').disabled = !enable;
-      document.getElementById('btn-paper').disabled = !enable;
-    }
-
-    async function makeMove(userChoice) {
-      const resultEl = document.getElementById('result-text');
-
-      if (currentRoom === 'pvp') {
-        if (!sdk || !sdk.payment) {
-          alert('Оплата доступна только внутри приложения Bastyon!');
-          return;
+      // 2. Получение адреса кошелька
+      if (sdk.get && typeof sdk.get.account === 'function') {
+        const account = await sdk.get.account();
+        if (account && account.address) {
+          userAddress = account.address;
+          document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
         }
+      }
 
-        enableButtons(false);
-        resultEl.innerText = '⏳ Подтвердите транзакцию 1 PKOIN...';
-
+      // 3. Запрос реального баланса PKOIN
+      if (sdk.get && typeof sdk.get.balance === 'function') {
         try {
-          const tx = await sdk.payment.make({
-            address: BANK_ADDRESS,
-            amount: 1,
-            currency: 'PKOIN',
-            comment: 'Ставка в КНБ (1 PKOIN)'
-          });
-
-          if (!tx || !tx.id) throw new Error('Транзакция отменена');
-
-          resultEl.innerText = 'Ставка принята! Идет матч...';
-          playPvpMatch(userChoice);
-
-        } catch (err) {
-          console.error('Ошибка платежа:', err);
-          resultEl.innerText = '❌ Оплата отменена или произошла ошибка.';
-          enableButtons(true);
-          return;
+          const bal = await sdk.get.balance();
+          const numericBalance = parseFloat(bal) || 0;
+          document.getElementById('user-balance').innerText = `${numericBalance.toFixed(4)} PKOIN`;
+        } catch (bErr) {
+          console.warn('Ошибка получения баланса:', bErr);
         }
-      } else {
-        playDemoMatch(userChoice);
-      }
-    }
-
-    function playDemoMatch(userChoice) {
-      const keys = Object.keys(choices);
-      const botChoice = keys[Math.floor(Math.random() * keys.length)];
-      showResult(userChoice, botChoice, 'Бот');
-    }
-
-    function playPvpMatch(userChoice) {
-      setTimeout(() => {
-        const keys = Object.keys(choices);
-        const opponentChoice = keys[Math.floor(Math.random() * keys.length)];
-        showResult(userChoice, opponentChoice, 'Соперник');
-        enableButtons(true);
-      }, 1500);
-    }
-
-    function showResult(userChoice, opponentChoice, opponentName) {
-      let resultMessage = '';
-
-      if (userChoice === opponentChoice) {
-        resultMessage = `Ничья! Оба выбрали ${choices[userChoice]}`;
-      } else if (
-        (userChoice === 'rock' && opponentChoice === 'scissors') ||
-        (userChoice === 'scissors' && opponentChoice === 'paper') ||
-        (userChoice === 'paper' && opponentChoice === 'rock')
-      ) {
-        resultMessage = `🎉 Вы выиграли! ${choices[userChoice]} бьет ${choices[opponentChoice]}`;
-      } else {
-        resultMessage = `💥 ${opponentName} победил! ${choices[opponentChoice]} бьет ${choices[userChoice]}`;
       }
 
-      document.getElementById('result-text').innerText = resultMessage;
+      // 4. Запрос публичного имени и аватара по адресу из блокчейна
+      if (userAddress && sdk.rpc && typeof sdk.rpc.getuserprofile === 'function') {
+        try {
+          const profiles = await sdk.rpc.getuserprofile([userAddress]);
+          if (profiles && profiles.length > 0) {
+            const p = profiles[0];
+            if (p.name) document.getElementById('user-name').innerText = p.name;
+            if (p.i) document.getElementById('user-avatar').src = p.i;
+          }
+        } catch (pErr) {
+          console.warn('Ошибка чтения профиля:', pErr);
+        }
+      }
+
+      // 5. Динамическое обновление баланса
+      sdk.on('balance', (newBalance) => {
+        const num = parseFloat(newBalance) || 0;
+        document.getElementById('user-balance').innerText = `${num.toFixed(4)} PKOIN`;
+      });
+
+      sdk.emit('loaded');
+      statusEl.innerText = '● Подключено к Bastyon';
+      enableButtons(true);
+
+    } else {
+      statusEl.style.color = '#ff4444';
+      statusEl.innerText = 'Запущено вне Bastyon (Демо-режим)';
+      document.getElementById('user-name').innerText = 'Тестовый Игрок';
+      document.getElementById('user-balance').innerText = '10.0000 PKOIN';
+      enableButtons(true);
     }
+  } catch (e) {
+    console.error('Ошибка SDK:', e);
+    statusEl.style.color = '#ff4444';
+    statusEl.innerText = 'Ошибка инициализации SDK';
+    enableButtons(true);
+  }
+});
   </script>
 </body>
 </html>
