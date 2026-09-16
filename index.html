@@ -3,63 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rock Paper Scissors PKOIN</title>
+  <title>Игра КНБ</title>
+  <script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 20px;
       background-color: #1a1a1a;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+      color: #ffffff;
       margin: 0;
     }
     .card {
       background: #2a2a2a;
-      padding: 20px;
       border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      padding: 20px;
+      max-width: 400px;
+      margin: 20px auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
     .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+      margin-bottom: 15px;
+      word-break: break-all;
     }
-    .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
     }
     button {
-      background: #ffaa00;
+      font-size: 2em;
+      padding: 10px 15px;
       border: none;
-      padding: 10px 20px;
-      color: #000;
-      font-weight: bold;
-      border-radius: 6px;
+      border-radius: 8px;
+      background: #333;
       cursor: pointer;
-      margin-top: 10px;
+      transition: transform 0.1s, background 0.2s;
+    }
+    button:hover {
+      background: #444;
+      transform: scale(1.1);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .result {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-top: 15px;
+      min-height: 1.5em;
+    }
+    #status {
+      color: #00ff88;
+      font-size: 0.85em;
     }
   </style>
 </head>
 <body>
 
   <div class="card">
+    <h1>🪨 ✂️ 📄 Игра КНБ</h1>
+    
     <div class="user-info">
-      <img id="user-avatar" class="avatar" src="https://bastyon.com/images/user.png" alt="Avatar">
-      <div>
-        <div id="user-name">Загрузка...</div>
-        <div id="user-balance">0 PKOIN</div>
-      </div>
+      <div id="address">Адрес: загрузка...</div>
+      <div id="balance">Баланс: -- PKOIN</div>
     </div>
-    <h2>Камень Ножницы Бумага</h2>
-    <button onclick="createPvpMatch()">Сделать ставку 1 PKOIN</button>
+
+    <div class="buttons">
+      <button onclick="play('rock')" id="btn-rock" disabled>🪨</button>
+      <button onclick="play('scissors')" id="btn-scissors" disabled>✂️</button>
+      <button onclick="play('paper')" id="btn-paper" disabled>📄</button>
+    </div>
+
+    <div class="result" id="result-text">Сделайте ваш ход!</div>
+    <p id="status">Загрузка Bastyon SDK...</p>
   </div>
 
-  <script src="app.js"></script>
+  <script>
+    let sdk = null;
+    const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const statusEl = document.getElementById('status');
+      try {
+        if (window.BastyonSdk) {
+          sdk = new window.BastyonSdk();
+          await sdk.init();
+          
+          // Получаем данные аккаунта пользователя
+          if (sdk.get && typeof sdk.get.account === 'function') {
+            const account = await sdk.get.account();
+            if (account && account.address) {
+              document.getElementById('address').innerText = `Кошелек: ${account.address.slice(0, 6)}...${account.address.slice(-4)}`;
+            }
+            if (account && account.balance !== undefined) {
+              document.getElementById('balance').innerText = `Баланс: ${account.balance} PKOIN`;
+            }
+          }
+
+          // Уведомляем Bastyon, что мини-приложение загружено
+          sdk.emit('loaded');
+          statusEl.innerText = '● Успешно подключено к Bastyon';
+          
+          // Активируем кнопки
+          enableButtons(true);
+        } else {
+          statusEl.style.color = '#ff4444';
+          statusEl.innerText = 'Bastyon SDK не найден';
+        }
+      } catch (e) {
+        console.error('Ошибка инициализации SDK:', e);
+        statusEl.style.color = '#ff4444';
+        statusEl.innerText = 'Ошибка инициализации SDK';
+        // Активируем кнопки для тестирования в обычном браузере
+        enableButtons(true);
+      }
+    });
+
+    function enableButtons(enable) {
+      document.getElementById('btn-rock').disabled = !enable;
+      document.getElementById('btn-scissors').disabled = !enable;
+      document.getElementById('btn-paper').disabled = !enable;
+    }
+
+    function play(userChoice) {
+      const keys = Object.keys(choices);
+      const botChoice = keys[Math.floor(Math.random() * keys.length)];
+      
+      let resultMessage = '';
+
+      if (userChoice === botChoice) {
+        resultMessage = `Ничья! Оба выбрали ${choices[userChoice]}`;
+      } else if (
+        (userChoice === 'rock' && botChoice === 'scissors') ||
+        (userChoice === 'scissors' && botChoice === 'paper') ||
+        (userChoice === 'paper' && botChoice === 'rock')
+      ) {
+        resultMessage = `🎉 Вы выиграли! ${choices[userChoice]} бьет ${choices[botChoice]}`;
+      } else {
+        resultMessage = `💥 Вы проиграли! ${choices[botChoice]} бьет ${choices[userChoice]}`;
+      }
+
+      document.getElementById('result-text').innerText = resultMessage;
+    }
+  </script>
 </body>
 </html>
