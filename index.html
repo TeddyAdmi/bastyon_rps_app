@@ -62,7 +62,7 @@
     <h1>🪨 ✂️ 📄 Игра КНБ</h1>
     
     <div class="profile-card">
-      <img id="user-avatar" class="profile-avatar" src="https://bastyon.com/images/user.png" alt="Avatar" />
+      <img id="user-avatar" class="profile-avatar" src="https://bastyon.com/images/user.png" alt="Avatar" crossorigin="anonymous" />
       <div class="profile-info">
         <div id="user-name" class="profile-name">Загрузка...</div>
         <div id="user-address" class="profile-address">Адрес: --</div>
@@ -89,7 +89,7 @@
     let sdk = null;
     let userAddress = null;
     let currentRoom = 'demo';
-    const BANK_ADDRESS = 'ВАШ_АДРЕС_КОШЕЛЬКА_ИЗ_BASTYON'; 
+    const BANK_ADDRESS = 'PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs'; 
     const choices = { rock: '🪨 Камень', scissors: '✂️ Ножницы', paper: '📄 Бумага' };
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -99,66 +99,79 @@
         if (window.BastyonSdk) {
           sdk = new window.BastyonSdk();
           await sdk.init();
-          
-          // 1. Запрос прав доступа
+
+          // 1. Запрос прав в приложении
           if (sdk.permissions && typeof sdk.permissions.request === 'function') {
-            try { await sdk.permissions.request(['account', 'payment']); } catch (e) {}
+            try { 
+              await sdk.permissions.request(['account', 'payment']); 
+            } catch (pErr) {
+              console.warn('Права отклонены пользователем:', pErr);
+            }
           }
 
-          // 2. Получение данных пользователя через get.userinfo() или get.account()
-          let accountData = null;
-          if (sdk.get && typeof sdk.get.account === 'function') {
-            try { accountData = await sdk.get.account(); } catch (e) {}
-          }
+          // 2. Получение аккаунта
+          try {
+            if (sdk.get && typeof sdk.get.account === 'function') {
+              const acc = await sdk.get.account();
+              if (acc && acc.address) userAddress = acc.address;
+            }
+          } catch (e) { console.warn('Ошибка get.account:', e); }
 
-          if (accountData && accountData.address) {
-            userAddress = accountData.address;
+          if (userAddress) {
             document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
           }
 
-          // 3. Получение точного баланса
-          if (sdk.get && typeof sdk.get.balance === 'function') {
-            try {
+          // 3. Получение реального баланса
+          try {
+            if (sdk.get && typeof sdk.get.balance === 'function') {
               const bal = await sdk.get.balance();
               const numericBalance = parseFloat(bal) || 0;
               document.getElementById('user-balance').innerText = `${numericBalance.toFixed(4)} PKOIN`;
-            } catch (e) {}
-          }
+            }
+          } catch (e) { console.warn('Ошибка get.balance:', e); }
 
-          // 4. Запрос публичного профиля (Имя и Аватар) через RPC
+          // 4. Получение Имени и Аватара из блокчейна
           if (userAddress) {
             try {
               let profiles = null;
-              if (sdk.rpc && typeof sdk.rpc === 'function') {
+
+              // Универсальный вызов RPC
+              if (typeof sdk.rpc === 'function') {
                 profiles = await sdk.rpc('getuserprofile', [[userAddress]]);
               } else if (sdk.rpc && typeof sdk.rpc.getuserprofile === 'function') {
                 profiles = await sdk.rpc.getuserprofile([userAddress]);
               }
 
-              if (profiles && profiles.length > 0) {
-                const profile = profiles[0];
-                if (profile.name && profile.name.trim() !== '') {
-                  document.getElementById('user-name').innerText = profile.name;
+              if (profiles && Array.isArray(profiles) && profiles.length > 0) {
+                const p = profiles[0];
+
+                // Подстановка Имени
+                if (p.name && p.name.trim() !== '') {
+                  document.getElementById('user-name').innerText = p.pName || p.name;
                 } else {
                   document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
                 }
-                
-                // В Bastyon аватар передается в поле 'i' или 'avatar'
-                const avatarUrl = profile.i || profile.avatar || profile.image;
+
+                // Подстановка Аватара (i — стандартное поле аватара в Pocketnet/Bastyon)
+                const avatarUrl = p.i || p.avatar || p.usericon;
                 if (avatarUrl) {
-                  document.getElementById('user-avatar').src = avatarUrl;
+                  const avatarImg = document.getElementById('user-avatar');
+                  avatarImg.src = avatarUrl;
+                  avatarImg.onerror = () => {
+                    avatarImg.src = 'https://bastyon.com/images/user.png';
+                  };
                 }
-              }
-            } catch (pErr) {
-              console.warn('Ошибка профиля:', pErr);
-              if (userAddress) {
+              } else {
                 document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
               }
+            } catch (err) {
+              console.warn(' Ошибка RPC getuserprofile:', err);
+              document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
             }
           }
 
-          // 5. Подписка на изменение баланса
-          if (sdk.on) {
+          // 5. Отслеживание баланса в реальном времени
+          if (typeof sdk.on === 'function') {
             sdk.on('balance', (newBalance) => {
               const num = parseFloat(newBalance) || 0;
               document.getElementById('user-balance').innerText = `${num.toFixed(4)} PKOIN`;
