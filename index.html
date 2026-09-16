@@ -68,52 +68,22 @@
       margin-top: 4px;
     }
 
-    /* Комнаты */
-    .rooms {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+    .rooms { display: flex; gap: 10px; margin-bottom: 20px; }
     .room-btn {
-      flex: 1;
-      padding: 10px;
-      border: 2px solid #444;
-      border-radius: 8px;
-      background: #333;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
+      flex: 1; padding: 10px; border: 2px solid #444; border-radius: 8px;
+      background: #333; color: white; cursor: pointer; font-weight: bold;
     }
-    .room-btn.active {
-      border-color: #00ff88;
-      background: #1e3a29;
-    }
+    .room-btn.active { border-color: #00ff88; background: #1e3a29; }
 
-    /* Кнопки хода */
-    .buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
-    }
+    .buttons { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
     .game-btn {
-      font-size: 2em;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      background: #333;
-      cursor: pointer;
-      transition: transform 0.1s, background 0.2s;
+      font-size: 2em; padding: 10px 15px; border: none; border-radius: 8px;
+      background: #333; cursor: pointer; transition: transform 0.1s, background 0.2s;
     }
     .game-btn:hover { background: #444; transform: scale(1.05); }
     .game-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .result {
-      font-size: 1.1em;
-      font-weight: bold;
-      margin-top: 15px;
-      min-height: 1.5em;
-    }
+    .result { font-size: 1.1em; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
     #status { color: #00ff88; font-size: 0.85em; margin-top: 15px; }
   </style>
 </head>
@@ -122,23 +92,23 @@
   <div class="card">
     <h1>🪨 ✂️ 📄 Игра КНБ</h1>
     
-    <!-- Карточка профиля Bastyon -->
+    <!-- Профиль -->
     <div class="profile-card">
       <img id="user-avatar" class="profile-avatar" src="https://bastyon.com/images/user.png" alt="Avatar" />
       <div class="profile-info">
-        <div id="user-name" class="profile-name">Аноним</div>
+        <div id="user-name" class="profile-name">Загрузка...</div>
         <div id="user-address" class="profile-address">Адрес: --</div>
         <div id="user-balance" class="profile-balance">0.0000 PKOIN</div>
       </div>
     </div>
 
-    <!-- Выбор комнаты -->
+    <!-- Режимы -->
     <div class="rooms">
       <button class="room-btn active" id="mode-demo" onclick="selectRoom('demo')">🤖 Демо (0 PKOIN)</button>
       <button class="room-btn" id="mode-pvp" onclick="selectRoom('pvp')">⚔️ Игроки (1 PKOIN)</button>
     </div>
 
-    <!-- Игровое поле -->
+    <!-- Кнопки -->
     <div class="buttons">
       <button class="game-btn" onclick="makeMove('rock')" id="btn-rock" disabled>🪨</button>
       <button class="game-btn" onclick="makeMove('scissors')" id="btn-scissors" disabled>✂️</button>
@@ -146,7 +116,7 @@
     </div>
 
     <div class="result" id="result-text">Выберите режим и сделайте ваш ход!</div>
-    <p id="status">Загрузка Bastyon SDK...</p>
+    <p id="status">Инициализация Bastyon SDK...</p>
   </div>
 
   <script>
@@ -158,70 +128,90 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       const statusEl = document.getElementById('status');
+      
       try {
         if (window.BastyonSdk) {
           sdk = new window.BastyonSdk();
           await sdk.init();
           
-          // 1. Запрашиваем данные аккаунта
+          let userInfo = null;
+
+          // 1. Попытка запросить полные данные текущего пользователя приложения
+          if (sdk.get && typeof sdk.get.appuserinfo === 'function') {
+            try {
+              userInfo = await sdk.get.appuserinfo();
+            } catch (e) {
+              console.log('appuserinfo не ответил:', e);
+            }
+          }
+
+          // 2. Если appuserinfo не поддерживается, запрашиваем через getuserinfo/get.user
+          if (!userInfo && sdk.get && typeof sdk.get.user === 'function') {
+            try {
+              userInfo = await sdk.get.user();
+            } catch (e) {
+              console.log('get.user не ответил:', e);
+            }
+          }
+
+          // 3. Получаем данные кошелька (адрес и баланс)
+          let accountData = null;
           if (sdk.get && typeof sdk.get.account === 'function') {
-            const account = await sdk.get.account();
-            console.log('Данные account:', account);
-            
-            if (account) {
-              // Адрес
-              if (account.address) {
-                userAddress = account.address;
-                document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
-              }
+            try {
+              accountData = await sdk.get.account();
+            } catch (e) {
+              console.log('account не ответил:', e);
+            }
+          }
 
-              // Баланс с 4 знаками
-              if (account.balance !== undefined && account.balance !== null) {
-                const numericBalance = parseFloat(account.balance) || 0;
-                document.getElementById('user-balance').innerText = `${numericBalance.toFixed(4)} PKOIN`;
-              }
+          // Сводка данных
+          const finalAddress = (userInfo && userInfo.address) || (accountData && accountData.address);
+          const finalName = (userInfo && (userInfo.name || userInfo.nickname)) || (accountData && accountData.name);
+          const finalAvatar = (userInfo && (userInfo.avatar || userInfo.image)) || (accountData && accountData.avatar);
+          const finalBalance = (accountData && accountData.balance !== undefined) ? accountData.balance : (userInfo && userInfo.balance);
 
-              // Имя из основного объекта account (если есть)
-              let foundName = account.name || account.label || (account.user && account.user.name);
-              let foundAvatar = account.avatar || account.image || (account.user && account.user.avatar);
+          // Заполнение адреса
+          if (finalAddress) {
+            userAddress = finalAddress;
+            document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+          }
 
-              if (foundName) {
-                document.getElementById('user-name').innerText = foundName;
-              }
-              if (foundAvatar) {
-                document.getElementById('user-avatar').src = foundAvatar;
-              }
+          // Заполнение имени
+          if (finalName) {
+            document.getElementById('user-name').innerText = finalName;
+          } else if (userAddress) {
+            // Если у пользователя нет установленного имени в профиле
+            document.getElementById('user-name').innerText = `Пользователь ${userAddress.slice(0, 4)}`;
+          }
 
-              // 2. Если имени нет в account, запрашиваем профиль по адресу через getuserprofile
-              if (!foundName && userAddress && typeof sdk.get.getuserprofile === 'function') {
-                try {
-                  const profiles = await sdk.get.getuserprofile([userAddress]);
-                  console.log('Данные профиля:', profiles);
-                  
-                  if (profiles && profiles.length > 0) {
-                    const profile = profiles[0];
-                    if (profile.name) {
-                      document.getElementById('user-name').innerText = profile.name;
-                    }
-                    if (profile.i) { // В Bastyon 'i' часто отвечает за иконку/аватар
-                      document.getElementById('user-avatar').src = profile.i;
-                    }
-                  }
-                } catch (pErr) {
-                  console.warn('Не удалось получить getuserprofile:', pErr);
-                }
-              }
+          // Заполнение аватара
+          if (finalAvatar) {
+            document.getElementById('user-avatar').src = finalAvatar;
+          }
 
-              // Если имя так и не нашли, но есть адрес — выводим сокращенный адрес вместо "Загрузка..."
-              if (!foundName && document.getElementById('user-name').innerText === 'Аноним' && userAddress) {
-                document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 6)}`;
+          // Заполнение баланса
+          if (finalBalance !== undefined && finalBalance !== null) {
+            const numBal = parseFloat(finalBalance) || 0;
+            document.getElementById('user-balance').innerText = `${numBal.toFixed(4)} PKOIN`;
+          }
+
+          // Если имя все еще не нашлось — запрашиваем профиль из сети напрямую по найденному адресу
+          if (!finalName && userAddress && sdk.get && typeof sdk.get.getuserprofile === 'function') {
+            try {
+              const profiles = await sdk.get.getuserprofile([userAddress]);
+              if (profiles && profiles.length > 0 && profiles[0].name) {
+                document.getElementById('user-name').innerText = profiles[0].name;
+                if (profiles[0].i) document.getElementById('user-avatar').src = profiles[0].i;
               }
+            } catch (err) {
+              console.warn('Не удалось загрузить публичный профиль:', err);
             }
           }
 
           sdk.emit('loaded');
           statusEl.innerText = '● Успешно подключено к Bastyon';
           enableButtons(true);
+
         } else {
           statusEl.style.color = '#ff4444';
           statusEl.innerText = 'Запущено вне Bastyon (Демо-режим)';
@@ -230,9 +220,9 @@
           enableButtons(true);
         }
       } catch (e) {
-        console.error('Ошибка SDK:', e);
+        console.error('Ошибка инициализации:', e);
         statusEl.style.color = '#ff4444';
-        statusEl.innerText = 'Ошибка инициализации SDK';
+        statusEl.innerText = 'Ошибка SDK';
         enableButtons(true);
       }
     });
@@ -243,11 +233,7 @@
       document.getElementById('mode-pvp').classList.toggle('active', room === 'pvp');
       
       const resultText = document.getElementById('result-text');
-      if (room === 'demo') {
-        resultText.innerText = 'Режим с Ботом: Бесплатная игра.';
-      } else {
-        resultText.innerText = 'Режим 1 PKOIN: Оплата при каждом ходе!';
-      }
+      resultText.innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
     }
 
     function enableButtons(enable) {
