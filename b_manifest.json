@@ -2,7 +2,7 @@
   "id": "rpss.bastyon.app",
   "name": "Rock Paper Scissors PKOIN",
   "app_url": "bastyon-rps-app.vercel.app"
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Удваивай PKOIN в Bastyon! Игра КНБ с тренировкой с ботом и PvP ставками на 1 PKOIN.",
   "author": "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs",
   "permissions": ["account", "payment"]
