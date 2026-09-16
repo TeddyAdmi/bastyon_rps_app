@@ -1,3 +1,4 @@
+```js
 export default async function handler(req, res) {
     try {
         const address = req.query?.address;
@@ -9,9 +10,17 @@ export default async function handler(req, res) {
             });
         }
 
+        /*
+         * PocketNet RPC node endpoint.
+         *
+         * ВАЖНО:
+         * Это не /api/rpc Bastyon.
+         * RPC PocketNet вызывается через node RPC.
+         */
+
         const endpoints = [
-            "https://bastyon.com/api/rpc",
-            "https://pocketnet.app/api/rpc"
+            "https://pocketnet.app/api/node/rpc",
+            "https://bastyon.com/api/node/rpc"
         ];
 
         let lastError = null;
@@ -41,11 +50,12 @@ export default async function handler(req, res) {
                 try {
                     data = JSON.parse(text);
                 } catch {
-                    lastError = `Invalid JSON from ${endpoint} (${response.status})`;
+                    lastError =
+                        `Invalid JSON from ${endpoint} (${response.status})`;
                     continue;
                 }
 
-                if (response.ok && data) {
+                if (response.ok && !data?.error) {
                     return res.status(200).json({
                         success: true,
                         data
@@ -66,7 +76,7 @@ export default async function handler(req, res) {
 
         return res.status(502).json({
             success: false,
-            error: "Bastyon profile API unavailable",
+            error: "Profile request failed",
             details: lastError
         });
 
@@ -80,3 +90,4 @@ export default async function handler(req, res) {
         });
     }
 }
+```
