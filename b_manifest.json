@@ -6,6 +6,8 @@
     "payment",
     "rpc"
   ],
+  "icon": "https://bastyon-rps-app.vercel.app/b_icon.png",
+  "entry": "https://bastyon-rps-app.vercel.app/"
   "version": "1.0.0",
   "description": "Мини-игра Камень-Ножницы-Бумага для Bastyon",
   "scope": "bastyon-rps-app.vercel.app",
