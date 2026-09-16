@@ -41,19 +41,83 @@
       background-color: #333;
       border: 2px solid #00ff88;
     }
-    .profile-info { flex: 1; overflow: hidden; }
-    .profile-name { font-weight: bold; font-size: 1.05em; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .profile-address { font-size: 0.75em; color: #888; font-family: monospace; margin-top: 2px; }
-    .profile-balance { font-size: 0.9em; font-weight: 600; color: #00ff88; margin-top: 4px; }
-    .rooms { display: flex; gap: 10px; margin-bottom: 20px; }
-    .room-btn { flex: 1; padding: 10px; border: 2px solid #444; border-radius: 8px; background: #333; color: white; cursor: pointer; font-weight: bold; }
-    .room-btn.active { border-color: #00ff88; background: #1e3a29; }
-    .buttons { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
-    .game-btn { font-size: 2em; padding: 10px 15px; border: none; border-radius: 8px; background: #333; cursor: pointer; transition: transform 0.1s, background 0.2s; }
-    .game-btn:hover { background: #444; transform: scale(1.05); }
-    .game-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .result { font-size: 1.1em; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
-    #status { color: #00ff88; font-size: 0.85em; margin-top: 15px; }
+    .profile-info { 
+      flex: 1; 
+      overflow: hidden; 
+    }
+    .profile-name { 
+      font-weight: bold; 
+      font-size: 1.05em; 
+      color: #fff; 
+      white-space: nowrap; 
+      overflow: hidden; 
+      text-overflow: ellipsis; 
+    }
+    .profile-address { 
+      font-size: 0.75em; 
+      color: #888; 
+      font-family: monospace; 
+      margin-top: 2px; 
+    }
+    .profile-balance { 
+      font-size: 0.9em; 
+      font-weight: 600; 
+      color: #00ff88; 
+      margin-top: 4px; 
+    }
+    .rooms { 
+      display: flex; 
+      gap: 10px; 
+      margin-bottom: 20px; 
+    }
+    .room-btn { 
+      flex: 1; 
+      padding: 10px; 
+      border: 2px solid #444; 
+      border-radius: 8px; 
+      background: #333; 
+      color: white; 
+      cursor: pointer; 
+      font-weight: bold; 
+    }
+    .room-btn.active { 
+      border-color: #00ff88; 
+      background: #1e3a29; 
+    }
+    .buttons { 
+      display: flex; 
+      justify-content: center; 
+      gap: 10px; 
+      margin: 20px 0; 
+    }
+    .game-btn { 
+      font-size: 2em; 
+      padding: 10px 15px; 
+      border: none; 
+      border-radius: 8px; 
+      background: #333; 
+      cursor: pointer; 
+      transition: transform 0.1s, background 0.2s; 
+    }
+    .game-btn:hover { 
+      background: #444; 
+      transform: scale(1.05); 
+    }
+    .game-btn:disabled { 
+      opacity: 0.4; 
+      cursor: not-allowed; 
+    }
+    .result { 
+      font-size: 1.1em; 
+      font-weight: bold; 
+      margin-top: 15px; 
+      min-height: 1.5em; 
+    }
+    #status { 
+      color: #00ff88; 
+      font-size: 0.85em; 
+      margin-top: 15px; 
+    }
   </style>
 </head>
 <body>
@@ -107,71 +171,94 @@
       document.getElementById('result-text').innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
     }
 
-    // Загрузка информации профиля (Имя и Аватар)
-    async function loadProfileInfo(address) {
-      const avatarImg = document.getElementById('user-avatar');
-      const nameEl = document.getElementById('user-name');
-      if (!address || !sdk) return;
-
-      try {
-        let profile = null;
-        if (typeof sdk.rpc === 'function') {
-          const res = await sdk.rpc('getuserprofile', [[address]]);
-          profile = Array.isArray(res) ? res[0] : res;
-        }
-
-        if (profile) {
-          const name = profile.name || profile.pName;
-          nameEl.innerText = (name && name.trim()) ? name : `Игрок ${address.slice(0, 4)}`;
-
-          if (profile.i) {
-            const url = profile.i.startsWith('http') 
-              ? profile.i 
-              : `https://pocketnet.app/ipfs/${profile.i.replace(/^\//, '')}`;
-            avatarImg.src = url;
-            avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
-          } else {
-            avatarImg.src = DEFAULT_AVATAR;
-          }
-        } else {
-          nameEl.innerText = `Игрок ${address.slice(0, 4)}`;
-          avatarImg.src = DEFAULT_AVATAR;
-        }
-      } catch (e) {
-        console.warn('Ошибка загрузки профиля:', e);
-        nameEl.innerText = `Игрок ${address.slice(0, 4)}`;
-        avatarImg.src = DEFAULT_AVATAR;
+    // Вспомогательная функция для безопасного URL аватара
+    function getValidAvatarUrl(rawUrl, address) {
+      if (!rawUrl || typeof rawUrl !== 'string') {
+        return address ? `https://api.dicebear.com/7.x/identicon/svg?seed=${address}` : DEFAULT_AVATAR;
       }
+      if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) return rawUrl;
+      
+      const cleanHash = rawUrl.replace(/^\/?(ipfs\/)?/, '');
+      return `https://pocketnet.app/ipfs/${cleanHash}`;
     }
 
-    async function loadBastyonUserData() {
-      try {
-        if (sdk.get && typeof sdk.get.account === 'function') {
+    // Комплексная каскадная загрузка профиля
+    async function loadFullUserProfile() {
+      const avatarImg = document.getElementById('user-avatar');
+      const nameEl = document.getElementById('user-name');
+      const balanceEl = document.getElementById('user-balance');
+      const addressEl = document.getElementById('user-address');
+
+      if (!sdk) return;
+
+      let address = null;
+      let rawBalance = null;
+      let userName = null;
+      let rawAvatar = null;
+
+      // 1. Читаем данные из контекста SDK
+      if (sdk.context && sdk.context.currentAccount) {
+        const ctx = sdk.context.currentAccount;
+        address = ctx.address || ctx.addr;
+        userName = ctx.name || ctx.nickname;
+        rawAvatar = ctx.avatar || ctx.i || ctx.image;
+      }
+
+      // 2. Достаем адрес из sdk.get.account
+      if (!address && sdk.get && typeof sdk.get.account === 'function') {
+        try {
           const acc = await sdk.get.account();
           if (acc) {
-            userAddress = typeof acc === 'string' ? acc : (acc.address || acc.addr);
+            address = typeof acc === 'string' ? acc : (acc.address || acc.addr);
+            userName = userName || acc.name || acc.nickname;
+            rawAvatar = rawAvatar || acc.avatar || acc.i;
           }
-        }
-
-        if (userAddress) {
-          document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
-          loadProfileInfo(userAddress);
-        } else {
-          document.getElementById('user-address').innerText = 'Адрес: Гость';
-        }
-
-        if (sdk.get && typeof sdk.get.balance === 'function') {
-          try {
-            const bal = await sdk.get.balance();
-            const cleanBal = (typeof bal === 'object' && bal !== null) ? (bal.balance || bal.confirmed || 0) : parseFloat(bal) || 0;
-            document.getElementById('user-balance').innerText = `${Number(cleanBal).toFixed(4)} PKOIN`;
-          } catch (bErr) {
-            console.warn('Balance error:', bErr);
-          }
-        }
-      } catch (err) {
-        console.error('Ошибка аккаунта:', err);
+        } catch (e) { console.warn('Account warn:', e); }
       }
+
+      if (address) {
+        userAddress = address;
+        addressEl.innerText = `${address.slice(0, 6)}...${address.slice(-4)}`;
+      } else {
+        addressEl.innerText = 'Адрес: Гость';
+      }
+
+      // 3. Загружаем баланс PKOIN
+      try {
+        if (sdk.get && typeof sdk.get.balance === 'function') {
+          const bal = await sdk.get.balance();
+          if (typeof bal === 'object' && bal !== null) {
+            rawBalance = bal.balance ?? bal.confirmed ?? bal.amount;
+          } else {
+            rawBalance = parseFloat(bal);
+          }
+        }
+      } catch (e) { console.warn('Balance warn:', e); }
+
+      if (rawBalance !== null && !isNaN(rawBalance)) {
+        balanceEl.innerText = `${Number(rawBalance).toFixed(4)} PKOIN`;
+      }
+
+      // 4. Дополучаем имя и аватар через RPC если их не было
+      if (address && (!userName || !rawAvatar)) {
+        try {
+          const res = await sdk.rpc('getuserprofile', [[address]]);
+          const profile = Array.isArray(res) ? res[0] : res;
+          if (profile) {
+            userName = userName || profile.name || profile.pName || profile.nickname;
+            rawAvatar = rawAvatar || profile.i || profile.avatar || profile.image;
+          }
+        } catch (e) { console.warn('RPC profile warn:', e); }
+      }
+
+      // 5. Отрисовка
+      nameEl.innerText = (userName && userName.trim()) ? userName : (address ? `Игрок ${address.slice(0, 4)}` : 'Гость');
+      
+      const finalAvatarUrl = getValidAvatarUrl(rawAvatar, address);
+      avatarImg.src = finalAvatarUrl;
+      avatarImg.onerror = () => {
+        avatarImg.src = address ? `https://api.dicebear.com/7.x/identicon/svg?seed=${address}` : DEFAULT_AVATAR;
+      };
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -179,7 +266,7 @@
 
       if (!window.BastyonSdk) {
         statusEl.style.color = '#ff4444';
-        statusEl.innerText = '❌ SDK не обнаружен';
+        statusEl.innerText = '❌ SDK не обнаружен (Запущено вне Bastyon)';
         enableButtons(true);
         return;
       }
@@ -196,11 +283,11 @@
           }
         }
 
-        await loadBastyonUserData();
+        await loadFullUserProfile();
 
         if (typeof sdk.on === 'function') {
-          sdk.on('balance', (newBalance) => {
-            const num = (typeof newBalance === 'object' && newBalance !== null) ? (newBalance.balance || 0) : parseFloat(newBalance) || 0;
+          sdk.on('balance', (b) => {
+            const num = (typeof b === 'object' && b !== null) ? (b.balance || 0) : parseFloat(b) || 0;
             document.getElementById('user-balance').innerText = `${Number(num).toFixed(4)} PKOIN`;
           });
         }
@@ -210,14 +297,14 @@
         enableButtons(true);
 
       } catch (err) {
-        console.error('SDK Error:', err);
+        console.error('SDK Init error:', err);
         statusEl.style.color = '#ff4444';
-        statusEl.innerText = '❌ Ошибка SDK: ' + (err.message || 'Ошибка');
+        statusEl.innerText = '❌ Ошибка SDK: ' + (err.message || 'Сбой соединения');
         enableButtons(true);
       }
     });
 
-    // Безопасный метод проведения платежа через Bastyon SDK
+    // Метод оплаты
     async function makePayment() {
       const paymentData = {
         address: BANK_ADDRESS,
@@ -226,7 +313,6 @@
         comment: 'Ставка в КНБ (1 PKOIN)'
       };
 
-      // Проверка поддерживаемых методов платежа в разных версиях SDK
       if (sdk.payment && typeof sdk.payment.make === 'function') {
         return await sdk.payment.make(paymentData);
       } else if (sdk.payment && typeof sdk.payment.request === 'function') {
@@ -234,7 +320,7 @@
       } else if (typeof sdk.payment === 'function') {
         return await sdk.payment(paymentData);
       } else {
-        throw new Error('Метод оплаты недоступен. Проверьте манифест и права приложения.');
+        throw new Error('Оплата недоступна. Исправьте URL манифеста в настройках.');
       }
     }
 
@@ -243,7 +329,7 @@
 
       if (currentRoom === 'pvp') {
         if (!sdk) {
-          alert('Запущено вне Bastyon!');
+          alert('Оплата доступна только внутри приложения Bastyon!');
           return;
         }
 
@@ -259,7 +345,7 @@
 
         } catch (err) {
           console.error('Ошибка платежа:', err);
-          resultEl.innerText = '❌ Оплата не выполнена: ' + (err.message || 'Отменено');
+          resultEl.innerText = '❌ Оплата отменена: ' + (err.message || 'Ошибка');
           enableButtons(true);
           return;
         }
