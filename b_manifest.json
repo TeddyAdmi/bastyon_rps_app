@@ -6,7 +6,7 @@
   "scope": "bastyon-rps-app.vercel.app",
   "author": "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs",
   "permissions": [
-"account",
-    "payment"
+  "account",
+  "payment"
   ]
 }
