@@ -1,11 +1,14 @@
 {
   "id": "rps.bastyon.app",
   "name": "Игра КНБ",
+  "permissions": [
+    "account",
+    "payment",
+    "rpc"
+  ]
   "version": "1.0.0",
   "description": "Мини-игра Камень-Ножницы-Бумага для Bastyon",
   "scope": "bastyon-rps-app.vercel.app",
   "author": "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs",
-  "permissions": [
-    "account"
-  ]
+  
 }
