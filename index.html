@@ -41,83 +41,19 @@
       background-color: #333;
       border: 2px solid #00ff88;
     }
-    .profile-info { 
-      flex: 1; 
-      overflow: hidden; 
-    }
-    .profile-name { 
-      font-weight: bold; 
-      font-size: 1.05em; 
-      color: #fff; 
-      white-space: nowrap; 
-      overflow: hidden; 
-      text-overflow: ellipsis; 
-    }
-    .profile-address { 
-      font-size: 0.75em; 
-      color: #888; 
-      font-family: monospace; 
-      margin-top: 2px; 
-    }
-    .profile-balance { 
-      font-size: 0.9em; 
-      font-weight: 600; 
-      color: #00ff88; 
-      margin-top: 4px; 
-    }
-    .rooms { 
-      display: flex; 
-      gap: 10px; 
-      margin-bottom: 20px; 
-    }
-    .room-btn { 
-      flex: 1; 
-      padding: 10px; 
-      border: 2px solid #444; 
-      border-radius: 8px; 
-      background: #333; 
-      color: white; 
-      cursor: pointer; 
-      font-weight: bold; 
-    }
-    .room-btn.active { 
-      border-color: #00ff88; 
-      background: #1e3a29; 
-    }
-    .buttons { 
-      display: flex; 
-      justify-content: center; 
-      gap: 10px; 
-      margin: 20px 0; 
-    }
-    .game-btn { 
-      font-size: 2em; 
-      padding: 10px 15px; 
-      border: none; 
-      border-radius: 8px; 
-      background: #333; 
-      cursor: pointer; 
-      transition: transform 0.1s, background 0.2s; 
-    }
-    .game-btn:hover { 
-      background: #444; 
-      transform: scale(1.05); 
-    }
-    .game-btn:disabled { 
-      opacity: 0.4; 
-      cursor: not-allowed; 
-    }
-    .result { 
-      font-size: 1.1em; 
-      font-weight: bold; 
-      margin-top: 15px; 
-      min-height: 1.5em; 
-    }
-    #status { 
-      color: #00ff88; 
-      font-size: 0.85em; 
-      margin-top: 15px; 
-    }
+    .profile-info { flex: 1; overflow: hidden; }
+    .profile-name { font-weight: bold; font-size: 1.05em; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .profile-address { font-size: 0.75em; color: #888; font-family: monospace; margin-top: 2px; }
+    .profile-balance { font-size: 0.9em; font-weight: 600; color: #00ff88; margin-top: 4px; }
+    .rooms { display: flex; gap: 10px; margin-bottom: 20px; }
+    .room-btn { flex: 1; padding: 10px; border: 2px solid #444; border-radius: 8px; background: #333; color: white; cursor: pointer; font-weight: bold; }
+    .room-btn.active { border-color: #00ff88; background: #1e3a29; }
+    .buttons { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+    .game-btn { font-size: 2em; padding: 10px 15px; border: none; border-radius: 8px; background: #333; cursor: pointer; transition: transform 0.1s, background 0.2s; }
+    .game-btn:hover { background: #444; transform: scale(1.05); }
+    .game-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .result { font-size: 1.1em; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
+    #status { color: #00ff88; font-size: 0.85em; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -171,27 +107,39 @@
       document.getElementById('result-text').innerText = (room === 'demo') ? 'Режим с Ботом: Бесплатная игра.' : 'Режим 1 PKOIN: Оплата при каждом ходе!';
     }
 
-    // Простая функция загрузки аватара через SDK RPC
-    async function loadAvatar(address) {
+    // Загрузка информации профиля (Имя и Аватар)
+    async function loadProfileInfo(address) {
       const avatarImg = document.getElementById('user-avatar');
+      const nameEl = document.getElementById('user-name');
       if (!address || !sdk) return;
 
       try {
-        const res = await sdk.rpc('getuserprofile', [[address]]);
-        const profile = Array.isArray(res) ? res[0] : res;
-        
-        if (profile && profile.i) {
-          const url = profile.i.startsWith('http') 
-            ? profile.i 
-            : `https://pocketnet.app/ipfs/${profile.i.replace(/^\//, '')}`;
-            
-          avatarImg.src = url;
-          avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
+        let profile = null;
+        if (typeof sdk.rpc === 'function') {
+          const res = await sdk.rpc('getuserprofile', [[address]]);
+          profile = Array.isArray(res) ? res[0] : res;
+        }
+
+        if (profile) {
+          const name = profile.name || profile.pName;
+          nameEl.innerText = (name && name.trim()) ? name : `Игрок ${address.slice(0, 4)}`;
+
+          if (profile.i) {
+            const url = profile.i.startsWith('http') 
+              ? profile.i 
+              : `https://pocketnet.app/ipfs/${profile.i.replace(/^\//, '')}`;
+            avatarImg.src = url;
+            avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
+          } else {
+            avatarImg.src = DEFAULT_AVATAR;
+          }
         } else {
+          nameEl.innerText = `Игрок ${address.slice(0, 4)}`;
           avatarImg.src = DEFAULT_AVATAR;
         }
       } catch (e) {
-        console.warn('Ошибка загрузки аватара:', e);
+        console.warn('Ошибка загрузки профиля:', e);
+        nameEl.innerText = `Игрок ${address.slice(0, 4)}`;
         avatarImg.src = DEFAULT_AVATAR;
       }
     }
@@ -205,13 +153,9 @@
           }
         }
 
-        if (!userAddress && sdk.context && sdk.context.currentAccount) {
-          userAddress = sdk.context.currentAccount.address;
-        }
-
         if (userAddress) {
           document.getElementById('user-address').innerText = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
-          loadAvatar(userAddress); // Загружаем аватар
+          loadProfileInfo(userAddress);
         } else {
           document.getElementById('user-address').innerText = 'Адрес: Гость';
         }
@@ -225,25 +169,8 @@
             console.warn('Balance error:', bErr);
           }
         }
-
-        // Загрузка имени через RPC
-        if (userAddress) {
-          try {
-            const res = await sdk.rpc('getuserprofile', [[userAddress]]);
-            const profile = Array.isArray(res) ? res[0] : res;
-            if (profile) {
-              const userName = profile.name || profile.pName || profile.nickname;
-              document.getElementById('user-name').innerText = (userName && userName.trim()) ? userName : `Игрок ${userAddress.slice(0, 4)}`;
-            } else {
-              document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
-            }
-          } catch (e) {
-            document.getElementById('user-name').innerText = `Игрок ${userAddress.slice(0, 4)}`;
-          }
-        }
-
       } catch (err) {
-        console.error('Ошибка данных пользователя:', err);
+        console.error('Ошибка аккаунта:', err);
       }
     }
 
@@ -252,7 +179,7 @@
 
       if (!window.BastyonSdk) {
         statusEl.style.color = '#ff4444';
-        statusEl.innerText = '❌ SDK не обнаружен (Запущено вне Bastyon)';
+        statusEl.innerText = '❌ SDK не обнаружен';
         enableButtons(true);
         return;
       }
@@ -283,19 +210,40 @@
         enableButtons(true);
 
       } catch (err) {
-        console.error('SDK Init error:', err);
+        console.error('SDK Error:', err);
         statusEl.style.color = '#ff4444';
-        statusEl.innerText = '❌ Ошибка SDK: ' + (err.message || 'Сбой соединения');
+        statusEl.innerText = '❌ Ошибка SDK: ' + (err.message || 'Ошибка');
         enableButtons(true);
       }
     });
+
+    // Безопасный метод проведения платежа через Bastyon SDK
+    async function makePayment() {
+      const paymentData = {
+        address: BANK_ADDRESS,
+        amount: 1,
+        currency: 'PKOIN',
+        comment: 'Ставка в КНБ (1 PKOIN)'
+      };
+
+      // Проверка поддерживаемых методов платежа в разных версиях SDK
+      if (sdk.payment && typeof sdk.payment.make === 'function') {
+        return await sdk.payment.make(paymentData);
+      } else if (sdk.payment && typeof sdk.payment.request === 'function') {
+        return await sdk.payment.request(paymentData);
+      } else if (typeof sdk.payment === 'function') {
+        return await sdk.payment(paymentData);
+      } else {
+        throw new Error('Метод оплаты недоступен. Проверьте манифест и права приложения.');
+      }
+    }
 
     async function makeMove(userChoice) {
       const resultEl = document.getElementById('result-text');
 
       if (currentRoom === 'pvp') {
-        if (!sdk || !sdk.payment) {
-          alert('Оплата доступна только внутри приложения Bastyon!');
+        if (!sdk) {
+          alert('Запущено вне Bastyon!');
           return;
         }
 
@@ -303,21 +251,15 @@
         resultEl.innerText = '⏳ Подтвердите транзакцию 1 PKOIN...';
 
         try {
-          const tx = await sdk.payment.make({
-            address: BANK_ADDRESS,
-            amount: 1,
-            currency: 'PKOIN',
-            comment: 'Ставка в КНБ (1 PKOIN)'
-          });
-
-          if (!tx || !tx.id) throw new Error('Транзакция отменена');
+          const tx = await makePayment();
+          if (!tx || (!tx.id && !tx.txid)) throw new Error('Транзакция отменена');
 
           resultEl.innerText = 'Ставка принята! Идет матч...';
           playPvpMatch(userChoice);
 
         } catch (err) {
           console.error('Ошибка платежа:', err);
-          resultEl.innerText = '❌ Оплата отменена или произошла ошибка.';
+          resultEl.innerText = '❌ Оплата не выполнена: ' + (err.message || 'Отменено');
           enableButtons(true);
           return;
         }
