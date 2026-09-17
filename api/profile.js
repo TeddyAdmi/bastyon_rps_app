@@ -1,101 +1,140 @@
-function getProfile(data) {
-  if (!data) return {};
+function normalizeProfile(data) {
+  let value = data;
 
-  if (Array.isArray(data)) {
-    return getProfile(data[0]);
+  if (value && value.data !== undefined) {
+    value = value.data;
   }
 
-  if (typeof data !== "object") {
-    return {};
+  if (Array.isArray(value)) {
+    value = value[0] || {};
   }
 
-  if (data.profile) {
-    return getProfile(data.profile);
+  if (value && value.profile) {
+    value = value.profile;
   }
 
-  if (data.result) {
-    return getProfile(data.result);
+  if (!value || typeof value !== "object") {
+    return {
+      name: "",
+      avatarUrl: ""
+    };
   }
 
-  if (data.data) {
-    return getProfile(data.data);
+  const name =
+    value.name ||
+    value.nickname ||
+    value.username ||
+    value.displayName ||
+    value.n ||
+    "";
+
+  let avatar =
+    value.avatarUrl ||
+    value.avatar ||
+    value.imageUrl ||
+    value.image ||
+    value.photoUrl ||
+    value.photo ||
+    value.i ||
+    "";
+
+  if (avatar && typeof avatar === "object") {
+    avatar =
+      avatar.url ||
+      avatar.src ||
+      avatar.hash ||
+      "";
+  }
+
+  if (
+    typeof avatar === "string" &&
+    avatar.trim()
+  ) {
+    avatar = avatar.trim();
+
+    if (
+      avatar.indexOf("http://") !== 0 &&
+      avatar.indexOf("https://") !== 0 &&
+      avatar.indexOf("data:") !== 0 &&
+      avatar.indexOf("//") !== 0
+    ) {
+      avatar =
+        "https://pocketnet.app/ipfs/" +
+        avatar.replace(/^\/+/, "");
+    }
+  } else {
+    avatar = "";
+  }
+
+  return {
+    name:
+      typeof name === "string"
+        ? name.trim()
+        : "",
+    avatarUrl: avatar
+  };
+}
+
+async function requestProfile(node, address) {
+  const response = await fetch(
+    node,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        method: "getuserprofile",
+        parameters: [
+          [address],
+          "1"
+        ]
+      })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "HTTP " + response.status
+    );
+  }
+
+  const text = await response.text();
+
+  if (!text) {
+    throw new Error(
+      "Пустой ответ RPC"
+    );
+  }
+
+  let data;
+
+  try {
+    data = JSON.parse(text);
+  } catch (error) {
+    throw new Error(
+      "RPC вернул не JSON"
+    );
+  }
+
+  if (
+    data &&
+    data.result &&
+    data.result !== "success"
+  ) {
+    throw new Error(
+      "RPC result: " +
+      data.result
+    );
   }
 
   return data;
 }
 
-function getName(profile) {
-  const value =
-    profile.name ||
-    profile.pName ||
-    profile.nickname ||
-    profile.username ||
-    profile.displayName ||
-    "";
-
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function getAvatar(profile) {
-  let value =
-    profile.i ||
-    profile.avatar ||
-    profile.avatarUrl ||
-    profile.image ||
-    profile.imageUrl ||
-    profile.photo ||
-    profile.photoUrl ||
-    "";
-
-  if (value && typeof value === "object") {
-    value = value.url || value.src || value.hash || "";
-  }
-
-  if (typeof value !== "string") {
-    return "";
-  }
-
-  value = value.trim();
-
-  if (!value) {
-    return "";
-  }
-
-  if (
-    value.indexOf("http://") === 0 ||
-    value.indexOf("https://") === 0 ||
-    value.indexOf("data:") === 0 ||
-    value.indexOf("//") === 0
-  ) {
-    return value;
-  }
-
-  return "https://pocketnet.app/ipfs/" + value.replace(/^\/+/, "");
-}
-
-async function callRpc(node, address) {
-  const response = await fetch(node, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      method: "getuserprofile",
-      params: {
-        addresses: [address],
-        shortForm: "basic"
-      }
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error("HTTP " + response.status);
-  }
-
-  return response.json();
-}
-
-module.exports = async function handler(req, res) {
+module.exports = async function handler(
+  req,
+  res
+) {
   if (req.method !== "GET") {
     return res.status(405).json({
       success: false,
@@ -103,7 +142,9 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const address = req.query && req.query.address;
+  const address =
+    req.query &&
+    req.query.address;
 
   if (!address) {
     return res.status(400).json({
@@ -113,43 +154,47 @@ module.exports = async function handler(req, res) {
   }
 
   const nodes = [
-    "https://1.pocketnet.app:38881/public/",
-    "https://2.pocketnet.app:38881/public/",
-    "https://3.pocketnet.app:38881/public/"
+    "https://5.pocketnet.app:8899/rpc/getuserprofile",
+    "https://1.pocketnet.app:8899/rpc/getuserprofile",
+    "https://2.pocketnet.app:8899/rpc/getuserprofile"
   ];
 
-  for (let i = 0; i < nodes.length; i++) {
+  for (
+    let i = 0;
+    i < nodes.length;
+    i++
+  ) {
     try {
-      const raw = await callRpc(nodes[i], address);
+      const raw =
+        await requestProfile(
+          nodes[i],
+          address
+        );
 
       console.log(
         "PROFILE RPC RAW",
         JSON.stringify(raw)
       );
 
-      const profile = getProfile(raw);
-
-      const result = {
-        name: getName(profile),
-        avatarUrl: getAvatar(profile)
-      };
+      const profile =
+        normalizeProfile(raw);
 
       console.log(
         "PROFILE EXTRACTED",
-        JSON.stringify(result)
+        JSON.stringify(profile)
       );
 
       return res.status(200).json({
         success: true,
         address: address,
-        profile: result
+        profile: profile
       });
-
     } catch (error) {
       console.log(
         "PROFILE RPC ERROR",
         nodes[i],
-        error && error.message
+        error &&
+        error.message
           ? error.message
           : String(error)
       );
