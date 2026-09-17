@@ -376,10 +376,7 @@ shortForm: "basic"
 ```
   let profile = extractProfile(payload);
 
-  if (
-    profile.name ||
-    profile.avatarUrl
-  ) {
+  if (profile.name || profile.avatarUrl) {
     console.log(
       "PROFILE RPC RESULT:",
       node,
@@ -403,10 +400,7 @@ shortForm: "basic"
 
     profile = extractProfile(payload);
 
-    if (
-      profile.name ||
-      profile.avatarUrl
-    ) {
+    if (profile.name || profile.avatarUrl) {
       console.log(
         "PROFILE RPC RESULT ARRAY PARAMS:",
         node,
@@ -415,69 +409,8 @@ shortForm: "basic"
 
       return profile;
     }
-  } catch (secondaryError) {
-    lastError = secondaryError;
-  }
-
-  try {
-    payload = await rpcRequest(
-      node,
-      "getaccountversions",
-      {
-        address,
-        pageStart: 0,
-        pageSize: 10
-      }
-    );
-
-    let versions = payload;
-
-    if (
-      versions &&
-      typeof versions === "object" &&
-      versions.result !== undefined
-    ) {
-      versions = versions.result;
-    }
-
-    if (
-      versions &&
-      typeof versions === "object" &&
-      versions.data !== undefined
-    ) {
-      versions = versions.data;
-    }
-
-    if (
-      Array.isArray(versions) &&
-      versions.length
-    ) {
-      const latest =
-        versions.find(
-          (item) =>
-            item &&
-            item.last === 1
-        ) ||
-        versions[0];
-
-      profile =
-        extractProfile(latest);
-
-      if (
-        profile.name ||
-        profile.avatarUrl
-      ) {
-        console.log(
-          "PROFILE FROM ACCOUNT VERSIONS:",
-          node,
-          profile
-        );
-
-        return profile;
-      }
-    }
-  } catch (versionsError) {
-    lastError = versionsError;
+  } catch (error) {
+    lastError = error;
   }
 } catch (error) {
   lastError = error;
@@ -554,15 +487,12 @@ if (
   path === "/api/profile"
 ) {
   const address =
-    url.searchParams.get(
-      "address"
-    );
+    url.searchParams.get("address");
 
   if (!address) {
     return res.status(400).json({
       success: false,
-      error:
-        "address is required"
+      error: "address is required"
     });
   }
 
@@ -583,8 +513,7 @@ if (
 
     return res.status(502).json({
       success: false,
-      error:
-        "PROFILE_RPC_UNAVAILABLE",
+      error: "PROFILE_RPC_UNAVAILABLE",
       message:
         error?.message ||
         "Unknown profile error"
@@ -598,8 +527,7 @@ if (
 ) {
   return res.status(200).json({
     ok: true,
-    app:
-      "bastyon-rps-app",
+    app: "bastyon-rps-app",
     mode:
       DEMO_MODE
         ? "demo"
@@ -618,16 +546,13 @@ if (
     const room of rooms.values()
   ) {
     if (
-      room.status ===
-        "waiting" &&
-      room.expiresAt >
-        Date.now()
+      room.status === "waiting" &&
+      room.expiresAt > Date.now()
     ) {
       waiting += 1;
     }
 
-    online +=
-      room.players.length;
+    online += room.players.length;
   }
 
   return res.status(200).json({
@@ -647,8 +572,7 @@ if (
     body.userId;
 
   const nickname =
-    body.nickname ||
-    "Player";
+    body.nickname || "Player";
 
   if (!userId) {
     return res.status(400).json({
@@ -683,9 +607,7 @@ if (
   roomMatch
 ) {
   const room =
-    getRoom(
-      roomMatch[1]
-    );
+    getRoom(roomMatch[1]);
 
   if (!room) {
     return res.status(404).json({
@@ -771,9 +693,7 @@ if (
   }
 
   const room =
-    getRoom(
-      choiceMatch[1]
-    );
+    getRoom(choiceMatch[1]);
 
   if (!room) {
     return res.status(404).json({
