@@ -46,24 +46,20 @@ function normalizeProfile(data) {
       "";
   }
 
-  if (
-    typeof avatar === "string" &&
-    avatar.trim()
-  ) {
-    avatar = avatar.trim();
-
-    if (
-      avatar.indexOf("http://") !== 0 &&
-      avatar.indexOf("https://") !== 0 &&
-      avatar.indexOf("data:") !== 0 &&
-      avatar.indexOf("//") !== 0
-    ) {
-      avatar =
-        "https://pocketnet.app/ipfs/" +
-        avatar.replace(/^\/+/, "");
-    }
-  } else {
+  if (typeof avatar !== "string") {
     avatar = "";
+  }
+
+  avatar = avatar.trim();
+
+  if (
+    avatar.indexOf(
+      "https://bastyon.com:8092/i/"
+    ) === 0
+  ) {
+    avatar =
+      "/api/avatar?url=" +
+      encodeURIComponent(avatar);
   }
 
   return {
@@ -75,16 +71,21 @@ function normalizeProfile(data) {
   };
 }
 
-async function requestProfile(node, address) {
+async function requestProfile(
+  node,
+  address
+) {
   const response = await fetch(
     node,
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type":
+          "application/json"
       },
       body: JSON.stringify({
-        method: "getuserprofile",
+        method:
+          "getuserprofile",
         parameters: [
           [address],
           "1"
@@ -95,11 +96,13 @@ async function requestProfile(node, address) {
 
   if (!response.ok) {
     throw new Error(
-      "HTTP " + response.status
+      "HTTP " +
+      response.status
     );
   }
 
-  const text = await response.text();
+  const text =
+    await response.text();
 
   if (!text) {
     throw new Error(
@@ -117,96 +120,107 @@ async function requestProfile(node, address) {
     );
   }
 
-  if (
-    data &&
-    data.result &&
-    data.result !== "success"
-  ) {
-    throw new Error(
-      "RPC result: " +
-      data.result
-    );
-  }
-
   return data;
 }
 
-module.exports = async function handler(
-  req,
-  res
-) {
-  if (req.method !== "GET") {
-    return res.status(405).json({
-      success: false,
-      error: "Method not allowed"
-    });
-  }
-
-  const address =
-    req.query &&
-    req.query.address;
-
-  if (!address) {
-    return res.status(400).json({
-      success: false,
-      error: "address is required"
-    });
-  }
-
-  const nodes = [
-    "https://5.pocketnet.app:8899/rpc/getuserprofile",
-    "https://1.pocketnet.app:8899/rpc/getuserprofile",
-    "https://2.pocketnet.app:8899/rpc/getuserprofile"
-  ];
-
-  for (
-    let i = 0;
-    i < nodes.length;
-    i++
+module.exports =
+  async function handler(
+    req,
+    res
   ) {
-    try {
-      const raw =
-        await requestProfile(
-          nodes[i],
-          address
+    if (
+      req.method !== "GET"
+    ) {
+      return res
+        .status(405)
+        .json({
+          success: false,
+          error:
+            "Method not allowed"
+        });
+    }
+
+    const address =
+      req.query &&
+      req.query.address;
+
+    if (!address) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          error:
+            "address is required"
+        });
+    }
+
+    const nodes = [
+      "https://5.pocketnet.app:8899/rpc/getuserprofile",
+      "https://1.pocketnet.app:8899/rpc/getuserprofile",
+      "https://2.pocketnet.app:8899/rpc/getuserprofile"
+    ];
+
+    for (
+      let i = 0;
+      i < nodes.length;
+      i++
+    ) {
+      try {
+        const raw =
+          await requestProfile(
+            nodes[i],
+            address
+          );
+
+        const profile =
+          normalizeProfile(
+            raw
+          );
+
+        console.log(
+          "PROFILE RPC RAW",
+          JSON.stringify(raw)
         );
 
-      console.log(
-        "PROFILE RPC RAW",
-        JSON.stringify(raw)
-      );
+        console.log(
+          "PROFILE EXTRACTED",
+          JSON.stringify(
+            profile
+          )
+        );
 
-      const profile =
-        normalizeProfile(raw);
+        return res
+          .status(200)
+          .json({
+            success: true,
+            address:
+              address,
+            profile:
+              profile
+          });
+      } catch (
+        error
+      ) {
+        console.log(
+          "PROFILE RPC ERROR",
+          nodes[i],
+          error &&
+          error.message
+            ? error.message
+            : String(error)
+        );
+      }
+    }
 
-      console.log(
-        "PROFILE EXTRACTED",
-        JSON.stringify(profile)
-      );
-
-      return res.status(200).json({
+    return res
+      .status(200)
+      .json({
         success: true,
-        address: address,
-        profile: profile
+        address:
+          address,
+        profile: {
+          name: "",
+          avatarUrl: ""
+        }
       });
-    } catch (error) {
-      console.log(
-        "PROFILE RPC ERROR",
-        nodes[i],
-        error &&
-        error.message
-          ? error.message
-          : String(error)
-      );
-    }
-  }
-
-  return res.status(200).json({
-    success: true,
-    address: address,
-    profile: {
-      name: "",
-      avatarUrl: ""
-    }
-  });
-};
+  };
