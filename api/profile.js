@@ -50,24 +50,12 @@ function normalizeProfile(data) {
     avatar = "";
   }
 
-  avatar = avatar.trim();
-
-  if (
-    avatar.indexOf(
-      "https://bastyon.com:8092/i/"
-    ) === 0
-  ) {
-    avatar =
-      "/api/avatar?url=" +
-      encodeURIComponent(avatar);
-  }
-
   return {
     name:
       typeof name === "string"
         ? name.trim()
         : "",
-    avatarUrl: avatar
+    avatarUrl: avatar.trim()
   };
 }
 
@@ -110,17 +98,13 @@ async function requestProfile(
     );
   }
 
-  let data;
-
   try {
-    data = JSON.parse(text);
+    return JSON.parse(text);
   } catch (error) {
     throw new Error(
       "RPC вернул не JSON"
     );
   }
-
-  return data;
 }
 
 module.exports =
@@ -177,6 +161,44 @@ module.exports =
             raw
           );
 
+        let avatarUrl =
+          profile.avatarUrl;
+
+        if (
+          avatarUrl &&
+          (
+            avatarUrl.indexOf(
+              "https://bastyon.com:8092/i/"
+            ) === 0 ||
+            avatarUrl.indexOf(
+              "http://bastyon.com:8092/i/"
+            ) === 0
+          )
+        ) {
+          const protocol =
+            req.headers[
+              "x-forwarded-proto"
+            ] || "https";
+
+          const host =
+            req.headers.host ||
+            "bastyon-rps-app.vercel.app";
+
+          avatarUrl =
+            protocol +
+            "://" +
+            host +
+            "/api/avatar?url=" +
+            encodeURIComponent(
+              avatarUrl
+            );
+        }
+
+        const result = {
+          name: profile.name,
+          avatarUrl: avatarUrl
+        };
+
         console.log(
           "PROFILE RPC RAW",
           JSON.stringify(raw)
@@ -184,9 +206,7 @@ module.exports =
 
         console.log(
           "PROFILE EXTRACTED",
-          JSON.stringify(
-            profile
-          )
+          JSON.stringify(result)
         );
 
         return res
@@ -196,11 +216,11 @@ module.exports =
             address:
               address,
             profile:
-              profile
+              result
           });
-      } catch (
-        error
-      ) {
+
+      } catch (error) {
+
         console.log(
           "PROFILE RPC ERROR",
           nodes[i],
