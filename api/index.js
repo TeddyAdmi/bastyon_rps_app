@@ -1,105 +1,488 @@
-import {
-joinRoom,
-getRoom,
-makeChoice,
-recordPayment
-} from "../backend/src/store.js";
+const rooms = new Map();
 
-import { gameResult } from "../backend/src/game.js";
+const STAKE = Number(
+process.env.STAKE_PKOIN || 1
+);
 
-import {
-getConfig,
-paymentStatus
-} from "../backend/src/payments.js";
+const COMMISSION_BPS = Number(
+process.env.COMMISSION_BPS || 500
+);
 
-export default async function handler(req, res) {
+const WAIT_HOURS = Number(
+process.env.WAIT_HOURS || 24
+);
+
+const DEMO_MODE =
+String(
+process.env.DEMO_MODE || "true"
+).toLowerCase() === "true";
+
+function makeRoomId() {
+return Math.random()
+.toString(36)
+.slice(2, 10);
+}
+
+function joinRoom(
+userId,
+nickname
+) {
+const now = Date.now();
+
+for (const room of rooms.values()) {
+if (
+room.status === "waiting" &&
+!room.players.some(
+(player) =>
+player.userId === userId
+)
+) {
+room.players.push({
+userId,
+nickname,
+paid: false,
+choice: null
+});
+
+```
+  room.status = "playing";
+
+  return room;
+}
+```
+
+}
+
+const room = {
+id: makeRoomId(),
+status: "waiting",
+createdAt: now,
+expiresAt:
+now +
+WAIT_HOURS *
+60 *
+60 *
+1000,
+players: [
+{
+userId,
+nickname,
+paid: false,
+choice: null
+}
+]
+};
+
+rooms.set(
+room.id,
+room
+);
+
+return room;
+}
+
+function getRoom(id) {
+const room =
+rooms.get(id);
+
+if (!room) {
+return null;
+}
+
+if (
+room.status === "waiting" &&
+Date.now() >
+room.expiresAt
+) {
+room.status = "expired";
+}
+
+return room;
+}
+
+function recordPayment(
+roomId,
+userId
+) {
+const room =
+getRoom(roomId);
+
+if (!room) {
+return null;
+}
+
+const player =
+room.players.find(
+(item) =>
+item.userId ===
+String(userId)
+);
+
+if (player) {
+player.paid = true;
+}
+
+return room;
+}
+
+function makeChoice(
+roomId,
+userId,
+choice
+) {
+const room =
+getRoom(roomId);
+
+if (
+!room ||
+room.status !== "playing" ||
+room.players.length !== 2
+) {
+return null;
+}
+
+const player =
+room.players.find(
+(item) =>
+item.userId ===
+String(userId)
+);
+
+if (
+!player ||
+player.choice
+) {
+return null;
+}
+
+player.choice =
+choice;
+
+if (
+room.players.every(
+(item) =>
+item.choice
+)
+) {
+room.status =
+"finished";
+
+```
+return {
+  finished: true,
+  roomId,
+  choices:
+    room.players.map(
+      (item) =>
+        item.choice
+    ),
+  players:
+    room.players.map(
+      (item) => ({
+        userId:
+          item.userId,
+        nickname:
+          item.nickname
+      })
+    )
+};
+```
+
+}
+
+return {
+finished: false,
+roomId,
+waitingForOpponent:
+true
+};
+}
+
+function gameResult(
+a,
+b
+) {
+if (a === b) {
+return "draw";
+}
+
+const wins = {
+stone: "scissors",
+scissors: "paper",
+paper: "stone"
+};
+
+return wins[a] === b
+? "player1"
+: "player2";
+}
+
+function paymentStatus(
+room
+) {
+return {
+configured:
+!DEMO_MODE,
+verifiedPlayers:
+room.players.filter(
+(player) =>
+player.paid
+).length
+};
+}
+
+function extractProfile(
+payload
+) {
+let value = payload;
+
+if (
+value &&
+typeof value ===
+"object" &&
+value.result !==
+undefined
+) {
+value = value.result;
+}
+
+if (
+value &&
+typeof value ===
+"object" &&
+value.data !==
+undefined
+) {
+value =
+value.data;
+}
+
+if (
+Array.isArray(value)
+) {
+value =
+value[0] || {};
+}
+
+if (
+!value ||
+typeof value !== "object"
+) {
+return {};
+}
+
+const name =
+value.name ||
+value.pName ||
+value.nickname ||
+value.username ||
+value.displayName ||
+"";
+
+let avatar =
+value.i ||
+value.avatar ||
+value.image ||
+value.avatarUrl ||
+value.imageUrl ||
+"";
+
+if (
+typeof avatar ===
+"string" &&
+avatar.trim()
+) {
+avatar =
+avatar.trim();
+
+```
+if (
+  !/^https?:\/\//i.test(
+    avatar
+  ) &&
+  !avatar.startsWith(
+    "data:"
+  )
+) {
+  avatar =
+    "https://pocketnet.app/ipfs/" +
+    avatar.replace(
+      /^\/+/,
+      ""
+    );
+}
+```
+
+} else {
+avatar = "";
+}
+
+return {
+name:
+typeof name ===
+"string"
+? name.trim()
+: "",
+avatarUrl:
+avatar
+};
+}
+
+async function getProfile(
+address
+) {
+const nodes = [
+"https://1.pocketnet.app:38881/public/",
+"https://2.pocketnet.app:38881/public/",
+"https://3.pocketnet.app:38881/public/"
+];
+
+const requestBody = {
+jsonrpc: "2.0",
+id: 1,
+method:
+"getuserprofile",
+params: [
+{
+address,
+shortForm:
+"basic"
+}
+]
+};
+
+let lastError =
+null;
+
+for (
+const node of nodes
+) {
 try {
-const url = new URL(
+const response =
+await fetch(
+node,
+{
+method: "POST",
+headers: {
+"Content-Type":
+"application/json"
+},
+body:
+JSON.stringify(
+requestBody
+)
+}
+);
+
+```
+  if (
+    !response.ok
+  ) {
+    throw new Error(
+      "HTTP " +
+        response.status
+    );
+  }
+
+  const payload =
+    await response.json();
+
+  console.log(
+    "PROFILE RPC RESULT:",
+    payload
+  );
+
+  return extractProfile(
+    payload
+  );
+} catch (error) {
+  lastError =
+    error;
+
+  console.log(
+    "PROFILE NODE ERROR:",
+    node,
+    error.message
+  );
+}
+```
+
+}
+
+throw (
+lastError ||
+new Error(
+"Bastyon RPC unavailable"
+)
+);
+}
+
+export default async function handler(
+req,
+res
+) {
+try {
+const url =
+new URL(
 req.url || "/",
 `https://${req.headers.host}`
 );
 
 ```
-const path = url.pathname;
+const path =
+  url.pathname;
 
-// =========================================
+// =====================================
 // PROFILE
-// =========================================
+// =====================================
 
 if (
   req.method === "GET" &&
   path === "/api/profile"
 ) {
   const address =
-    url.searchParams.get("address");
+    url.searchParams.get(
+      "address"
+    );
 
   if (!address) {
     return res.status(400).json({
-      error: "address is required"
+      success: false,
+      error:
+        "address is required"
     });
   }
 
-  const rpcPayload = {
-    jsonrpc: "2.0",
-    id: 1,
-    method: "getuserprofile",
-    params: [[address]]
-  };
-
-  const nodes = [
-    "https://1.pocketnet.app:38881/public/",
-    "https://2.pocketnet.app:38881/public/",
-    "https://3.pocketnet.app:38881/public/"
-  ];
-
-  for (const node of nodes) {
-    try {
-      const response = await fetch(
-        node,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-          body: JSON.stringify(
-            rpcPayload
-          )
-        }
+  try {
+    const profile =
+      await getProfile(
+        address
       );
 
-      if (!response.ok) {
-        continue;
-      }
+    return res.status(200).json({
+      success: true,
+      address,
+      profile
+    });
+  } catch (error) {
+    console.error(
+      "PROFILE API ERROR:",
+      error
+    );
 
-      const data =
-        await response.json();
-
-      console.log(
-        "PROFILE RPC RESULT:",
-        data
-      );
-
-      return res.status(200).json(
-        data
-      );
-    } catch (error) {
-      console.error(
-        "PROFILE NODE ERROR:",
+    return res.status(502).json({
+      success: false,
+      error:
+        "PROFILE_RPC_UNAVAILABLE",
+      message:
         error.message
-      );
-    }
+    });
   }
-
-  return res.status(502).json({
-    error:
-      "PROFILE_RPC_UNAVAILABLE"
-  });
 }
 
-// =========================================
+// =====================================
 // HEALTH
-// =========================================
+// =====================================
 
 if (
   req.method === "GET" &&
@@ -107,30 +490,50 @@ if (
 ) {
   return res.status(200).json({
     ok: true,
-    app: "knb-bastyon",
-    mode: getConfig().demoMode
-      ? "demo"
-      : "production"
+    app:
+      "bastyon-rps-app",
+    mode:
+      DEMO_MODE
+        ? "demo"
+        : "production"
   });
 }
 
-// =========================================
+// =====================================
 // STATS
-// =========================================
+// =====================================
 
 if (
   req.method === "GET" &&
   path === "/api/stats"
 ) {
+  let waiting = 0;
+  let online = 0;
+
+  for (
+    const room of
+      rooms.values()
+  ) {
+    if (
+      room.status ===
+      "waiting"
+    ) {
+      waiting++;
+    }
+
+    online +=
+      room.players.length;
+  }
+
   return res.status(200).json({
-    online: 0,
-    waiting: 0
+    online,
+    waiting
   });
 }
 
-// =========================================
+// =====================================
 // PVP JOIN
-// =========================================
+// =====================================
 
 if (
   req.method === "POST" &&
@@ -143,7 +546,8 @@ if (
     body.userId;
 
   const nickname =
-    body.nickname;
+    body.nickname ||
+    "Player";
 
   if (!userId) {
     return res.status(400).json({
@@ -155,25 +559,22 @@ if (
   const room =
     joinRoom(
       String(userId),
-      String(
-        nickname || "Player"
-      )
+      String(nickname)
     );
 
   return res.status(200).json({
     room,
     paymentRequired:
-      !getConfig().demoMode,
-    stake:
-      getConfig().stake,
+      !DEMO_MODE,
+    stake: STAKE,
     waitHours:
-      getConfig().waitHours
+      WAIT_HOURS
   });
 }
 
-// =========================================
+// =====================================
 // PVP ROOM
-// =========================================
+// =====================================
 
 const roomMatch =
   path.match(
@@ -201,9 +602,9 @@ if (
   });
 }
 
-// =========================================
+// =====================================
 // PAYMENT
-// =========================================
+// =====================================
 
 const paymentMatch =
   path.match(
@@ -217,12 +618,10 @@ if (
   const body =
     await readJsonBody(req);
 
-  if (!getConfig().demoMode) {
+  if (!DEMO_MODE) {
     return res.status(501).json({
       error:
-        "REAL_PKOIN_NOT_CONFIGURED",
-      message:
-        "Real PKOIN verification is not configured yet."
+        "REAL_PKOIN_NOT_CONFIGURED"
     });
   }
 
@@ -246,9 +645,9 @@ if (
   });
 }
 
-// =========================================
+// =====================================
 // CHOICE
-// =========================================
+// =====================================
 
 const choiceMatch =
   path.match(
@@ -295,7 +694,7 @@ if (
   }
 
   if (
-    !getConfig().demoMode &&
+    !DEMO_MODE &&
     !room.players.every(
       (player) =>
         player.paid
@@ -321,7 +720,9 @@ if (
     });
   }
 
-  if (result.finished) {
+  if (
+    result.finished
+  ) {
     result.outcome =
       gameResult(
         result.choices[0],
@@ -329,14 +730,13 @@ if (
       );
 
     const pot =
-      getConfig().stake * 2;
+      STAKE * 2;
 
     result.commission =
       Number(
         (
           pot *
-          getConfig()
-            .commissionBps /
+          COMMISSION_BPS /
           10000
         ).toFixed(8)
       );
@@ -354,10 +754,6 @@ if (
     result
   );
 }
-
-// =========================================
-// NOT FOUND
-// =========================================
 
 return res.status(404).json({
   error:
@@ -385,14 +781,13 @@ return res.status(500).json({
 }
 }
 
-// =========================================
-// JSON BODY
-// =========================================
-
-async function readJsonBody(req) {
+async function readJsonBody(
+req
+) {
 if (
 req.body &&
-typeof req.body === "object"
+typeof req.body ===
+"object"
 ) {
 return req.body;
 }
