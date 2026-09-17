@@ -3,7 +3,6 @@
 <html lang="ru">
 
 <head>
-
   <meta charset="UTF-8">
 
 <meta
@@ -17,16 +16,13 @@ content="width=device-width, initial-scale=1.0"
   <script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
 
     body {
-
       margin: 0;
       padding: 20px;
-
       min-height: 100vh;
 
       font-family:
@@ -39,12 +35,9 @@ content="width=device-width, initial-scale=1.0"
 
       background: #1a1a1a;
       color: #ffffff;
-
     }
 
-
     .card {
-
       width: 100%;
       max-width: 420px;
 
@@ -58,48 +51,32 @@ content="width=device-width, initial-scale=1.0"
       box-shadow:
         0 4px 20px
         rgba(0, 0, 0, 0.45);
-
     }
-
 
     h1 {
-
       margin: 0 0 20px;
-
       font-size: 28px;
-
       text-align: center;
-
     }
 
-
-    /* ==================================================
-       PROFILE
-       ================================================== */
+    /* PROFILE */
 
     .profile-card {
-
       display: flex;
-
       align-items: center;
 
       gap: 12px;
 
       padding: 12px;
-
       margin-bottom: 20px;
 
       background: #1e1e1e;
 
       border: 1px solid #333;
-
       border-radius: 12px;
-
     }
 
-
     .profile-avatar {
-
       width: 54px;
       height: 54px;
 
@@ -114,38 +91,25 @@ content="width=device-width, initial-scale=1.0"
       border: 2px solid #00ff88;
 
       display: block;
-
     }
-
 
     .profile-info {
-
       min-width: 0;
-
       flex: 1;
-
     }
 
-
     .profile-name {
-
       font-size: 17px;
-
       font-weight: 700;
 
       color: #fff;
 
       white-space: nowrap;
-
       overflow: hidden;
-
       text-overflow: ellipsis;
-
     }
 
-
     .profile-address {
-
       margin-top: 3px;
 
       font-family: monospace;
@@ -155,50 +119,34 @@ content="width=device-width, initial-scale=1.0"
       color: #888;
 
       white-space: nowrap;
-
       overflow: hidden;
-
       text-overflow: ellipsis;
-
     }
 
-
     .profile-balance {
-
       margin-top: 5px;
 
       font-size: 14px;
-
       font-weight: 700;
 
       color: #00ff88;
-
     }
 
-
-    /* ==================================================
-       ROOMS
-       ================================================== */
+    /* ROOMS */
 
     .rooms {
-
       display: flex;
-
       gap: 10px;
 
       margin-bottom: 20px;
-
     }
 
-
     .room-btn {
-
       flex: 1;
 
       padding: 12px 8px;
 
       border: 2px solid #444;
-
       border-radius: 10px;
 
       background: #333;
@@ -208,46 +156,30 @@ content="width=device-width, initial-scale=1.0"
       cursor: pointer;
 
       font-size: 14px;
-
       font-weight: 700;
 
       transition:
         background 0.2s,
         border-color 0.2s,
         transform 0.1s;
-
     }
-
 
     .room-btn:hover {
-
       background: #3d3d3d;
-
     }
-
 
     .room-btn:active {
-
       transform: scale(0.98);
-
     }
-
 
     .room-btn.active {
-
       border-color: #00ff88;
-
       background: #1e3a29;
-
     }
 
-
-    /* ==================================================
-       GAME BUTTONS
-       ================================================== */
+    /* GAME BUTTONS */
 
     .buttons {
-
       display: flex;
 
       justify-content: center;
@@ -255,19 +187,15 @@ content="width=device-width, initial-scale=1.0"
       gap: 12px;
 
       margin: 25px 0;
-
     }
 
-
     .game-btn {
-
       width: 95px;
       height: 95px;
 
       padding: 10px;
 
       border: 2px solid #444;
-
       border-radius: 14px;
 
       background: #333;
@@ -282,47 +210,30 @@ content="width=device-width, initial-scale=1.0"
         transform 0.15s,
         background 0.2s,
         border-color 0.2s;
-
     }
 
-
     .game-btn:hover:not(:disabled) {
-
       background: #444;
-
       border-color: #00ff88;
 
       transform: translateY(-3px);
-
     }
-
 
     .game-btn:active:not(:disabled) {
-
       transform: scale(0.95);
-
     }
-
 
     .game-btn:disabled {
-
       opacity: 0.4;
-
       cursor: not-allowed;
-
     }
 
-
-    /* ==================================================
-       RESULT
-       ================================================== */
+    /* RESULT */
 
     .result {
-
       min-height: 50px;
 
       margin-top: 15px;
-
       padding: 12px;
 
       border-radius: 10px;
@@ -330,22 +241,16 @@ content="width=device-width, initial-scale=1.0"
       background: #202020;
 
       font-size: 16px;
-
       font-weight: 700;
 
       text-align: center;
 
       line-height: 1.4;
-
     }
 
-
-    /* ==================================================
-       STATUS
-       ================================================== */
+    /* STATUS */
 
     #status {
-
       margin: 15px 0 0;
 
       color: #00ff88;
@@ -353,23 +258,15 @@ content="width=device-width, initial-scale=1.0"
       font-size: 13px;
 
       text-align: center;
-
     }
-
 
     .error {
-
       color: #ff4444 !important;
-
     }
-
 
     .warning {
-
       color: #ffaa00 !important;
-
     }
-
   </style>
 
 </head>
@@ -383,10 +280,7 @@ content="width=device-width, initial-scale=1.0"
   🪨 ✂️ 📄 КНБ
 </h1>
 
-
-<!-- ==================================================
-     PROFILE
-     ================================================== -->
+<!-- PROFILE -->
 
 <div class="profile-card">
 
@@ -395,7 +289,6 @@ content="width=device-width, initial-scale=1.0"
     class="profile-avatar"
     alt="Аватар"
   >
-
 
   <div class="profile-info">
 
@@ -406,14 +299,12 @@ content="width=device-width, initial-scale=1.0"
       Загрузка...
     </div>
 
-
     <div
       id="user-address"
       class="profile-address"
     >
       Адрес: --
     </div>
-
 
     <div
       id="user-balance"
@@ -426,10 +317,7 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-
-<!-- ==================================================
-     ROOMS
-     ================================================== -->
+<!-- ROOMS -->
 
 <div class="rooms">
 
@@ -441,7 +329,6 @@ content="width=device-width, initial-scale=1.0"
     🤖 Бесплатная
   </button>
 
-
   <button
     class="room-btn"
     id="mode-pvp"
@@ -452,10 +339,7 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-
-<!-- ==================================================
-     GAME
-     ================================================== -->
+<!-- GAME -->
 
 <div class="buttons">
 
@@ -469,7 +353,6 @@ content="width=device-width, initial-scale=1.0"
     🪨
   </button>
 
-
   <button
     class="game-btn"
     id="btn-scissors"
@@ -479,7 +362,6 @@ content="width=device-width, initial-scale=1.0"
   >
     ✂️
   </button>
-
 
   <button
     class="game-btn"
@@ -493,14 +375,12 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-
 <div
   class="result"
   id="result-text"
 >
   Выберите режим и сделайте ваш ход!
 </div>
-
 
 <p id="status">
   Запуск Bastyon SDK...
@@ -511,11 +391,9 @@ content="width=device-width, initial-scale=1.0"
 
   <script>
 
-    /*
-     * ====================================================
-     * ГЛОБАЛЬНЫЕ ДАННЫЕ
-     * ====================================================
-     */
+    /* ====================================================
+       ГЛОБАЛЬНЫЕ ДАННЫЕ
+       ==================================================== */
 
     let sdk = null;
 
@@ -524,11 +402,9 @@ content="width=device-width, initial-scale=1.0"
     let currentRoom = 'demo';
 
 
-    /*
-     * ====================================================
-     * АВАТАР ПО УМОЛЧАНИЮ
-     * ====================================================
-     */
+    /* ====================================================
+       АВАТАР ПО УМОЛЧАНИЮ
+       ==================================================== */
 
     const DEFAULT_AVATAR =
       "data:image/svg+xml;utf8," +
@@ -539,11 +415,9 @@ content="width=device-width, initial-scale=1.0"
       "</svg>";
 
 
-    /*
-     * ====================================================
-     * ВАРИАНТЫ КНБ
-     * ====================================================
-     */
+    /* ====================================================
+       ВАРИАНТЫ КНБ
+       ==================================================== */
 
     const choices = {
 
@@ -556,35 +430,26 @@ content="width=device-width, initial-scale=1.0"
     };
 
 
-    /*
-     * ====================================================
-     * КНОПКИ
-     * ====================================================
-     */
+    /* ====================================================
+       КНОПКИ
+       ==================================================== */
 
     function enableButtons(enable) {
 
       const ids = [
-
         'btn-rock',
-
         'btn-scissors',
-
         'btn-paper'
-
       ];
-
 
       ids.forEach(function(id) {
 
         const button =
           document.getElementById(id);
 
-
         if (button) {
 
-          button.disabled =
-            !enable;
+          button.disabled = !enable;
 
         }
 
@@ -593,17 +458,13 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * КОМНАТА
-     * ====================================================
-     */
+    /* ====================================================
+       КОМНАТА
+       ==================================================== */
 
     function selectRoom(room) {
 
-      currentRoom =
-        room;
-
+      currentRoom = room;
 
       document
         .getElementById('mode-demo')
@@ -612,7 +473,6 @@ content="width=device-width, initial-scale=1.0"
           room === 'demo'
         );
 
-
       document
         .getElementById('mode-pvp')
         .classList.toggle(
@@ -620,12 +480,8 @@ content="width=device-width, initial-scale=1.0"
           room === 'pvp'
         );
 
-
       const result =
-        document.getElementById(
-          'result-text'
-        );
-
+        document.getElementById('result-text');
 
       if (room === 'demo') {
 
@@ -642,11 +498,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * СОКРАЩЁННЫЙ АДРЕС
-     * ====================================================
-     */
+    /* ====================================================
+       СОКРАЩЁННЫЙ АДРЕС
+       ==================================================== */
 
     function shortAddress(address) {
 
@@ -656,17 +510,14 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
-
       const text =
         String(address);
-
 
       if (text.length <= 12) {
 
         return text;
 
       }
-
 
       return (
         text.slice(0, 6) +
@@ -677,11 +528,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * ПОКАЗ АДРЕСА
-     * ====================================================
-     */
+    /* ====================================================
+       ПОКАЗ АДРЕСА
+       ==================================================== */
 
     function showAddress(address) {
 
@@ -690,13 +539,11 @@ content="width=device-width, initial-scale=1.0"
           'user-address'
         );
 
-
       if (!element) {
 
         return;
 
       }
-
 
       if (address) {
 
@@ -713,17 +560,27 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * ПОЛУЧЕНИЕ ЗНАЧЕНИЯ ИЗ ОБЪЕКТА
-     * ====================================================
-     *
-     * Ничего не подставляем автоматически.
-     *
-     * Если SDK вернул другой формат,
-     * мы его увидим в консоли.
-     * ====================================================
-     */
+    /* ====================================================
+       ПОЛУЧЕНИЕ БАЛАНСА
+       ====================================================
+       
+       ВАЖНО:
+       Bastyon SDK сейчас возвращает:
+
+       {
+         total: 0.20059996,
+         actual: 0.20059996,
+         tempbalance: 0
+       }
+
+       Поэтому сначала проверяем:
+       actual
+       total
+       balance
+       confirmed
+       available
+       amount
+       ==================================================== */
 
     function findBalanceValue(
       object,
@@ -740,9 +597,7 @@ content="width=device-width, initial-scale=1.0"
       }
 
 
-      /*
-       * Число
-       */
+      /* Число */
 
       if (
         typeof object === 'number' &&
@@ -760,9 +615,7 @@ content="width=device-width, initial-scale=1.0"
       }
 
 
-      /*
-       * Строка
-       */
+      /* Строка с числом */
 
       if (
         typeof object === 'string' &&
@@ -772,7 +625,6 @@ content="width=device-width, initial-scale=1.0"
         const number =
           Number(object);
 
-
         if (
           Number.isFinite(number)
         ) {
@@ -781,8 +633,7 @@ content="width=device-width, initial-scale=1.0"
 
             value: number,
 
-            path:
-              path || 'string'
+            path: path || 'string'
 
           };
 
@@ -791,9 +642,7 @@ content="width=device-width, initial-scale=1.0"
       }
 
 
-      /*
-       * Только объекты
-       */
+      /* Только объекты */
 
       if (
         typeof object !== 'object'
@@ -805,11 +654,18 @@ content="width=device-width, initial-scale=1.0"
 
 
       /*
-       * Поля, которые наиболее вероятно
-       * содержат баланс.
+       * ПРИОРИТЕТНЫЕ ПОЛЯ BASTYON
+       *
+       * actual и total идут первыми,
+       * потому что именно их сейчас
+       * возвращает sdk.get.balance()
        */
 
       const priorityKeys = [
+
+        'actual',
+
+        'total',
 
         'balance',
 
@@ -833,24 +689,63 @@ content="width=device-width, initial-scale=1.0"
       ) {
 
         if (
-          Object.prototype.hasOwnProperty.call(
+          !Object.prototype.hasOwnProperty.call(
             object,
             key
           )
         ) {
 
-          const value =
-            object[key];
+          continue;
 
+        }
+
+
+        const value =
+          object[key];
+
+
+        /*
+         * Число
+         */
+
+        if (
+          typeof value === 'number' &&
+          Number.isFinite(value)
+        ) {
+
+          return {
+
+            value: value,
+
+            path:
+              path
+                ? path + '.' + key
+                : key
+
+          };
+
+        }
+
+
+        /*
+         * Строка
+         */
+
+        if (
+          typeof value === 'string' &&
+          value.trim() !== ''
+        ) {
+
+          const number =
+            Number(value);
 
           if (
-            typeof value === 'number' &&
-            Number.isFinite(value)
+            Number.isFinite(number)
           ) {
 
             return {
 
-              value: value,
+              value: number,
 
               path:
                 path
@@ -861,42 +756,13 @@ content="width=device-width, initial-scale=1.0"
 
           }
 
-
-          if (
-            typeof value === 'string' &&
-            value.trim() !== ''
-          ) {
-
-            const number =
-              Number(value);
-
-
-            if (
-              Number.isFinite(number)
-            ) {
-
-              return {
-
-                value: number,
-
-                path:
-                  path
-                    ? path + '.' + key
-                    : key
-
-              };
-
-            }
-
-          }
-
         }
 
       }
 
 
       /*
-       * Ищем вложенные объекты.
+       * Ищем вложенные объекты
        */
 
       for (
@@ -905,7 +771,6 @@ content="width=device-width, initial-scale=1.0"
 
         const value =
           object[key];
-
 
         if (
           value &&
@@ -919,7 +784,6 @@ content="width=device-width, initial-scale=1.0"
                 ? path + '.' + key
                 : key
             );
-
 
           if (result) {
 
@@ -937,11 +801,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * ПОКАЗ БАЛАНСА
-     * ====================================================
-     */
+    /* ====================================================
+       ПОКАЗ БАЛАНСА
+       ==================================================== */
 
     function showBalance(
       balanceData
@@ -952,12 +814,17 @@ content="width=device-width, initial-scale=1.0"
           'user-balance'
         );
 
-
       if (!element) {
 
         return;
 
       }
+
+
+      console.log(
+        'BASTYON BALANCE DATA:',
+        balanceData
+      );
 
 
       const found =
@@ -977,11 +844,9 @@ content="width=device-width, initial-scale=1.0"
         element.innerText =
           'Баланс недоступен';
 
-
         element.classList.add(
           'warning'
         );
-
 
         return;
 
@@ -999,11 +864,22 @@ content="width=device-width, initial-scale=1.0"
         element.innerText =
           'Баланс недоступен';
 
+        element.classList.add(
+          'warning'
+        );
 
         return;
 
       }
 
+
+      /*
+       * Показываем 4 знака после запятой.
+       *
+       * 0.20059996
+       *       ↓
+       * 0.2006 PKOIN
+       */
 
       element.innerText =
         number.toFixed(4) +
@@ -1017,11 +893,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * ПРОФИЛЬ
-     * ====================================================
-     */
+    /* ====================================================
+       ПРОФИЛЬ
+       ==================================================== */
 
     async function loadProfileInfo(
       address
@@ -1031,7 +905,6 @@ content="width=device-width, initial-scale=1.0"
         document.getElementById(
           'user-avatar'
         );
-
 
       const nameEl =
         document.getElementById(
@@ -1044,10 +917,8 @@ content="width=device-width, initial-scale=1.0"
         nameEl.innerText =
           'Гость';
 
-
         avatarImg.src =
           DEFAULT_AVATAR;
-
 
         return;
 
@@ -1058,19 +929,22 @@ content="width=device-width, initial-scale=1.0"
         DEFAULT_AVATAR;
 
 
+      /*
+       * Пока используем RPC только для
+       * получения профиля.
+       *
+       * Ошибка RPC не мешает загрузке
+       * аккаунта и баланса.
+       */
+
       try {
 
         let profile = null;
 
 
-        /*
-         * RPC
-         */
-
         if (
           sdk &&
-          typeof sdk.rpc ===
-            'function'
+          typeof sdk.rpc === 'function'
         ) {
 
           try {
@@ -1109,10 +983,6 @@ content="width=device-width, initial-scale=1.0"
         }
 
 
-        /*
-         * Имя
-         */
-
         if (profile) {
 
           const name =
@@ -1139,10 +1009,6 @@ content="width=device-width, initial-scale=1.0"
 
           }
 
-
-          /*
-           * Аватар
-           */
 
           const avatar =
             profile.i ||
@@ -1176,9 +1042,7 @@ content="width=device-width, initial-scale=1.0"
               !/^https?:\/\//i.test(
                 avatarUrl
               ) &&
-              !avatarUrl.startsWith(
-                'data:'
-              )
+              !avatarUrl.startsWith('data:')
             ) {
 
               avatarUrl =
@@ -1202,7 +1066,6 @@ content="width=device-width, initial-scale=1.0"
                   'Аватар не загрузился:',
                   avatarUrl
                 );
-
 
                 avatarImg.src =
                   DEFAULT_AVATAR;
@@ -1241,19 +1104,16 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * ПОЛУЧЕНИЕ АККАУНТА
-     * ====================================================
-     */
+    /* ====================================================
+       ПОЛУЧЕНИЕ АККАУНТА
+       ==================================================== */
 
     async function getAccount() {
 
       if (
         !sdk ||
         !sdk.get ||
-        typeof sdk.get.account !==
-          'function'
+        typeof sdk.get.account !== 'function'
       ) {
 
         return null;
@@ -1274,8 +1134,7 @@ content="width=device-width, initial-scale=1.0"
 
 
         if (
-          typeof account ===
-            'string'
+          typeof account === 'string'
         ) {
 
           return account;
@@ -1285,8 +1144,7 @@ content="width=device-width, initial-scale=1.0"
 
         if (
           account &&
-          typeof account ===
-            'object'
+          typeof account === 'object'
         ) {
 
           return (
@@ -1314,25 +1172,21 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * ПОЛУЧЕНИЕ БАЛАНСА
-     * ====================================================
-     */
+    /* ====================================================
+       ПОЛУЧЕНИЕ БАЛАНСА
+       ==================================================== */
 
     async function getBalance() {
 
       if (
         !sdk ||
         !sdk.get ||
-        typeof sdk.get.balance !==
-          'function'
+        typeof sdk.get.balance !== 'function'
       ) {
 
         console.warn(
           'sdk.get.balance отсутствует'
         );
-
 
         return null;
 
@@ -1344,12 +1198,6 @@ content="width=device-width, initial-scale=1.0"
         const balance =
           await sdk.get.balance();
 
-
-        /*
-         * ВАЖНО:
-         * показываем настоящий ответ
-         * SDK в консоли.
-         */
 
         console.log(
           'BASTYON BALANCE RAW:',
@@ -1366,7 +1214,6 @@ content="width=device-width, initial-scale=1.0"
           error
         );
 
-
         return null;
 
       }
@@ -1374,11 +1221,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * ЗАГРУЗКА ДАННЫХ BASTYON
-     * ====================================================
-     */
+    /* ====================================================
+       ЗАГРУЗКА ДАННЫХ BASTYON
+       ==================================================== */
 
     async function loadBastyonUserData() {
 
@@ -1412,9 +1257,7 @@ content="width=device-width, initial-scale=1.0"
       } else {
 
         document
-          .getElementById(
-            'user-name'
-          )
+          .getElementById('user-name')
           .innerText =
             'Гость';
 
@@ -1444,10 +1287,8 @@ content="width=device-width, initial-scale=1.0"
             'user-balance'
           );
 
-
         balanceElement.innerText =
           'Баланс недоступен';
-
 
         balanceElement.classList.add(
           'warning'
@@ -1463,8 +1304,7 @@ content="width=device-width, initial-scale=1.0"
       if (
         sdk &&
         sdk.helpers &&
-        typeof sdk.helpers.userstate ===
-          'function'
+        typeof sdk.helpers.userstate === 'function'
       ) {
 
         try {
@@ -1478,11 +1318,6 @@ content="width=device-width, initial-scale=1.0"
             state
           );
 
-
-          /*
-           * Если имя через RPC не получилось,
-           * пробуем userstate.
-           */
 
           const nameElement =
             document.getElementById(
@@ -1537,11 +1372,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * ИНИЦИАЛИЗАЦИЯ
-     * ====================================================
-     */
+    /* ====================================================
+       ИНИЦИАЛИЗАЦИЯ
+       ==================================================== */
 
     document.addEventListener(
       'DOMContentLoaded',
@@ -1563,13 +1396,10 @@ content="width=device-width, initial-scale=1.0"
             'error'
           );
 
-
           status.innerText =
             '❌ SDK Bastyon не обнаружен';
 
-
           enableButtons(true);
-
 
           return;
 
@@ -1579,7 +1409,7 @@ content="width=device-width, initial-scale=1.0"
         try {
 
           /*
-           * Создание SDK
+           * СОЗДАНИЕ SDK
            */
 
           sdk =
@@ -1591,8 +1421,7 @@ content="width=device-width, initial-scale=1.0"
            */
 
           if (
-            typeof sdk.init ===
-              'function'
+            typeof sdk.init === 'function'
           ) {
 
             await sdk.init();
@@ -1601,13 +1430,12 @@ content="width=device-width, initial-scale=1.0"
 
 
           /*
-           * Разрешения
+           * РАЗРЕШЕНИЯ
            */
 
           if (
             sdk.permissions &&
-            typeof sdk.permissions.request ===
-              'function'
+            typeof sdk.permissions.request === 'function'
           ) {
 
             try {
@@ -1631,19 +1459,18 @@ content="width=device-width, initial-scale=1.0"
 
 
           /*
-           * Данные пользователя
+           * ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
            */
 
           await loadBastyonUserData();
 
 
           /*
-           * Событие изменения баланса
+           * СОБЫТИЕ ИЗМЕНЕНИЯ БАЛАНСА
            */
 
           if (
-            typeof sdk.on ===
-              'function'
+            typeof sdk.on === 'function'
           ) {
 
             sdk.on(
@@ -1667,12 +1494,11 @@ content="width=device-width, initial-scale=1.0"
 
 
           /*
-           * loaded
+           * LOADED
            */
 
           if (
-            typeof sdk.emit ===
-              'function'
+            typeof sdk.emit === 'function'
           ) {
 
             sdk.emit(
@@ -1699,9 +1525,7 @@ content="width=device-width, initial-scale=1.0"
            * GAME
            */
 
-          enableButtons(
-            true
-          );
+          enableButtons(true);
 
 
         } catch (error) {
@@ -1725,9 +1549,7 @@ content="width=device-width, initial-scale=1.0"
             );
 
 
-          enableButtons(
-            true
-          );
+          enableButtons(true);
 
         }
 
@@ -1735,11 +1557,9 @@ content="width=device-width, initial-scale=1.0"
     );
 
 
-    /*
-     * ====================================================
-     * DEMO GAME
-     * ====================================================
-     */
+    /* ====================================================
+       DEMO GAME
+       ==================================================== */
 
     function playDemoMatch(
       userChoice
@@ -1769,17 +1589,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * PVP
-     * ====================================================
-     *
-     * Сейчас оставляем демонстрационный
-     * режим до подключения серверного API.
-     *
-     * Реальные PKOIN здесь пока НЕ списываем.
-     * ====================================================
-     */
+    /* ====================================================
+       PVP
+       ==================================================== */
 
     async function playPvpMatch(
       userChoice
@@ -1856,10 +1668,7 @@ content="width=device-width, initial-scale=1.0"
             response.status;
 
 
-          enableButtons(
-            true
-          );
-
+          enableButtons(true);
 
           return;
 
@@ -1896,18 +1705,14 @@ content="width=device-width, initial-scale=1.0"
       }
 
 
-      enableButtons(
-        true
-      );
+      enableButtons(true);
 
     }
 
 
-    /*
-     * ====================================================
-     * ХОД
-     * ====================================================
-     */
+    /* ====================================================
+       ХОД
+       ==================================================== */
 
     async function makeMove(
       userChoice
@@ -1926,10 +1731,6 @@ content="width=device-width, initial-scale=1.0"
       }
 
 
-      /*
-       * PvP
-       */
-
       await playPvpMatch(
         userChoice
       );
@@ -1937,11 +1738,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-     * ====================================================
-     * РЕЗУЛЬТАТ
-     * ====================================================
-     */
+    /* ====================================================
+       РЕЗУЛЬТАТ
+       ==================================================== */
 
     function showResult(
       userChoice,
@@ -1954,12 +1753,11 @@ content="width=device-width, initial-scale=1.0"
 
 
       /*
-       * Ничья
+       * НИЧЬЯ
        */
 
       if (
-        userChoice ===
-        opponentChoice
+        userChoice === opponentChoice
       ) {
 
         resultMessage =
@@ -1970,7 +1768,7 @@ content="width=device-width, initial-scale=1.0"
 
 
       /*
-       * Победа
+       * ПОБЕДА
        */
 
       else if (
@@ -2006,7 +1804,7 @@ content="width=device-width, initial-scale=1.0"
 
 
       /*
-       * Поражение
+       * ПОРАЖЕНИЕ
        */
 
       else {
