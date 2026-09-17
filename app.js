@@ -1,652 +1,632 @@
-const $ = s => document.querySelector(s);
-
-// ======================================================
-// ЭКРАНЫ
-// ======================================================
+const $ = (s) => document.querySelector(s);
 
 const screens = {
-home: $('#home'),
-game: $('#game'),
-pvpWait: $('#pvpWait')
+  home: $('#home'),
+  game: $('#game'),
+  pvpWait: $('#pvpWait')
 };
 
-// ======================================================
-// ПОЛЬЗОВАТЕЛЬ
-// ======================================================
-
 let user = {
-id: 'demo-' + Math.random().toString(36).slice(2),
-nickname: 'Гость',
-balance: null,
-avatar: null
+  id: 'demo-' + Math.random().toString(36).slice(2),
+  nickname: 'Гость',
+  avatar: '',
+  balance: null
 };
 
 let mode = 'free';
 let room = null;
 
-// ======================================================
-// ЭКРАНЫ
-// ======================================================
-
 function show(name) {
+  Object.values(screens).forEach((screen) => {
+    screen.classList.remove('active');
+  });
 
-Object.values(screens).forEach(screen => {
-
-```
-if (screen) {
-  screen.classList.remove('active');
+  screens[name].classList.add('active');
 }
-```
-
-});
-
-if (screens[name]) {
-screens[name].classList.add('active');
-}
-}
-
-// ======================================================
-// ИКОНКИ
-// ======================================================
 
 function icon(choice) {
-
-return {
-stone: '🪨',
-scissors: '✂',
-paper: '📄'
-}[choice] || '?';
+  return {
+    stone: '🪨',
+    scissors: '✂',
+    paper: '📄'
+  }[choice] || '?';
 }
-
-// ======================================================
-// РЕЗУЛЬТАТ
-// ======================================================
 
 function resultText(result) {
-
-if (result === 'draw') {
-return 'Ничья!';
+  if (result === 'draw') return 'Ничья!';
+  return result === 'player1' ? 'Ты победил!' : 'Ты проиграл!';
 }
 
-if (result === 'player1') {
-return 'Ты победил!';
-}
-
-return 'Ты проиграл!';
-}
-
-// ======================================================
-// АВАТАР
-// ======================================================
-
-function setAvatar(avatarUrl) {
-
-const avatar = $('#avatar');
-
-if (!avatar) {
-return;
-}
-
-if (!avatarUrl) {
-
-```
-avatar.innerHTML = '';
-
-avatar.textContent =
-  (user.nickname || 'Г')
-    .slice(0, 1)
-    .toUpperCase();
-
-return;
-```
-
-}
-
-let url = String(avatarUrl).trim();
-
-// ----------------------------------------------------
-// //example.com/image
-// ----------------------------------------------------
-
-if (url.startsWith('//')) {
-url = 'https:' + url;
-}
-
-// ----------------------------------------------------
-// IPFS
-// ----------------------------------------------------
-
-if (
-!/^https?:///i.test(url) &&
-!url.startsWith('data:')
-) {
-
-```
-url =
-  'https://pocketnet.app/ipfs/' +
-  url.replace(/^\/+/, '');
-```
-
-}
-
-avatar.innerHTML = '';
-
-const img =
-document.createElement('img');
-
-img.src = url;
-
-img.alt =
-user.nickname || 'Профиль';
-
-img.referrerPolicy =
-'no-referrer';
-
-img.onload = () => {
-
-```
-user.avatar = url;
-```
-
-};
-
-img.onerror = () => {
-
-```
-avatar.innerHTML = '';
-
-avatar.textContent =
-  (user.nickname || 'Г')
-    .slice(0, 1)
-    .toUpperCase();
-```
-
-};
-
-avatar.appendChild(img);
-}
-
-// ======================================================
-// ПРОФИЛЬ
-// ======================================================
-
-function setProfile(name, avatarUrl) {
-
-const nickname =
-$('#nickname');
-
-if (name) {
-
-```
-user.nickname =
-  String(name);
-
-if (nickname) {
-  nickname.textContent =
-    user.nickname;
-}
-```
-
-}
-
-if (avatarUrl) {
-
-```
-setAvatar(avatarUrl);
-```
-
-} else {
-
-```
-setAvatar(null);
-```
-
-}
-}
-
-// ======================================================
-// ПОИСК ЗНАЧЕНИЯ В ОБЪЕКТЕ
-// ======================================================
-
-function findValue(object, keys) {
-
-if (!object || typeof object !== 'object') {
-return null;
-}
-
-for (const key of keys) {
-
-```
-if (
-  object[key] !== undefined &&
-  object[key] !== null
-) {
-
-  return object[key];
-}
-```
-
-}
-
-return null;
-}
-
-// ======================================================
-// ПРЕОБРАЗОВАНИЕ БАЛАНСА
-// ======================================================
-
-function extractBalance(data) {
-
-console.log(
-'BASTYON BALANCE RAW:',
-data
-);
-
-// ----------------------------------------------------
-// Если SDK сразу вернул число
-// ----------------------------------------------------
-
-if (typeof data === 'number') {
-return data;
-}
-
-// ----------------------------------------------------
-// Если SDK вернул строку с числом
-// ----------------------------------------------------
-
-if (
-typeof data === 'string' &&
-data.trim() !== ''
-) {
-
-```
-const number =
-  Number(data);
-
-if (Number.isFinite(number)) {
-  return number;
-}
-```
-
-}
-
-// ----------------------------------------------------
-// Объект
-// ----------------------------------------------------
-
-if (
-data &&
-typeof data === 'object'
-) {
-
-```
-const value =
-  findValue(
-    data,
-    [
-      'balance',
-      'amount',
-      'pkoin',
-      'PKOIN',
-      'value',
-      'available',
-      'confirmed'
-    ]
-  );
-
-if (
-  typeof value === 'number'
-) {
-  return value;
-}
-
-if (
-  typeof value === 'string' &&
-  value.trim() !== ''
-) {
-
-  const number =
-    Number(value);
-
-  if (Number.isFinite(number)) {
-    return number;
-  }
-}
-
-
-// ------------------------------------------------
-// Иногда данные могут лежать внутри account
-// ------------------------------------------------
-
-if (data.account) {
-
-  const nested =
-    extractBalance(
-      data.account
-    );
-
-  if (nested !== null) {
-    return nested;
-  }
-}
-
-
-// ------------------------------------------------
-// Иногда внутри wallet
-// ------------------------------------------------
-
-if (data.wallet) {
-
-  const nested =
-    extractBalance(
-      data.wallet
-    );
-
-  if (nested !== null) {
-    return nested;
-  }
-}
-
-
-// ------------------------------------------------
-// Иногда внутри data
-// ------------------------------------------------
-
-if (data.data) {
-
-  const nested =
-    extractBalance(
-      data.data
-    );
-
-  if (nested !== null) {
-    return nested;
-  }
-}
-```
-
-}
-
-return null;
-}
-
-// ======================================================
-// ПОКАЗ БАЛАНСА
-// ======================================================
-
-function updateBalanceDisplay() {
-
-const balance =
-$('#balance');
-
-if (!balance) {
-return;
-}
-
-if (
-user.balance === null ||
-user.balance === undefined
-) {
-
-```
-balance.textContent =
-  '—';
-
-return;
-```
-
-}
-
-// ----------------------------------------------------
-// Красивое отображение числа
-// ----------------------------------------------------
-
-const number =
-Number(user.balance);
-
-if (Number.isFinite(number)) {
-
-```
-balance.textContent =
-  number.toLocaleString(
-    'en-US',
-    {
-      maximumFractionDigits: 8
+function firstString(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
     }
-  );
-```
+  }
 
-} else {
-
-```
-balance.textContent =
-  String(user.balance);
-```
-
-}
+  return '';
 }
 
-// ======================================================
-// BASTYON
-// ======================================================
+function findDeepValue(value, keys, depth = 0) {
+  if (!value || typeof value !== 'object' || depth > 6) {
+    return '';
+  }
 
-async function loadBastyon() {
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      const found = value[key];
 
-try {
+      if (typeof found === 'string' && found.trim()) {
+        return found.trim();
+      }
 
-```
-const sdk =
-  window.sdk;
+      if (found && typeof found === 'object') {
+        const nested = findDeepValue(found, keys, depth + 1);
 
-
-// ==================================================
-// ПРОВЕРКА SDK
-// ==================================================
-
-console.log(
-  'BASTYON SDK:',
-  sdk
-);
-
-
-if (!sdk) {
-
-  console.log(
-    'Bastyon SDK не найден'
-  );
-
-  setProfile(
-    'Гость',
-    null
-  );
-
-  updateBalanceDisplay();
-
-  return;
-}
-
-
-// ==================================================
-// ACCOUNT
-// ==================================================
-
-try {
-
-  if (sdk.get?.account) {
-
-    const account =
-      await sdk.get.account();
-
-    console.log(
-      'BASTYON ACCOUNT:',
-      account
-    );
-
-
-    if (account) {
-
-      const accountId =
-        account.address ||
-        account.id ||
-        account.uid ||
-        account.userId ||
-        account.key;
-
-      if (accountId) {
-
-        user.id =
-          String(accountId);
-
+        if (nested) {
+          return nested;
+        }
       }
     }
   }
 
-} catch (error) {
+  for (const child of Object.values(value)) {
+    if (child && typeof child === 'object') {
+      const nested = findDeepValue(child, keys, depth + 1);
 
-  console.log(
-    'Account error:',
-    error
-  );
+      if (nested) {
+        return nested;
+      }
+    }
+  }
+
+  return '';
 }
 
+function normalizeProfile(raw) {
+  let data = raw;
 
-// ==================================================
-// BALANCE
-// ==================================================
+  if (data && typeof data === 'object') {
+    if (data.data !== undefined) {
+      data = data.data;
+    }
 
-try {
+    if (Array.isArray(data)) {
+      data = data[0] || {};
+    }
+  }
 
-  if (sdk.get?.balance) {
+  const nickname = firstString(
+    findDeepValue(data, [
+      'name',
+      'nickname',
+      'username',
+      'userName',
+      'displayName',
+      'displayname',
+      'n'
+    ]),
+    findDeepValue(raw, [
+      'name',
+      'nickname',
+      'username',
+      'userName',
+      'displayName',
+      'displayname',
+      'n'
+    ])
+  );
 
-    const balanceData =
-      await sdk.get.balance();
+  let avatar = firstString(
+    findDeepValue(data, [
+      'avatarUrl',
+      'avatarURL',
+      'avatar_url',
+      'avatar',
+      'image',
+      'photo',
+      'picture'
+    ]),
+    findDeepValue(raw, [
+      'avatarUrl',
+      'avatarURL',
+      'avatar_url',
+      'avatar',
+      'image',
+      'photo',
+      'picture'
+    ])
+  );
 
-    user.balance =
-      extractBalance(
+  if (
+    avatar &&
+    !/^https?:\/\//i.test(avatar) &&
+    !avatar.startsWith('data:') &&
+    avatar.startsWith('/')
+  ) {
+    avatar = new URL(avatar, window.location.origin).href;
+  }
+
+  return {
+    nickname,
+    avatar
+  };
+}
+
+function renderUser() {
+  const nicknameEl = $('#nickname');
+  const avatarEl = $('#avatar');
+  const balanceEl = $('#balance');
+
+  nicknameEl.textContent = user.nickname || 'Гость';
+
+  avatarEl.textContent = '';
+  avatarEl.style.backgroundImage = '';
+  avatarEl.style.backgroundSize = 'cover';
+  avatarEl.style.backgroundPosition = 'center';
+  avatarEl.style.backgroundRepeat = 'no-repeat';
+  avatarEl.style.overflow = 'hidden';
+
+  if (user.avatar) {
+    const image = new Image();
+
+    image.alt = '';
+
+    image.onload = () => {
+      avatarEl.style.backgroundImage =
+        `url("${user.avatar.replace(/"/g, '%22')}")`;
+    };
+
+    image.onerror = () => {
+      avatarEl.textContent =
+        (user.nickname || 'Г').slice(0, 1).toUpperCase();
+
+      avatarEl.style.backgroundImage = '';
+    };
+
+    image.src = user.avatar;
+  } else {
+    avatarEl.textContent =
+      (user.nickname || 'Г').slice(0, 1).toUpperCase();
+  }
+
+  if (user.balance == null) {
+    balanceEl.textContent = '—';
+  } else {
+    balanceEl.textContent = Number(user.balance)
+      .toFixed(4)
+      .replace(/0+$/, '')
+      .replace(/\.$/, '');
+  }
+}
+
+async function loadProfile(address) {
+  if (!address) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      '/api/profile?address=' + encodeURIComponent(address),
+      {
+        method: 'GET',
+        cache: 'no-store'
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Profile HTTP ' + response.status);
+    }
+
+    const payload = await response.json();
+
+    console.log('BASTYON PROFILE RAW:', payload);
+
+    const profile = normalizeProfile(payload);
+
+    console.log('BASTYON PROFILE NORMALIZED:', profile);
+
+    if (profile.nickname) {
+      user.nickname = profile.nickname;
+    }
+
+    if (profile.avatar) {
+      user.avatar = profile.avatar;
+    }
+
+    renderUser();
+  } catch (error) {
+    console.log('PROFILE LOAD ERROR:', error);
+    renderUser();
+  }
+}
+
+async function loadBastyon() {
+  try {
+    if (
+      !window.sdk &&
+      typeof window.BastyonSdk === 'function'
+    ) {
+      window.sdk = new window.BastyonSdk();
+
+      await window.sdk.init();
+
+      if (window.sdk.emit) {
+        window.sdk.emit('loaded');
+      }
+    }
+
+    if (
+      window.sdk?.permissions?.check &&
+      window.sdk?.permissions?.request
+    ) {
+      try {
+        const granted =
+          await window.sdk.permissions.check({
+            permission: 'account'
+          });
+
+        if (!granted) {
+          await window.sdk.permissions.request([
+            'account'
+          ]);
+        }
+      } catch (permissionError) {
+        console.log(
+          'ACCOUNT PERMISSION ERROR:',
+          permissionError
+        );
+      }
+    }
+
+    if (window.sdk?.get?.account) {
+      const account = await window.sdk.get.account();
+
+      console.log(
+        'BASTYON ACCOUNT RAW:',
+        account
+      );
+
+      if (account) {
+        user.id = String(
+          account.address ||
+          account.id ||
+          user.id
+        );
+      }
+    }
+
+    if (window.sdk?.get?.balance) {
+      const balanceData =
+        await window.sdk.get.balance();
+
+      console.log(
+        'BASTYON BALANCE RAW:',
         balanceData
       );
 
-  } else {
+      if (typeof balanceData === 'number') {
+        user.balance = balanceData;
+      } else if (
+        balanceData &&
+        typeof balanceData === 'object'
+      ) {
+        const values = [
+          ['actual', balanceData.actual],
+          ['total', balanceData.total],
+          ['balance', balanceData.balance],
+          ['confirmed', balanceData.confirmed]
+        ];
 
-    console.log(
-      'sdk.get.balance отсутствует'
-    );
-
-  }
-
-} catch (error) {
-
-  console.log(
-    'Balance error:',
-    error
-  );
-
-  user.balance =
-    null;
-}
-
-
-// ==================================================
-// USERSTATE
-// ==================================================
-
-try {
-
-  if (
-    sdk.helpers?.userstate
-  ) {
-
-    const state =
-      await sdk.helpers.userstate();
-
-    console.log(
-      'BASTYON USERSTATE:',
-      state
-    );
-
-
-    // ----------------------------------------------
-    // Профиль
-    // ----------------------------------------------
-
-    const profile =
-      state?.profile ||
-      state?.user ||
-      state?.account ||
-      state;
-
-
-    const name =
-      profile?.name ||
-      profile?.pName ||
-      profile?.nickname ||
-      profile?.username ||
-      profile?.displayName ||
-      state?.name ||
-      state?.pName;
-
-
-    const avatar =
-      profile?.i ||
-      profile?.avatar ||
-      profile?.avatarUrl ||
-      profile?.image ||
-      profile?.imageUrl ||
-      profile?.avatarImage ||
-      state?.i ||
-      state?.avatar ||
-      state?.avatarUrl;
-
-
-    if (
-      name ||
-      avatar
-    ) {
-
-      setProfile(
-        name,
-        avatar
-      );
-    }
-
-
-    // ----------------------------------------------
-    // Иногда баланс приходит вместе с userstate
-    // ----------------------------------------------
-
-    if (
-      user.balance === null ||
-      user.balance === undefined
-    ) {
-
-      const stateBalance =
-        extractBalance(
-          state
+        const valid = values.find(
+          ([, value]) =>
+            typeof value === 'number' &&
+            Number.isFinite(value)
         );
 
-      if (
-        stateBalance !== null
-      ) {
+        user.balance = valid
+          ? valid[1]
+          : null;
 
-        user.balance =
-          stateBalance;
+        console.log(
+          'BALANCE SEARCH RESULT:',
+          valid
+            ? {
+                value: valid[1],
+                path: valid[0]
+              }
+            : null
+        );
       }
     }
+  } catch (error) {
+    console.log(
+      'BASTYON SDK ERROR:',
+      error
+    );
   }
 
-} catch (error) {
+  renderUser();
 
-  console.log(
-    'Userstate error:',
-    error
-  );
+  await loadProfile(user.id);
 }
-```
 
-} catch (error) {
+function freeGame() {
+  mode = 'free';
 
-```
-console.log(
-  'Bastyon initialization error:',
-  err
-```
+  $('#gameMode').textContent =
+    'Бесплатная игра';
+
+  $('#roomInfo').textContent = '';
+
+  $('#opponentName').textContent =
+    'Компьютер';
+
+  $('#playerPick').textContent = '?';
+
+  $('#opponentPick').textContent = '?';
+
+  $('#result').textContent =
+    'Сделай выбор';
+
+  show('game');
+}
+
+function playFree(choice) {
+  const opponent =
+    ['stone', 'scissors', 'paper'][
+      Math.floor(Math.random() * 3)
+    ];
+
+  $('#playerPick').textContent =
+    icon(choice);
+
+  $('#opponentPick').textContent =
+    icon(opponent);
+
+  const wins = {
+    stone: 'scissors',
+    scissors: 'paper',
+    paper: 'stone'
+  };
+
+  $('#result').textContent =
+    resultText(
+      choice === opponent
+        ? 'draw'
+        : wins[choice] === opponent
+          ? 'player1'
+          : 'player2'
+    );
+}
+
+async function startPvp() {
+  mode = 'pvp';
+
+  try {
+    const response = await fetch(
+      '/api/pvp/join',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          nickname: user.nickname
+        })
+      }
+    );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+      alert(
+        data.error ||
+        'Ошибка'
+      );
+
+      return;
+    }
+
+    room = data.room;
+
+    $('#roomId').textContent =
+      room.id;
+
+    $('#waitText').textContent =
+      data.paymentRequired
+        ? 'Нужна реальная PKOIN-оплата. Платёжный модуль пока не подключён.'
+        : 'DEMO_MODE: реальные PKOIN не списываются.';
+
+    $('#demoMatch').style.display =
+      data.paymentRequired
+        ? 'none'
+        : 'inline-block';
+
+    if (room.status === 'waiting') {
+      show('pvpWait');
+    } else {
+      setupPvp();
+    }
+  } catch (error) {
+    alert(
+      'PvP API недоступен: ' +
+      error.message
+    );
+  }
+}
+
+function setupPvp() {
+  $('#gameMode').textContent =
+    'PvP — 1 PKOIN';
+
+  $('#roomInfo').textContent =
+    'Комната ' + room.id;
+
+  $('#opponentName').textContent =
+    'Соперник';
+
+  $('#result').textContent =
+    'Сделай выбор';
+
+  $('#playerPick').textContent = '?';
+
+  $('#opponentPick').textContent = '?';
+
+  show('game');
+}
+
+async function demoSecondPlayer() {
+  if (!room) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      '/api/pvp/join',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+        body: JSON.stringify({
+          userId:
+            user.id + '-opponent',
+          nickname: 'Demo Player'
+        })
+      }
+    );
+
+    const data =
+      await response.json();
+
+    if (data.room?.id === room.id) {
+      room = data.room;
+      setupPvp();
+    } else {
+      alert(
+        'Для настоящего PvP нужна постоянная БД.'
+      );
+    }
+  } catch (error) {
+    alert(
+      'Ошибка DEMO PvP: ' +
+      error.message
+    );
+  }
+}
+
+async function playPvp(choice) {
+  if (!room) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      '/api/pvp/room/' +
+        room.id +
+        '/choice',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          choice
+        })
+      }
+    );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+      alert(
+        data.error ||
+        'Ошибка'
+      );
+
+      return;
+    }
+
+    $('#playerPick').textContent =
+      icon(choice);
+
+    if (!data.finished) {
+      $('#result').textContent =
+        'Ждём выбор соперника…';
+
+      return;
+    }
+
+    $('#opponentPick').textContent =
+      icon(data.choices[1]);
+
+    const index =
+      data.players.findIndex(
+        (player) =>
+          player.userId === user.id
+      );
+
+    const outcome =
+      data.outcome === 'draw'
+        ? 'draw'
+        : data.outcome ===
+          `player${index + 1}`
+          ? 'player1'
+          : 'player2';
+
+    $('#result').textContent =
+      resultText(outcome) +
+      ` Банк: ${data.payout} PKOIN`;
+  } catch (error) {
+    alert(
+      'Ошибка PvP: ' +
+      error.message
+    );
+  }
+}
+
+document.addEventListener(
+  'click',
+  (event) => {
+    const button =
+      event.target.closest(
+        '[data-choice]'
+      );
+
+    if (button) {
+      return mode === 'free'
+        ? playFree(
+            button.dataset.choice
+          )
+        : playPvp(
+            button.dataset.choice
+          );
+    }
+
+    if (
+      event.target.closest(
+        '[data-back]'
+      )
+    ) {
+      show('home');
+    }
+  }
+);
+
+$('#freeBtn').onclick =
+  freeGame;
+
+$('#pvpBtn').onclick =
+  startPvp;
+
+$('#demoMatch').onclick =
+  demoSecondPlayer;
+
+loadBastyon();
