@@ -50,12 +50,14 @@ function normalizeProfile(data) {
     avatar = "";
   }
 
+  avatar = avatar.trim();
+
   return {
     name:
       typeof name === "string"
         ? name.trim()
         : "",
-    avatarUrl: avatar.trim()
+    avatarUrl: avatar
   };
 }
 
@@ -161,44 +163,6 @@ module.exports =
             raw
           );
 
-        let avatarUrl =
-          profile.avatarUrl;
-
-        if (
-          avatarUrl &&
-          (
-            avatarUrl.indexOf(
-              "https://bastyon.com:8092/i/"
-            ) === 0 ||
-            avatarUrl.indexOf(
-              "http://bastyon.com:8092/i/"
-            ) === 0
-          )
-        ) {
-          const protocol =
-            req.headers[
-              "x-forwarded-proto"
-            ] || "https";
-
-          const host =
-            req.headers.host ||
-            "bastyon-rps-app.vercel.app";
-
-          avatarUrl =
-            protocol +
-            "://" +
-            host +
-            "/api/avatar?url=" +
-            encodeURIComponent(
-              avatarUrl
-            );
-        }
-
-        const result = {
-          name: profile.name,
-          avatarUrl: avatarUrl
-        };
-
         console.log(
           "PROFILE RPC RAW",
           JSON.stringify(raw)
@@ -206,7 +170,7 @@ module.exports =
 
         console.log(
           "PROFILE EXTRACTED",
-          JSON.stringify(result)
+          JSON.stringify(profile)
         );
 
         return res
@@ -216,7 +180,7 @@ module.exports =
             address:
               address,
             profile:
-              result
+              profile
           });
 
       } catch (error) {
