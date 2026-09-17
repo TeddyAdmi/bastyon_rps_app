@@ -1,37 +1,18 @@
-function parseValue(value) {
+function extractText(value) {
 if (typeof value !== "string") {
-return value;
+return "";
 }
 
-const text = value.trim();
-
-if (!text) {
-return value;
+return value.trim();
 }
 
+function extractProfile(data) {
+let name = "";
+let avatar = "";
+
+function scan(value, depth) {
 if (
-text[0] !== "{" &&
-text[0] !== "["
-) {
-return value;
-}
-
-try {
-return JSON.parse(text);
-} catch {
-return value;
-}
-}
-
-function findProfileData(source) {
-const visited = new Set();
-
-let bestName = "";
-let bestAvatar = "";
-
-function walk(value, depth) {
-if (
-depth > 8 ||
+depth > 6 ||
 value === null ||
 value === undefined
 ) {
@@ -40,24 +21,49 @@ return;
 
 ```
 if (
+  typeof value === "string"
+) {
+  const text =
+    extractText(value);
+
+  if (
+    !name &&
+    text.length > 1 &&
+    text.length < 100
+  ) {
+    const lowered =
+      text.toLowerCase();
+
+    if (
+      lowered.indexOf(
+        "http://"
+      ) !== 0 &&
+      lowered.indexOf(
+        "https://"
+      ) !== 0 &&
+      lowered.indexOf(
+        "pqo"
+      ) !== 0
+    ) {
+      name = text;
+    }
+  }
+
+  return;
+}
+
+if (
   typeof value !== "object"
 ) {
   return;
 }
-
-if (visited.has(value)) {
-  return;
-}
-
-visited.add(value);
 
 const nameKeys = [
   "name",
   "pName",
   "nickname",
   "username",
-  "displayName",
-  "n"
+  "displayName"
 ];
 
 const avatarKeys = [
@@ -78,17 +84,17 @@ for (
   const key =
     nameKeys[i];
 
-  const valueForKey =
-    value[key];
-
   if (
-    !bestName &&
-    typeof valueForKey ===
-      "string" &&
-    valueForKey.trim()
+    !name &&
+    typeof value[key] ===
+      "string"
   ) {
-    bestName =
-      valueForKey.trim();
+    const text =
+      value[key].trim();
+
+    if (text) {
+      name = text;
+    }
   }
 }
 
@@ -100,29 +106,32 @@ for (
   const key =
     avatarKeys[i];
 
-  let avatarValue =
+  let current =
     value[key];
 
   if (
-    avatarValue &&
-    typeof avatarValue ===
+    current &&
+    typeof current ===
       "object"
   ) {
-    avatarValue =
-      avatarValue.url ||
-      avatarValue.src ||
-      avatarValue.hash ||
+    current =
+      current.url ||
+      current.src ||
+      current.hash ||
       "";
   }
 
   if (
-    !bestAvatar &&
-    typeof avatarValue ===
-      "string" &&
-    avatarValue.trim()
+    !avatar &&
+    typeof current ===
+      "string"
   ) {
-    bestAvatar =
-      avatarValue.trim();
+    const text =
+      current.trim();
+
+    if (text) {
+      avatar = text;
+    }
   }
 }
 
@@ -134,43 +143,16 @@ for (
   i < keys.length;
   i++
 ) {
-  const key =
-    keys[i];
-
-  const child =
-    value[key];
-
-  const parsed =
-    parseValue(child);
-
-  if (
-    parsed !== child
-  ) {
-    walk(
-      parsed,
-      depth + 1
-    );
-  }
-
-  if (
-    child &&
-    typeof child ===
-      "object"
-  ) {
-    walk(
-      child,
-      depth + 1
-    );
-  }
+  scan(
+    value[keys[i]],
+    depth + 1
+  );
 }
 ```
 
 }
 
-walk(source, 0);
-
-let avatar =
-bestAvatar;
+scan(data, 0);
 
 if (
 avatar &&
@@ -196,14 +178,12 @@ avatar.replace(
 }
 
 return {
-name:
-bestName,
-avatarUrl:
-avatar
+name: name,
+avatarUrl: avatar
 };
 }
 
-async function requestRpc(
+async function callRpc(
 node,
 address
 ) {
@@ -237,16 +217,7 @@ response.status
 );
 }
 
-const text =
-await response.text();
-
-if (!text) {
-throw new Error(
-"Empty response"
-);
-}
-
-return JSON.parse(text);
+return response.json();
 }
 
 module.exports =
@@ -282,9 +253,6 @@ const nodes = [
   "https://3.pocketnet.app:38881/public/"
 ];
 
-let lastError =
-  null;
-
 for (
   let i = 0;
   i < nodes.length;
@@ -292,21 +260,21 @@ for (
 ) {
   try {
     const raw =
-      await requestRpc(
+      await callRpc(
         nodes[i],
         address
       );
 
     console.log(
-      "BASTYON PROFILE RPC RAW",
+      "PROFILE RPC RAW",
       JSON.stringify(raw)
     );
 
     const profile =
-      findProfileData(raw);
+      extractProfile(raw);
 
     console.log(
-      "BASTYON PROFILE EXTRACTED",
+      "PROFILE EXTRACTED",
       JSON.stringify(profile)
     );
 
@@ -319,23 +287,13 @@ for (
     });
 
   } catch (error) {
-    lastError =
-      error;
-
     console.log(
-      "PROFILE NODE ERROR",
+      "PROFILE RPC ERROR",
       nodes[i],
       error.message
     );
   }
 }
-
-console.log(
-  "PROFILE ALL NODES FAILED",
-  lastError
-    ? lastError.message
-    : "unknown"
-);
 
 return res.status(200).json({
   success: true,
