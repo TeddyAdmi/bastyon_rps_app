@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 
 <html lang="ru">
-
 <head>
   <meta charset="UTF-8">
 
@@ -23,6 +22,7 @@ content="width=device-width, initial-scale=1.0"
     body {
       margin: 0;
       padding: 20px;
+
       min-height: 100vh;
 
       font-family:
@@ -34,6 +34,7 @@ content="width=device-width, initial-scale=1.0"
         sans-serif;
 
       background: #1a1a1a;
+
       color: #ffffff;
     }
 
@@ -55,24 +56,31 @@ content="width=device-width, initial-scale=1.0"
 
     h1 {
       margin: 0 0 20px;
+
       font-size: 28px;
+
       text-align: center;
     }
 
-    /* PROFILE */
+    /* =========================================
+       PROFILE
+       ========================================= */
 
     .profile-card {
       display: flex;
+
       align-items: center;
 
       gap: 12px;
 
       padding: 12px;
+
       margin-bottom: 20px;
 
       background: #1e1e1e;
 
       border: 1px solid #333;
+
       border-radius: 12px;
     }
 
@@ -95,17 +103,21 @@ content="width=device-width, initial-scale=1.0"
 
     .profile-info {
       min-width: 0;
+
       flex: 1;
     }
 
     .profile-name {
       font-size: 17px;
+
       font-weight: 700;
 
       color: #fff;
 
       white-space: nowrap;
+
       overflow: hidden;
+
       text-overflow: ellipsis;
     }
 
@@ -119,7 +131,9 @@ content="width=device-width, initial-scale=1.0"
       color: #888;
 
       white-space: nowrap;
+
       overflow: hidden;
+
       text-overflow: ellipsis;
     }
 
@@ -127,15 +141,19 @@ content="width=device-width, initial-scale=1.0"
       margin-top: 5px;
 
       font-size: 14px;
+
       font-weight: 700;
 
       color: #00ff88;
     }
 
-    /* ROOMS */
+    /* =========================================
+       ROOMS
+       ========================================= */
 
     .rooms {
       display: flex;
+
       gap: 10px;
 
       margin-bottom: 20px;
@@ -147,6 +165,7 @@ content="width=device-width, initial-scale=1.0"
       padding: 12px 8px;
 
       border: 2px solid #444;
+
       border-radius: 10px;
 
       background: #333;
@@ -156,6 +175,7 @@ content="width=device-width, initial-scale=1.0"
       cursor: pointer;
 
       font-size: 14px;
+
       font-weight: 700;
 
       transition:
@@ -174,10 +194,13 @@ content="width=device-width, initial-scale=1.0"
 
     .room-btn.active {
       border-color: #00ff88;
+
       background: #1e3a29;
     }
 
-    /* GAME BUTTONS */
+    /* =========================================
+       GAME BUTTONS
+       ========================================= */
 
     .buttons {
       display: flex;
@@ -196,6 +219,7 @@ content="width=device-width, initial-scale=1.0"
       padding: 10px;
 
       border: 2px solid #444;
+
       border-radius: 14px;
 
       background: #333;
@@ -214,6 +238,7 @@ content="width=device-width, initial-scale=1.0"
 
     .game-btn:hover:not(:disabled) {
       background: #444;
+
       border-color: #00ff88;
 
       transform: translateY(-3px);
@@ -225,15 +250,19 @@ content="width=device-width, initial-scale=1.0"
 
     .game-btn:disabled {
       opacity: 0.4;
+
       cursor: not-allowed;
     }
 
-    /* RESULT */
+    /* =========================================
+       RESULT
+       ========================================= */
 
     .result {
-      min-height: 50px;
+      min-height: 70px;
 
       margin-top: 15px;
+
       padding: 12px;
 
       border-radius: 10px;
@@ -241,6 +270,7 @@ content="width=device-width, initial-scale=1.0"
       background: #202020;
 
       font-size: 16px;
+
       font-weight: 700;
 
       text-align: center;
@@ -248,7 +278,9 @@ content="width=device-width, initial-scale=1.0"
       line-height: 1.4;
     }
 
-    /* STATUS */
+    /* =========================================
+       STATUS
+       ========================================= */
 
     #status {
       margin: 15px 0 0;
@@ -258,6 +290,8 @@ content="width=device-width, initial-scale=1.0"
       font-size: 13px;
 
       text-align: center;
+
+      line-height: 1.4;
     }
 
     .error {
@@ -266,6 +300,70 @@ content="width=device-width, initial-scale=1.0"
 
     .warning {
       color: #ffaa00 !important;
+    }
+
+    .success {
+      color: #00ff88 !important;
+    }
+
+    .muted {
+      color: #888 !important;
+    }
+
+    /* =========================================
+       PVP INFO
+       ========================================= */
+
+    .pvp-info {
+      display: none;
+
+      margin-top: 12px;
+
+      padding: 12px;
+
+      border-radius: 10px;
+
+      background: #202020;
+
+      border: 1px solid #333;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+
+      color: #aaa;
+
+      text-align: center;
+    }
+
+    .pvp-info.show {
+      display: block;
+    }
+
+    .room-id {
+      margin-top: 6px;
+
+      color: #00ff88;
+
+      font-family: monospace;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .card {
+        margin: 10px auto;
+        padding: 16px;
+      }
+
+      .game-btn {
+        width: 82px;
+        height: 82px;
+
+        font-size: 36px;
+      }
     }
   </style>
 
@@ -280,7 +378,9 @@ content="width=device-width, initial-scale=1.0"
   🪨 ✂️ 📄 КНБ
 </h1>
 
-<!-- PROFILE -->
+<!-- =======================================
+     PROFILE
+     ======================================= -->
 
 <div class="profile-card">
 
@@ -317,7 +417,9 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-<!-- ROOMS -->
+<!-- =======================================
+     ROOMS
+     ======================================= -->
 
 <div class="rooms">
 
@@ -339,7 +441,9 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-<!-- GAME -->
+<!-- =======================================
+     GAME BUTTONS
+     ======================================= -->
 
 <div class="buttons">
 
@@ -375,12 +479,39 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
+<!-- =======================================
+     RESULT
+     ======================================= -->
+
 <div
   class="result"
   id="result-text"
 >
   Выберите режим и сделайте ваш ход!
 </div>
+
+<!-- =======================================
+     PVP INFO
+     ======================================= -->
+
+<div
+  id="pvp-info"
+  class="pvp-info"
+>
+  <div id="pvp-message">
+    PvP ожидает соперника
+  </div>
+
+  <div
+    id="pvp-room"
+    class="room-id"
+  >
+  </div>
+</div>
+
+<!-- =======================================
+     STATUS
+     ======================================= -->
 
 <p id="status">
   Запуск Bastyon SDK...
@@ -391,20 +522,22 @@ content="width=device-width, initial-scale=1.0"
 
   <script>
 
-    /* ====================================================
-       ГЛОБАЛЬНЫЕ ДАННЫЕ
-       ==================================================== */
+    /* =========================================
+       GLOBAL
+       ========================================= */
 
     let sdk = null;
 
     let userAddress = null;
 
-    let currentRoom = 'demo';
+    let currentRoom = "demo";
+
+    let currentPvpRoom = null;
 
 
-    /* ====================================================
-       АВАТАР ПО УМОЛЧАНИЮ
-       ==================================================== */
+    /* =========================================
+       DEFAULT AVATAR
+       ========================================= */
 
     const DEFAULT_AVATAR =
       "data:image/svg+xml;utf8," +
@@ -415,98 +548,118 @@ content="width=device-width, initial-scale=1.0"
       "</svg>";
 
 
-    /* ====================================================
-       ВАРИАНТЫ КНБ
-       ==================================================== */
+    /* =========================================
+       CHOICES
+       ========================================= */
 
     const choices = {
 
-      rock: '🪨 Камень',
+      rock: "🪨 Камень",
 
-      scissors: '✂️ Ножницы',
+      scissors: "✂️ Ножницы",
 
-      paper: '📄 Бумага'
+      paper: "📄 Бумага"
 
     };
 
 
-    /* ====================================================
-       КНОПКИ
-       ==================================================== */
+    /* =========================================
+       BUTTONS
+       ========================================= */
 
     function enableButtons(enable) {
 
       const ids = [
-        'btn-rock',
-        'btn-scissors',
-        'btn-paper'
+        "btn-rock",
+        "btn-scissors",
+        "btn-paper"
       ];
 
-      ids.forEach(function(id) {
+      ids.forEach(
+        function(id) {
 
-        const button =
-          document.getElementById(id);
+          const button =
+            document.getElementById(id);
 
-        if (button) {
+          if (button) {
 
-          button.disabled = !enable;
+            button.disabled =
+              !enable;
+
+          }
 
         }
-
-      });
+      );
 
     }
 
 
-    /* ====================================================
-       КОМНАТА
-       ==================================================== */
+    /* =========================================
+       ROOM
+       ========================================= */
 
     function selectRoom(room) {
 
       currentRoom = room;
 
       document
-        .getElementById('mode-demo')
+        .getElementById("mode-demo")
         .classList.toggle(
-          'active',
-          room === 'demo'
+          "active",
+          room === "demo"
         );
 
       document
-        .getElementById('mode-pvp')
+        .getElementById("mode-pvp")
         .classList.toggle(
-          'active',
-          room === 'pvp'
+          "active",
+          room === "pvp"
         );
 
       const result =
-        document.getElementById('result-text');
+        document.getElementById(
+          "result-text"
+        );
 
-      if (room === 'demo') {
+      const pvpInfo =
+        document.getElementById(
+          "pvp-info"
+        );
+
+      if (room === "demo") {
 
         result.innerText =
-          'Бесплатная игра с компьютером.';
+          "Бесплатная игра с компьютером.";
+
+        pvpInfo.classList.remove(
+          "show"
+        );
 
       } else {
 
         result.innerText =
-          'Игра между игроками — ставка 1 PKOIN.';
+          "Игра между игроками — ставка 1 PKOIN.";
+
+        pvpInfo.classList.add(
+          "show"
+        );
 
       }
 
     }
 
 
-    /* ====================================================
-       СОКРАЩЁННЫЙ АДРЕС
-       ==================================================== */
+    /* =========================================
+       ADDRESS
+       ========================================= */
 
-    function shortAddress(address) {
+    function shortAddress(
+      address
+    ) {
 
       if (!address) {
 
-        return 'Адрес: --';
+        return "Адрес: --";
 
       }
 
@@ -521,22 +674,20 @@ content="width=device-width, initial-scale=1.0"
 
       return (
         text.slice(0, 6) +
-        '...' +
+        "..." +
         text.slice(-4)
       );
 
     }
 
 
-    /* ====================================================
-       ПОКАЗ АДРЕСА
-       ==================================================== */
-
-    function showAddress(address) {
+    function showAddress(
+      address
+    ) {
 
       const element =
         document.getElementById(
-          'user-address'
+          "user-address"
         );
 
       if (!element) {
@@ -545,265 +696,76 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
-      if (address) {
-
-        element.innerText =
-          shortAddress(address);
-
-      } else {
-
-        element.innerText =
-          'Адрес: не определён';
-
-      }
+      element.innerText =
+        address
+          ? shortAddress(address)
+          : "Адрес: не определён";
 
     }
 
 
-    /* ====================================================
-       ПОЛУЧЕНИЕ БАЛАНСА
-       ====================================================
-       
-       ВАЖНО:
-       Bastyon SDK сейчас возвращает:
+    /* =========================================
+       BALANCE
+       ========================================= */
 
-       {
-         total: 0.20059996,
-         actual: 0.20059996,
-         tempbalance: 0
-       }
-
-       Поэтому сначала проверяем:
-       actual
-       total
-       balance
-       confirmed
-       available
-       amount
-       ==================================================== */
-
-    function findBalanceValue(
-      object,
-      path = ''
+    function findBalance(
+      balanceData
     ) {
 
       if (
-        object === null ||
-        object === undefined
+        typeof balanceData ===
+        "number"
+      ) {
+
+        return balanceData;
+
+      }
+
+      if (
+        !balanceData ||
+        typeof balanceData !==
+        "object"
       ) {
 
         return null;
 
       }
 
+      const priority = [
 
-      /* Число */
+        balanceData.actual,
 
-      if (
-        typeof object === 'number' &&
-        Number.isFinite(object)
-      ) {
+        balanceData.total,
 
-        return {
+        balanceData.balance,
 
-          value: object,
+        balanceData.confirmed,
 
-          path: path || 'number'
+        balanceData.available,
 
-        };
-
-      }
-
-
-      /* Строка с числом */
-
-      if (
-        typeof object === 'string' &&
-        object.trim() !== ''
-      ) {
-
-        const number =
-          Number(object);
-
-        if (
-          Number.isFinite(number)
-        ) {
-
-          return {
-
-            value: number,
-
-            path: path || 'string'
-
-          };
-
-        }
-
-      }
-
-
-      /* Только объекты */
-
-      if (
-        typeof object !== 'object'
-      ) {
-
-        return null;
-
-      }
-
-
-      /*
-       * ПРИОРИТЕТНЫЕ ПОЛЯ BASTYON
-       *
-       * actual и total идут первыми,
-       * потому что именно их сейчас
-       * возвращает sdk.get.balance()
-       */
-
-      const priorityKeys = [
-
-        'actual',
-
-        'total',
-
-        'balance',
-
-        'confirmed',
-
-        'available',
-
-        'amount',
-
-        'pkoin',
-
-        'PKOIN',
-
-        'value'
+        balanceData.amount
 
       ];
 
-
       for (
-        const key of priorityKeys
+        const value of priority
       ) {
 
         if (
-          !Object.prototype.hasOwnProperty.call(
-            object,
-            key
-          )
-        ) {
-
-          continue;
-
-        }
-
-
-        const value =
-          object[key];
-
-
-        /*
-         * Число
-         */
-
-        if (
-          typeof value === 'number' &&
+          typeof value === "number" &&
           Number.isFinite(value)
         ) {
 
-          return {
-
-            value: value,
-
-            path:
-              path
-                ? path + '.' + key
-                : key
-
-          };
-
-        }
-
-
-        /*
-         * Строка
-         */
-
-        if (
-          typeof value === 'string' &&
-          value.trim() !== ''
-        ) {
-
-          const number =
-            Number(value);
-
-          if (
-            Number.isFinite(number)
-          ) {
-
-            return {
-
-              value: number,
-
-              path:
-                path
-                  ? path + '.' + key
-                  : key
-
-            };
-
-          }
+          return value;
 
         }
 
       }
-
-
-      /*
-       * Ищем вложенные объекты
-       */
-
-      for (
-        const key of Object.keys(object)
-      ) {
-
-        const value =
-          object[key];
-
-        if (
-          value &&
-          typeof value === 'object'
-        ) {
-
-          const result =
-            findBalanceValue(
-              value,
-              path
-                ? path + '.' + key
-                : key
-            );
-
-          if (result) {
-
-            return result;
-
-          }
-
-        }
-
-      }
-
 
       return null;
 
     }
 
-
-    /* ====================================================
-       ПОКАЗ БАЛАНСА
-       ==================================================== */
 
     function showBalance(
       balanceData
@@ -811,7 +773,7 @@ content="width=device-width, initial-scale=1.0"
 
       const element =
         document.getElementById(
-          'user-balance'
+          "user-balance"
         );
 
       if (!element) {
@@ -820,82 +782,213 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
-
       console.log(
-        'BASTYON BALANCE DATA:',
+        "BASTYON BALANCE DATA:",
         balanceData
       );
 
-
-      const found =
-        findBalanceValue(
+      const balance =
+        findBalance(
           balanceData
         );
 
-
-      console.log(
-        'BALANCE SEARCH RESULT:',
-        found
-      );
-
-
-      if (!found) {
-
-        element.innerText =
-          'Баланс недоступен';
-
-        element.classList.add(
-          'warning'
-        );
-
-        return;
-
-      }
-
-
-      const number =
-        Number(found.value);
-
-
       if (
-        !Number.isFinite(number)
+        balance === null
       ) {
 
         element.innerText =
-          'Баланс недоступен';
+          "Баланс недоступен";
 
         element.classList.add(
-          'warning'
+          "warning"
         );
 
         return;
 
       }
 
-
-      /*
-       * Показываем 4 знака после запятой.
-       *
-       * 0.20059996
-       *       ↓
-       * 0.2006 PKOIN
-       */
-
       element.innerText =
-        number.toFixed(4) +
-        ' PKOIN';
-
+        Number(balance)
+          .toFixed(4) +
+        " PKOIN";
 
       element.classList.remove(
-        'warning'
+        "warning"
       );
 
     }
 
 
-    /* ====================================================
-       ПРОФИЛЬ
-       ==================================================== */
+    /* =========================================
+       PROFILE DATA
+       ========================================= */
+
+    function normalizeProfile(
+      payload
+    ) {
+
+      if (
+        !payload ||
+        typeof payload !==
+        "object"
+      ) {
+
+        return {};
+
+      }
+
+      let profile =
+        payload.profile ||
+        payload.result ||
+        payload.data ||
+        payload;
+
+      if (
+        profile &&
+        typeof profile ===
+        "object" &&
+        profile.profile
+      ) {
+
+        profile =
+          profile.profile;
+
+      }
+
+      if (
+        Array.isArray(profile)
+      ) {
+
+        profile =
+          profile[0] || {};
+
+      }
+
+      if (
+        !profile ||
+        typeof profile !==
+        "object"
+      ) {
+
+        return {};
+
+      }
+
+      const name =
+        profile.name ||
+        profile.pName ||
+        profile.nickname ||
+        profile.username ||
+        profile.displayName ||
+        "";
+
+      const avatar =
+        profile.avatarUrl ||
+        profile.avatar ||
+        profile.image ||
+        profile.imageUrl ||
+        profile.i ||
+        "";
+
+      return {
+
+        name:
+          typeof name ===
+          "string"
+            ? name.trim()
+            : "",
+
+        avatar:
+          typeof avatar ===
+          "string"
+            ? avatar.trim()
+            : ""
+
+      };
+
+    }
+
+
+    /* =========================================
+       PROFILE IMAGE
+       ========================================= */
+
+    function normalizeAvatarUrl(
+      avatar
+    ) {
+
+      if (!avatar) {
+
+        return "";
+
+      }
+
+      let url =
+        String(avatar).trim();
+
+      if (!url) {
+
+        return "";
+
+      }
+
+      if (
+        url.startsWith("//")
+      ) {
+
+        return (
+          "https:" +
+          url
+        );
+
+      }
+
+      if (
+        /^https?:\/\//i.test(
+          url
+        )
+      ) {
+
+        return url;
+
+      }
+
+      if (
+        url.startsWith("data:")
+      ) {
+
+        return url;
+
+      }
+
+      url =
+        url.replace(
+          /^\/+/,
+          ""
+        );
+
+      if (
+        url.startsWith("ipfs/")
+      ) {
+
+        return (
+          "https://pocketnet.app/" +
+          url
+        );
+
+      }
+
+      return (
+        "https://pocketnet.app/ipfs/" +
+        url
+      );
+
+    }
+
+
+    /* =========================================
+       LOAD PROFILE
+       ========================================= */
 
     async function loadProfileInfo(
       address
@@ -903,19 +996,18 @@ content="width=device-width, initial-scale=1.0"
 
       const avatarImg =
         document.getElementById(
-          'user-avatar'
+          "user-avatar"
         );
 
       const nameEl =
         document.getElementById(
-          'user-name'
+          "user-name"
         );
-
 
       if (!address) {
 
         nameEl.innerText =
-          'Гость';
+          "Гость";
 
         avatarImg.src =
           DEFAULT_AVATAR;
@@ -924,177 +1016,138 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
-
       avatarImg.src =
         DEFAULT_AVATAR;
 
-
-      /*
-       * Пока используем RPC только для
-       * получения профиля.
-       *
-       * Ошибка RPC не мешает загрузке
-       * аккаунта и баланса.
-       */
-
       try {
 
-        let profile = null;
+        const response =
+          await fetch(
+            "/api/profile?address=" +
+            encodeURIComponent(
+              address
+            ),
+            {
+              method: "GET",
+              cache: "no-store"
+            }
+          );
 
+        console.log(
+          "PROFILE HTTP STATUS:",
+          response.status
+        );
 
-        if (
-          sdk &&
-          typeof sdk.rpc === 'function'
+        const text =
+          await response.text();
+
+        let payload = {};
+
+        try {
+
+          payload =
+            JSON.parse(text);
+
+        } catch (
+          parseError
         ) {
 
-          try {
+          console.warn(
+            "PROFILE NON JSON:",
+            text
+          );
 
-            const response =
-              await sdk.rpc(
-                'getuserprofile',
-                {
-                  address: address,
-                  shortForm: 'basic'
-                }
-              );
-
-
-            console.log(
-              'BASTYON PROFILE RAW:',
-              response
-            );
-
-
-            profile =
-              Array.isArray(response)
-                ? response[0]
-                : response;
-
-
-          } catch (error) {
-
-            console.warn(
-              'PROFILE RPC ERROR:',
-              error
-            );
-
-          }
+          throw new Error(
+            "Профиль вернул не JSON"
+          );
 
         }
 
+        console.log(
+          "BASTYON PROFILE RAW:",
+          payload
+        );
 
-        if (profile) {
+        if (!response.ok) {
 
-          const name =
-            profile.name ||
-            profile.pName ||
-            profile.nickname ||
-            profile.username ||
-            profile.displayName;
+          throw new Error(
+            payload.error ||
+            payload.message ||
+            "Profile HTTP " +
+            response.status
+          );
 
+        }
 
-          if (
-            name &&
-            String(name).trim()
-          ) {
+        const profile =
+          normalizeProfile(
+            payload
+          );
 
-            nameEl.innerText =
-              String(name).trim();
+        console.log(
+          "BASTYON PROFILE NORMALIZED:",
+          profile
+        );
 
-          } else {
+        if (
+          profile.name
+        ) {
 
-            nameEl.innerText =
-              'Игрок ' +
-              String(address).slice(0, 6);
-
-          }
-
-
-          const avatar =
-            profile.i ||
-            profile.avatar ||
-            profile.image ||
-            profile.avatarUrl ||
-            profile.imageUrl;
-
-
-          if (
-            avatar &&
-            typeof avatar === 'string'
-          ) {
-
-            let avatarUrl =
-              avatar.trim();
-
-
-            if (
-              avatarUrl.startsWith('//')
-            ) {
-
-              avatarUrl =
-                'https:' +
-                avatarUrl;
-
-            }
-
-
-            if (
-              !/^https?:\/\//i.test(
-                avatarUrl
-              ) &&
-              !avatarUrl.startsWith('data:')
-            ) {
-
-              avatarUrl =
-                'https://pocketnet.app/ipfs/' +
-                avatarUrl.replace(
-                  /^\/+/,
-                  ''
-                );
-
-            }
-
-
-            avatarImg.src =
-              avatarUrl;
-
-
-            avatarImg.onerror =
-              function() {
-
-                console.warn(
-                  'Аватар не загрузился:',
-                  avatarUrl
-                );
-
-                avatarImg.src =
-                  DEFAULT_AVATAR;
-
-              };
-
-          }
+          nameEl.innerText =
+            profile.name;
 
         } else {
 
           nameEl.innerText =
-            'Игрок ' +
-            String(address).slice(0, 6);
+            "Игрок " +
+            String(
+              address
+            ).slice(0, 6);
 
         }
 
+        const avatarUrl =
+          normalizeAvatarUrl(
+            profile.avatar
+          );
 
-      } catch (error) {
+        if (avatarUrl) {
+
+          avatarImg.onerror =
+            function() {
+
+              console.warn(
+                "AVATAR LOAD ERROR:",
+                avatarUrl
+              );
+
+              avatarImg.onerror =
+                null;
+
+              avatarImg.src =
+                DEFAULT_AVATAR;
+
+            };
+
+          avatarImg.src =
+            avatarUrl;
+
+        }
+
+      } catch (
+        error
+      ) {
 
         console.error(
-          'PROFILE ERROR:',
+          "PROFILE ERROR:",
           error
         );
 
-
         nameEl.innerText =
-          'Игрок ' +
-          String(address).slice(0, 6);
-
+          "Игрок " +
+          String(
+            address
+          ).slice(0, 6);
 
         avatarImg.src =
           DEFAULT_AVATAR;
@@ -1104,47 +1157,46 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* ====================================================
-       ПОЛУЧЕНИЕ АККАУНТА
-       ==================================================== */
+    /* =========================================
+       ACCOUNT
+       ========================================= */
 
     async function getAccount() {
 
       if (
         !sdk ||
         !sdk.get ||
-        typeof sdk.get.account !== 'function'
+        typeof sdk.get.account !==
+          "function"
       ) {
 
         return null;
 
       }
 
-
       try {
 
         const account =
           await sdk.get.account();
 
-
         console.log(
-          'BASTYON ACCOUNT RAW:',
+          "BASTYON ACCOUNT RAW:",
           account
         );
 
-
         if (
-          typeof account === 'string'
+          typeof account ===
+          "string"
         ) {
 
           return account;
 
         }
 
-
         if (
           account &&
-          typeof account === 'object'
+          typeof account ===
+          "object"
         ) {
 
           return (
@@ -1157,60 +1209,57 @@ content="width=device-width, initial-scale=1.0"
 
         }
 
-      } catch (error) {
+      } catch (
+        error
+      ) {
 
         console.error(
-          'ACCOUNT ERROR:',
+          "ACCOUNT ERROR:",
           error
         );
 
       }
-
 
       return null;
 
     }
 
 
-    /* ====================================================
-       ПОЛУЧЕНИЕ БАЛАНСА
-       ==================================================== */
+    /* =========================================
+       BALANCE
+       ========================================= */
 
     async function getBalance() {
 
       if (
         !sdk ||
         !sdk.get ||
-        typeof sdk.get.balance !== 'function'
+        typeof sdk.get.balance !==
+          "function"
       ) {
-
-        console.warn(
-          'sdk.get.balance отсутствует'
-        );
 
         return null;
 
       }
-
 
       try {
 
         const balance =
           await sdk.get.balance();
 
-
         console.log(
-          'BASTYON BALANCE RAW:',
+          "BASTYON BALANCE RAW:",
           balance
         );
 
-
         return balance;
 
-      } catch (error) {
+      } catch (
+        error
+      ) {
 
         console.error(
-          'BALANCE ERROR:',
+          "BALANCE ERROR:",
           error
         );
 
@@ -1221,32 +1270,18 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* ====================================================
-       ЗАГРУЗКА ДАННЫХ BASTYON
-       ==================================================== */
+    /* =========================================
+       LOAD BASTYON
+       ========================================= */
 
     async function loadBastyonUserData() {
-
-      /*
-       * ACCOUNT
-       */
 
       userAddress =
         await getAccount();
 
-
-      /*
-       * ADDRESS
-       */
-
       showAddress(
         userAddress
       );
-
-
-      /*
-       * PROFILE
-       */
 
       if (userAddress) {
 
@@ -1257,20 +1292,23 @@ content="width=device-width, initial-scale=1.0"
       } else {
 
         document
-          .getElementById('user-name')
+          .getElementById(
+            "user-name"
+          )
           .innerText =
-            'Гость';
+            "Гость";
+
+        document
+          .getElementById(
+            "user-avatar"
+          )
+          .src =
+            DEFAULT_AVATAR;
 
       }
 
-
-      /*
-       * BALANCE
-       */
-
       const balanceData =
         await getBalance();
-
 
       if (
         balanceData !== null
@@ -1284,282 +1322,24 @@ content="width=device-width, initial-scale=1.0"
 
         const balanceElement =
           document.getElementById(
-            'user-balance'
+            "user-balance"
           );
 
         balanceElement.innerText =
-          'Баланс недоступен';
+          "Баланс недоступен";
 
         balanceElement.classList.add(
-          'warning'
+          "warning"
         );
-
-      }
-
-
-      /*
-       * USERSTATE
-       */
-
-      if (
-        sdk &&
-        sdk.helpers &&
-        typeof sdk.helpers.userstate === 'function'
-      ) {
-
-        try {
-
-          const state =
-            await sdk.helpers.userstate();
-
-
-          console.log(
-            'BASTYON USERSTATE RAW:',
-            state
-          );
-
-
-          const nameElement =
-            document.getElementById(
-              'user-name'
-            );
-
-
-          const currentName =
-            nameElement.innerText;
-
-
-          if (
-            !currentName ||
-            currentName === 'Загрузка...' ||
-            currentName === 'Гость'
-          ) {
-
-            const profile =
-              state?.profile ||
-              state?.user ||
-              state?.account ||
-              state;
-
-
-            const name =
-              profile?.name ||
-              profile?.pName ||
-              profile?.nickname ||
-              profile?.username;
-
-
-            if (name) {
-
-              nameElement.innerText =
-                String(name);
-
-            }
-
-          }
-
-        } catch (error) {
-
-          console.warn(
-            'USERSTATE ERROR:',
-            error
-          );
-
-        }
 
       }
 
     }
 
 
-    /* ====================================================
-       ИНИЦИАЛИЗАЦИЯ
-       ==================================================== */
-
-    document.addEventListener(
-      'DOMContentLoaded',
-      async function() {
-
-        const status =
-          document.getElementById(
-            'status'
-          );
-
-
-        /*
-         * SDK
-         */
-
-        if (!window.BastyonSdk) {
-
-          status.classList.add(
-            'error'
-          );
-
-          status.innerText =
-            '❌ SDK Bastyon не обнаружен';
-
-          enableButtons(true);
-
-          return;
-
-        }
-
-
-        try {
-
-          /*
-           * СОЗДАНИЕ SDK
-           */
-
-          sdk =
-            new window.BastyonSdk();
-
-
-          /*
-           * INIT
-           */
-
-          if (
-            typeof sdk.init === 'function'
-          ) {
-
-            await sdk.init();
-
-          }
-
-
-          /*
-           * РАЗРЕШЕНИЯ
-           */
-
-          if (
-            sdk.permissions &&
-            typeof sdk.permissions.request === 'function'
-          ) {
-
-            try {
-
-              await sdk.permissions.request([
-                'account',
-                'payment',
-                'rpc'
-              ]);
-
-            } catch (error) {
-
-              console.warn(
-                'PERMISSIONS ERROR:',
-                error
-              );
-
-            }
-
-          }
-
-
-          /*
-           * ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
-           */
-
-          await loadBastyonUserData();
-
-
-          /*
-           * СОБЫТИЕ ИЗМЕНЕНИЯ БАЛАНСА
-           */
-
-          if (
-            typeof sdk.on === 'function'
-          ) {
-
-            sdk.on(
-              'balance',
-              function(newBalance) {
-
-                console.log(
-                  'BASTYON BALANCE EVENT:',
-                  newBalance
-                );
-
-
-                showBalance(
-                  newBalance
-                );
-
-              }
-            );
-
-          }
-
-
-          /*
-           * LOADED
-           */
-
-          if (
-            typeof sdk.emit === 'function'
-          ) {
-
-            sdk.emit(
-              'loaded'
-            );
-
-          }
-
-
-          /*
-           * STATUS
-           */
-
-          status.classList.remove(
-            'error'
-          );
-
-
-          status.innerText =
-            '● Bastyon подключён';
-
-
-          /*
-           * GAME
-           */
-
-          enableButtons(true);
-
-
-        } catch (error) {
-
-          console.error(
-            'SDK ERROR:',
-            error
-          );
-
-
-          status.classList.add(
-            'error'
-          );
-
-
-          status.innerText =
-            '❌ Ошибка SDK: ' +
-            (
-              error.message ||
-              'Ошибка'
-            );
-
-
-          enableButtons(true);
-
-        }
-
-      }
-    );
-
-
-    /* ====================================================
+    /* =========================================
        DEMO GAME
-       ==================================================== */
+       ========================================= */
 
     function playDemoMatch(
       userChoice
@@ -1570,7 +1350,6 @@ content="width=device-width, initial-scale=1.0"
           choices
         );
 
-
       const botChoice =
         keys[
           Math.floor(
@@ -1579,19 +1358,18 @@ content="width=device-width, initial-scale=1.0"
           )
         ];
 
-
       showResult(
         userChoice,
         botChoice,
-        'Бот'
+        "Бот"
       );
 
     }
 
 
-    /* ====================================================
+    /* =========================================
        PVP
-       ==================================================== */
+       ========================================= */
 
     async function playPvpMatch(
       userChoice
@@ -1599,36 +1377,53 @@ content="width=device-width, initial-scale=1.0"
 
       const result =
         document.getElementById(
-          'result-text'
+          "result-text"
         );
 
+      const pvpInfo =
+        document.getElementById(
+          "pvp-info"
+        );
+
+      const pvpMessage =
+        document.getElementById(
+          "pvp-message"
+        );
+
+      const pvpRoom =
+        document.getElementById(
+          "pvp-room"
+        );
 
       result.innerText =
-        '⏳ Подключение к PvP...';
+        "⏳ Подключение к PvP...";
 
+      pvpInfo.classList.add(
+        "show"
+      );
 
       try {
 
         const response =
           await fetch(
-            '/api/pvp/join',
+            "/api/pvp/join",
             {
-              method: 'POST',
+              method: "POST",
 
               headers: {
-                'Content-Type':
-                  'application/json'
+                "Content-Type":
+                  "application/json"
               },
 
               body: JSON.stringify({
 
                 userId:
                   userAddress ||
-                  'demo-user',
+                  "demo-user",
 
                 nickname:
                   document.getElementById(
-                    'user-name'
+                    "user-name"
                   ).innerText
 
               })
@@ -1636,90 +1431,109 @@ content="width=device-width, initial-scale=1.0"
             }
           );
 
-
         const text =
           await response.text();
 
-
         let data = null;
-
 
         try {
 
           data =
-            JSON.parse(text);
+            JSON.parse(
+              text
+            );
 
-        } catch (error) {
+        } catch (
+          error
+        ) {
 
           console.warn(
-            'PVP returned non-JSON:',
+            "PVP returned non-JSON:",
             text
           );
 
         }
-
 
         if (
           !response.ok
         ) {
 
           result.innerText =
-            '❌ PvP API: ' +
+            "❌ PvP API: " +
             response.status;
-
-
-          enableButtons(true);
 
           return;
 
         }
-
 
         if (
           data &&
           data.room
         ) {
 
-          result.innerText =
-            'Комната создана. Ожидание соперника...';
+          currentPvpRoom =
+            data.room;
+
+          pvpRoom.innerText =
+            "Комната: " +
+            currentPvpRoom.id;
+
+          if (
+            currentPvpRoom.status ===
+            "waiting"
+          ) {
+
+            pvpMessage.innerText =
+              "Комната создана. Ожидание соперника...";
+
+            result.innerText =
+              "⏳ Ожидание второго игрока...";
+
+          } else {
+
+            pvpMessage.innerText =
+              "Соперник подключён.";
+
+            result.innerText =
+              "✅ Соперник найден.";
+
+          }
 
         } else {
 
           result.innerText =
-            'Комната PvP создана.';
+            "Комната PvP создана.";
 
         }
 
-
-      } catch (error) {
+      } catch (
+        error
+      ) {
 
         console.error(
-          'PVP ERROR:',
+          "PVP ERROR:",
           error
         );
 
-
         result.innerText =
-          '❌ PvP сервер недоступен.';
+          "❌ PvP сервер недоступен.";
 
       }
-
-
-      enableButtons(true);
 
     }
 
 
-    /* ====================================================
-       ХОД
-       ==================================================== */
+    /* =========================================
+       MOVE
+       ========================================= */
 
     async function makeMove(
       userChoice
     ) {
 
       if (
-        currentRoom === 'demo'
+        currentRoom ===
+        "demo"
       ) {
 
         playDemoMatch(
@@ -1730,7 +1544,6 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
-
       await playPvpMatch(
         userChoice
       );
@@ -1738,9 +1551,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* ====================================================
-       РЕЗУЛЬТАТ
-       ==================================================== */
+    /* =========================================
+       RESULT
+       ========================================= */
 
     function showResult(
       userChoice,
@@ -1749,88 +1562,242 @@ content="width=device-width, initial-scale=1.0"
     ) {
 
       let resultMessage =
-        '';
-
-
-      /*
-       * НИЧЬЯ
-       */
+        "";
 
       if (
-        userChoice === opponentChoice
+        userChoice ===
+        opponentChoice
       ) {
 
         resultMessage =
-          'Ничья! Оба выбрали ' +
-          choices[userChoice];
+          "Ничья! Оба выбрали " +
+          choices[
+            userChoice
+          ];
 
       }
-
-
-      /*
-       * ПОБЕДА
-       */
 
       else if (
 
         (
-          userChoice === 'rock' &&
-          opponentChoice === 'scissors'
+          userChoice ===
+            "rock" &&
+          opponentChoice ===
+            "scissors"
         )
 
         ||
 
         (
-          userChoice === 'scissors' &&
-          opponentChoice === 'paper'
+          userChoice ===
+            "scissors" &&
+          opponentChoice ===
+            "paper"
         )
 
         ||
 
         (
-          userChoice === 'paper' &&
-          opponentChoice === 'rock'
+          userChoice ===
+            "paper" &&
+          opponentChoice ===
+            "rock"
         )
 
       ) {
 
         resultMessage =
-          '🎉 Вы выиграли! ' +
-          choices[userChoice] +
-          ' бьет ' +
-          choices[opponentChoice];
+          "🎉 Вы выиграли! " +
+          choices[
+            userChoice
+          ] +
+          " бьет " +
+          choices[
+            opponentChoice
+          ];
 
       }
-
-
-      /*
-       * ПОРАЖЕНИЕ
-       */
 
       else {
 
         resultMessage =
-          '💥 ' +
+          "💥 " +
           opponentName +
-          ' победил! ' +
-          choices[opponentChoice] +
-          ' бьет ' +
-          choices[userChoice];
+          " победил! " +
+          choices[
+            opponentChoice
+          ] +
+          " бьет " +
+          choices[
+            userChoice
+          ];
 
       }
 
-
       document
         .getElementById(
-          'result-text'
+          "result-text"
         )
         .innerText =
           resultMessage;
 
     }
 
+
+    /* =========================================
+       INIT
+       ========================================= */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      async function() {
+
+        const status =
+          document.getElementById(
+            "status"
+          );
+
+        if (
+          !window.BastyonSdk
+        ) {
+
+          status.classList.add(
+            "error"
+          );
+
+          status.innerText =
+            "❌ SDK Bastyon не обнаружен";
+
+          enableButtons(true);
+
+          return;
+
+        }
+
+        try {
+
+          sdk =
+            new window.BastyonSdk();
+
+          if (
+            typeof sdk.init ===
+            "function"
+          ) {
+
+            await sdk.init();
+
+          }
+
+          if (
+            sdk.permissions &&
+            typeof sdk.permissions.request ===
+              "function"
+          ) {
+
+            try {
+
+              await sdk.permissions.request([
+                "account",
+                "payment",
+                "rpc"
+              ]);
+
+            } catch (
+              error
+            ) {
+
+              console.warn(
+                "PERMISSIONS ERROR:",
+                error
+              );
+
+            }
+
+          }
+
+          await loadBastyonUserData();
+
+          if (
+            typeof sdk.on ===
+            "function"
+          ) {
+
+            sdk.on(
+              "balance",
+              function(
+                newBalance
+              ) {
+
+                console.log(
+                  "BASTYON BALANCE EVENT:",
+                  newBalance
+                );
+
+                showBalance(
+                  newBalance
+                );
+
+              }
+            );
+
+          }
+
+          if (
+            typeof sdk.emit ===
+            "function"
+          ) {
+
+            sdk.emit(
+              "loaded"
+            );
+
+          }
+
+          status.classList.remove(
+            "error"
+          );
+
+          status.classList.add(
+            "success"
+          );
+
+          status.innerText =
+            "● Bastyon подключён";
+
+          enableButtons(
+            true
+          );
+
+        } catch (
+          error
+        ) {
+
+          console.error(
+            "SDK ERROR:",
+            error
+          );
+
+          status.classList.add(
+            "error"
+          );
+
+          status.innerText =
+            "❌ Ошибка SDK: " +
+            (
+              error.message ||
+              "Ошибка"
+            );
+
+          enableButtons(
+            true
+          );
+
+        }
+
+      }
+    );
+
   </script>
 
 </body>
-
 </html>
