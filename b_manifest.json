@@ -1,12 +1,14 @@
 {
-  "id": "bastyon.videodownloader.app",
-  "name": "Bastyon Video Downloader",
+  "id": "rpss.bastyon.app",
+  "name": "Игра КНБ",
   "permissions": [
     "account",
-    "wallet",
+    "payment",
     "rpc"
   ],
+  "icon": "bastyon-rps-app.vercel.app/b_icon.png",
+  "entry": "bastyon-rps-app.vercel.app",
   "version": "1.0.0",
-  "description": "Мини-приложение для удобного скачивания видео из Bastyon",
+  "description": "Мини-игра Камень-Ножницы-Бумага для Bastyon",
   "author": "PQoPdcQdkqQSqiHxPfsMwnhxW8QAjfTEzs"
 }
