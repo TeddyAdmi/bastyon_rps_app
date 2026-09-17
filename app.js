@@ -29,11 +29,13 @@ screens[screenName].classList.add("active");
 }
 
 function icon(choice) {
-return {
+const icons = {
 stone: "🪨",
 scissors: "✂",
 paper: "📄"
-}[choice] || "?";
+};
+
+return icons[choice] || "?";
 }
 
 function resultText(result) {
@@ -41,14 +43,19 @@ if (result === "draw") {
 return "Ничья!";
 }
 
-return result === "player1"
-? "Ты победил!"
-: "Ты проиграл!";
+if (result === "player1") {
+return "Ты победил!";
+}
+
+return "Ты проиграл!";
 }
 
 function firstString(...values) {
 for (const value of values) {
-if (typeof value === "string" && value.trim()) {
+if (
+typeof value === "string" &&
+value.trim()
+) {
 return value.trim();
 }
 }
@@ -60,7 +67,7 @@ function findDeepValue(value, keys, depth = 0) {
 if (
 !value ||
 typeof value !== "object" ||
-depth > 7
+depth > 8
 ) {
 return "";
 }
@@ -201,13 +208,10 @@ avatarElement.style.backgroundImage = "";
 avatarElement.style.backgroundSize = "cover";
 avatarElement.style.backgroundPosition = "center";
 avatarElement.style.backgroundRepeat = "no-repeat";
-avatarElement.style.overflow = "hidden";
 
 ```
 if (user.avatar) {
   const image = new Image();
-
-  image.alt = "";
 
   image.onload = () => {
     avatarElement.style.backgroundImage =
@@ -240,12 +244,20 @@ user.balance === undefined
 ) {
 balanceElement.textContent = "—";
 } else {
-balanceElement.textContent =
-Number(user.balance)
-.toFixed(4)
-.replace(/0+$/, "")
-.replace(/.$/, "");
+const numericBalance =
+Number(user.balance);
+
+```
+  balanceElement.textContent =
+    Number.isFinite(numericBalance)
+      ? numericBalance
+          .toFixed(4)
+          .replace(/0+$/, "")
+          .replace(/\.$/, "")
+      : "—";
 }
+```
+
 }
 }
 
@@ -255,19 +267,31 @@ return;
 }
 
 try {
-const response = await fetch(
+const url =
 "/api/profile?address=" +
-encodeURIComponent(address),
-{
-method: "GET",
-cache: "no-store"
-}
-);
+encodeURIComponent(address);
 
 ```
+console.log(
+  "PROFILE REQUEST:",
+  url
+);
+
+const response =
+  await fetch(url, {
+    method: "GET",
+    cache: "no-store"
+  });
+
+console.log(
+  "PROFILE HTTP STATUS:",
+  response.status
+);
+
 if (!response.ok) {
   throw new Error(
-    "Profile HTTP " + response.status
+    "Profile HTTP " +
+    response.status
   );
 }
 
@@ -317,7 +341,8 @@ async function loadBastyon() {
 try {
 if (
 !window.sdk &&
-typeof window.BastyonSdk === "function"
+typeof window.BastyonSdk ===
+"function"
 ) {
 window.sdk =
 new window.BastyonSdk();
@@ -358,13 +383,15 @@ if (
   );
 
   if (
-    typeof balanceData === "number"
+    typeof balanceData ===
+    "number"
   ) {
     user.balance =
       balanceData;
   } else if (
     balanceData &&
-    typeof balanceData === "object"
+    typeof balanceData ===
+      "object"
   ) {
     console.log(
       "BASTYON BALANCE DATA:",
@@ -393,7 +420,8 @@ if (
     const found =
       candidates.find(
         ([, value]) =>
-          typeof value === "number" &&
+          typeof value ===
+            "number" &&
           Number.isFinite(value)
       );
 
@@ -422,7 +450,13 @@ error
 
 renderUser();
 
-await loadProfile(user.id);
+if (user.id) {
+await loadProfile(
+user.id
+);
+}
+
+renderUser();
 }
 
 function freeGame() {
@@ -431,14 +465,17 @@ mode = "free";
 $("#gameMode").textContent =
 "Бесплатная игра";
 
-$("#roomInfo").textContent = "";
+$("#roomInfo").textContent =
+"";
 
 $("#opponentName").textContent =
 "Компьютер";
 
-$("#playerPick").textContent = "?";
+$("#playerPick").textContent =
+"?";
 
-$("#opponentPick").textContent = "?";
+$("#opponentPick").textContent =
+"?";
 
 $("#result").textContent =
 "Сделай выбор";
@@ -531,7 +568,8 @@ $("#demoMatch").style.display =
     : "inline-block";
 
 if (
-  room.status === "waiting"
+  room.status ===
+  "waiting"
 ) {
   show("pvpWait");
 } else {
@@ -552,7 +590,8 @@ $("#gameMode").textContent =
 "PvP — 1 PKOIN";
 
 $("#roomInfo").textContent =
-"Комната " + room.id;
+"Комната " +
+room.id;
 
 $("#opponentName").textContent =
 "Соперник";
@@ -599,9 +638,11 @@ const data =
   await response.json();
 
 if (
-  data.room?.id === room.id
+  data.room?.id ===
+  room.id
 ) {
   room = data.room;
+
   setupPvp();
 } else {
   alert(
@@ -676,7 +717,8 @@ const playerIndex =
   );
 
 const outcome =
-  data.outcome === "draw"
+  data.outcome ===
+  "draw"
     ? "draw"
     : data.outcome ===
       `player${playerIndex + 1}`
@@ -706,13 +748,17 @@ event.target.closest(
 
 ```
 if (choiceButton) {
-  if (mode === "free") {
+  if (
+    mode === "free"
+  ) {
     playFree(
-      choiceButton.dataset.choice
+      choiceButton.dataset
+        .choice
     );
   } else {
     playPvp(
-      choiceButton.dataset.choice
+      choiceButton.dataset
+        .choice
     );
   }
 
@@ -749,11 +795,21 @@ demoSecondPlayer;
 
 loadBastyon();
 
-```
+````
 
-Теперь нажми **Commit changes**.
+Нажми **Commit changes**.
 
-После сохранения открой сайт и сделай **Ctrl+F5**. В шапке должны появиться настоящий профиль вместо буквы. Текущий `app.js` в репозитории действительно ещё старый и выводит только первую букву ника.
+Потом открой сайт и нажми **Ctrl + F5**.
 
-После Ctrl+F5 пришли, что показывает шапка: **аватар / имя / баланс**.
-```
+После этого в консоли должны появиться строки:
+
+```text
+PROFILE REQUEST:
+PROFILE HTTP STATUS:
+BASTYON PROFILE RAW:
+BASTYON PROFILE NORMALIZED:
+````
+
+Именно эти строки покажут нам, что реально возвращает Bastyon для **имени и аватара**. Баланс этот файл сохраняет: у тебя уже правильно определяется `actual = 0.20059996`.
+
+Если после этого снова будет `Игрок PQoPdc`, пришли **только 4 строки `PROFILE...` из консоли**, без access token.
