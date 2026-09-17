@@ -38,7 +38,10 @@ function normalizeProfile(data) {
     value.i ||
     "";
 
-  if (avatar && typeof avatar === "object") {
+  if (
+    avatar &&
+    typeof avatar === "object"
+  ) {
     avatar =
       avatar.url ||
       avatar.src ||
@@ -46,18 +49,54 @@ function normalizeProfile(data) {
       "";
   }
 
-  if (typeof avatar !== "string") {
+  if (
+    typeof avatar !== "string"
+  ) {
     avatar = "";
   }
 
   avatar = avatar.trim();
+
+  /*
+   * Bastyon itself заменяет
+   * bastyon.com:8092
+   * на
+   * pocketnet.app:8092
+   *
+   * Используем такую же схему.
+   */
+  if (
+    avatar.indexOf(
+      "https://bastyon.com:8092/"
+    ) === 0
+  ) {
+    avatar =
+      avatar.replace(
+        "https://bastyon.com:8092/",
+        "https://pocketnet.app:8092/"
+      );
+  }
+
+  if (
+    avatar.indexOf(
+      "http://bastyon.com:8092/"
+    ) === 0
+  ) {
+    avatar =
+      avatar.replace(
+        "http://bastyon.com:8092/",
+        "https://pocketnet.app:8092/"
+      );
+  }
 
   return {
     name:
       typeof name === "string"
         ? name.trim()
         : "",
-    avatarUrl: avatar
+
+    avatarUrl:
+      avatar
   };
 }
 
@@ -69,13 +108,16 @@ async function requestProfile(
     node,
     {
       method: "POST",
+
       headers: {
         "Content-Type":
           "application/json"
       },
+
       body: JSON.stringify({
         method:
           "getuserprofile",
+
         parameters: [
           [address],
           "1"
@@ -177,8 +219,10 @@ module.exports =
           .status(200)
           .json({
             success: true,
+
             address:
               address,
+
             profile:
               profile
           });
@@ -188,6 +232,7 @@ module.exports =
         console.log(
           "PROFILE RPC ERROR",
           nodes[i],
+
           error &&
           error.message
             ? error.message
@@ -200,8 +245,10 @@ module.exports =
       .status(200)
       .json({
         success: true,
+
         address:
           address,
+
         profile: {
           name: "",
           avatarUrl: ""
