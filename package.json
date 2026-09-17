@@ -1,10 +1,6 @@
 {
   "name": "bastyon-rps-app",
   "version": "1.0.0",
-  "description": "КНБ — Камень Ножницы Бумага для Bastyon",
-  "type": "module",
-  "dependencies": {
-    "pocketnet-proxy-api": "https://github.com/DaniilKimlb/pocketnet-proxy-api.git"
-  }
+  "private": true,
+  "description": "Игра КНБ — Камень Ножницы Бумага для Bastyon"
 }
-
