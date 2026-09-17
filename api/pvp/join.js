@@ -16,7 +16,8 @@ error: "Method not allowed"
 
 ```
 const body =
-  req.body && typeof req.body === "object"
+  req.body &&
+  typeof req.body === "object"
     ? req.body
     : {};
 
@@ -26,7 +27,8 @@ if (!body.userId) {
   });
 }
 
-const roomId = createRoomId();
+const roomId =
+  createRoomId();
 
 const room = {
   id: roomId,
@@ -37,16 +39,22 @@ const room = {
     24 * 60 * 60 * 1000,
   players: [
     {
-      userId: String(body.userId),
-      nickname: String(
-        body.nickname || "Player"
-      ),
+      userId:
+        String(body.userId),
+      nickname:
+        String(
+          body.nickname ||
+          "Player"
+        ),
       choice: null
     }
   ]
 };
 
-rooms.set(roomId, room);
+rooms.set(
+  roomId,
+  room
+);
 
 return res.status(200).json({
   room: room,
@@ -60,7 +68,8 @@ return res.status(200).json({
 return res.status(500).json({
 error: "SERVER_ERROR",
 message:
-error.message || "Unknown error"
+error.message ||
+"Unknown error"
 });
 }
 };
