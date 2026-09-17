@@ -1,41 +1,24 @@
 const rooms = new Map();
 
-const STAKE = Number(
-process.env.STAKE_PKOIN || 1
-);
-
-const COMMISSION_BPS = Number(
-process.env.COMMISSION_BPS || 500
-);
-
-const WAIT_HOURS = Number(
-process.env.WAIT_HOURS || 24
-);
+const STAKE = Number(process.env.STAKE_PKOIN || 1);
+const COMMISSION_BPS = Number(process.env.COMMISSION_BPS || 500);
+const WAIT_HOURS = Number(process.env.WAIT_HOURS || 24);
 
 const DEMO_MODE =
-String(
-process.env.DEMO_MODE || "true"
-).toLowerCase() === "true";
+String(process.env.DEMO_MODE || "true").toLowerCase() === "true";
 
 function makeRoomId() {
-return Math.random()
-.toString(36)
-.slice(2, 10);
+return Math.random().toString(36).slice(2, 10);
 }
 
-function joinRoom(
-userId,
-nickname
-) {
+function joinRoom(userId, nickname) {
 const now = Date.now();
 
 for (const room of rooms.values()) {
 if (
 room.status === "waiting" &&
-!room.players.some(
-(player) =>
-player.userId === userId
-)
+room.expiresAt > now &&
+!room.players.some((player) => player.userId === userId)
 ) {
 room.players.push({
 userId,
@@ -57,12 +40,7 @@ const room = {
 id: makeRoomId(),
 status: "waiting",
 createdAt: now,
-expiresAt:
-now +
-WAIT_HOURS *
-60 *
-60 *
-1000,
+expiresAt: now + WAIT_HOURS * 60 * 60 * 1000,
 players: [
 {
 userId,
@@ -73,17 +51,13 @@ choice: null
 ]
 };
 
-rooms.set(
-room.id,
-room
-);
+rooms.set(room.id, room);
 
 return room;
 }
 
 function getRoom(id) {
-const room =
-rooms.get(id);
+const room = rooms.get(id);
 
 if (!room) {
 return null;
@@ -91,8 +65,7 @@ return null;
 
 if (
 room.status === "waiting" &&
-Date.now() >
-room.expiresAt
+Date.now() > room.expiresAt
 ) {
 room.status = "expired";
 }
@@ -100,22 +73,15 @@ room.status = "expired";
 return room;
 }
 
-function recordPayment(
-roomId,
-userId
-) {
-const room =
-getRoom(roomId);
+function recordPayment(roomId, userId) {
+const room = getRoom(roomId);
 
 if (!room) {
 return null;
 }
 
-const player =
-room.players.find(
-(item) =>
-item.userId ===
-String(userId)
+const player = room.players.find(
+(item) => item.userId === String(userId)
 );
 
 if (player) {
@@ -125,13 +91,8 @@ player.paid = true;
 return room;
 }
 
-function makeChoice(
-roomId,
-userId,
-choice
-) {
-const room =
-getRoom(roomId);
+function makeChoice(roomId, userId, choice) {
+const room = getRoom(roomId);
 
 if (
 !room ||
@@ -141,50 +102,28 @@ room.players.length !== 2
 return null;
 }
 
-const player =
-room.players.find(
-(item) =>
-item.userId ===
-String(userId)
+const player = room.players.find(
+(item) => item.userId === String(userId)
 );
 
-if (
-!player ||
-player.choice
-) {
+if (!player || player.choice) {
 return null;
 }
 
-player.choice =
-choice;
+player.choice = choice;
 
-if (
-room.players.every(
-(item) =>
-item.choice
-)
-) {
-room.status =
-"finished";
+if (room.players.every((item) => item.choice)) {
+room.status = "finished";
 
 ```
 return {
   finished: true,
   roomId,
-  choices:
-    room.players.map(
-      (item) =>
-        item.choice
-    ),
-  players:
-    room.players.map(
-      (item) => ({
-        userId:
-          item.userId,
-        nickname:
-          item.nickname
-      })
-    )
+  choices: room.players.map((item) => item.choice),
+  players: room.players.map((item) => ({
+    userId: item.userId,
+    nickname: item.nickname
+  }))
 };
 ```
 
@@ -193,15 +132,11 @@ return {
 return {
 finished: false,
 roomId,
-waitingForOpponent:
-true
+waitingForOpponent: true
 };
 }
 
-function gameResult(
-a,
-b
-) {
+function gameResult(a, b) {
 if (a === b) {
 return "draw";
 }
@@ -212,62 +147,101 @@ scissors: "paper",
 paper: "stone"
 };
 
-return wins[a] === b
-? "player1"
-: "player2";
+return wins[a] === b ? "player1" : "player2";
 }
 
-function paymentStatus(
-room
-) {
+function paymentStatus(room) {
 return {
-configured:
-!DEMO_MODE,
-verifiedPlayers:
-room.players.filter(
-(player) =>
-player.paid
+configured: !DEMO_MODE,
+verifiedPlayers: room.players.filter(
+(player) => player.paid
 ).length
 };
 }
 
-function extractProfile(
-payload
-) {
+function parseJsonText(value) {
+if (typeof value !== "string") {
+return value;
+}
+
+const text = value.trim();
+
+if (!text) {
+return value;
+}
+
+try {
+return JSON.parse(text);
+} catch {
+return value;
+}
+}
+
+function extractProfile(payload) {
 let value = payload;
 
 if (
 value &&
-typeof value ===
-"object" &&
-value.result !==
-undefined
+typeof value === "object" &&
+value.result !== undefined
 ) {
 value = value.result;
 }
 
 if (
 value &&
-typeof value ===
-"object" &&
-value.data !==
-undefined
+typeof value === "object" &&
+value.data !== undefined
 ) {
-value =
-value.data;
+value = value.data;
 }
 
 if (
-Array.isArray(value)
+value &&
+typeof value === "object" &&
+value.profile !== undefined
 ) {
-value =
-value[0] || {};
+value = value.profile;
+}
+
+if (Array.isArray(value)) {
+value = value[0] || {};
 }
 
 if (
-!value ||
-typeof value !== "object"
+value &&
+typeof value === "object" &&
+value.p &&
+typeof value.p === "object"
 ) {
+const p = value.p;
+
+```
+const parsedS1 = parseJsonText(p.s1);
+const parsedS2 = parseJsonText(p.s2);
+const parsedS3 = parseJsonText(p.s3);
+const parsedS4 = parseJsonText(p.s4);
+
+value = {
+  ...value,
+  ...(parsedS1 && typeof parsedS1 === "object"
+    ? parsedS1
+    : {}),
+  ...(parsedS2 && typeof parsedS2 === "object"
+    ? parsedS2
+    : {}),
+  ...(parsedS3 && typeof parsedS3 === "object"
+    ? parsedS3
+    : {}),
+  ...(parsedS4 && typeof parsedS4 === "object"
+    ? parsedS4
+    : {})
+};
+```
+
+}
+
+if (!value || typeof value !== "object") {
 return {};
 }
 
@@ -277,6 +251,7 @@ value.pName ||
 value.nickname ||
 value.username ||
 value.displayName ||
+value.n ||
 "";
 
 let avatar =
@@ -287,117 +262,225 @@ value.avatarUrl ||
 value.imageUrl ||
 "";
 
-if (
-typeof avatar ===
-"string" &&
-avatar.trim()
-) {
+if (avatar && typeof avatar === "object") {
 avatar =
-avatar.trim();
-
-```
-if (
-  !/^https?:\/\//i.test(
-    avatar
-  ) &&
-  !avatar.startsWith(
-    "data:"
-  )
-) {
-  avatar =
-    "https://pocketnet.app/ipfs/" +
-    avatar.replace(
-      /^\/+/,
-      ""
-    );
+avatar.url ||
+avatar.src ||
+avatar.hash ||
+"";
 }
-```
 
+if (typeof avatar === "string") {
+avatar = avatar.trim();
 } else {
 avatar = "";
 }
 
+if (
+avatar &&
+!/^https?:///i.test(avatar) &&
+!/^data:/i.test(avatar) &&
+!/^///.test(avatar)
+) {
+avatar =
+"https://pocketnet.app/ipfs/" +
+avatar.replace(/^/+/, "");
+}
+
 return {
 name:
-typeof name ===
-"string"
+typeof name === "string"
 ? name.trim()
 : "",
-avatarUrl:
-avatar
+avatarUrl: avatar
 };
 }
 
-async function getProfile(
-address
-) {
+async function rpcRequest(node, method, params) {
+const controller = new AbortController();
+
+const timer = setTimeout(() => {
+controller.abort();
+}, 8000);
+
+try {
+const response = await fetch(node, {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+jsonrpc: "2.0",
+id: 1,
+method,
+params
+}),
+signal: controller.signal
+});
+
+```
+if (!response.ok) {
+  throw new Error(
+    "HTTP " + response.status
+  );
+}
+
+const text = await response.text();
+
+let payload;
+
+try {
+  payload = JSON.parse(text);
+} catch {
+  throw new Error(
+    "RPC returned non-JSON response"
+  );
+}
+
+if (payload && payload.error) {
+  throw new Error(
+    typeof payload.error === "string"
+      ? payload.error
+      : JSON.stringify(payload.error)
+  );
+}
+
+return payload;
+```
+
+} finally {
+clearTimeout(timer);
+}
+}
+
+async function getProfile(address) {
 const nodes = [
 "https://1.pocketnet.app:38881/public/",
 "https://2.pocketnet.app:38881/public/",
 "https://3.pocketnet.app:38881/public/"
 ];
 
-const requestBody = {
-jsonrpc: "2.0",
-id: 1,
-method:
+let lastError = null;
+
+for (const node of nodes) {
+try {
+let payload = await rpcRequest(
+node,
 "getuserprofile",
-params: [
 {
 address,
-shortForm:
-"basic"
-}
-]
-};
-
-let lastError =
-null;
-
-for (
-const node of nodes
-) {
-try {
-const response =
-await fetch(
-node,
-{
-method: "POST",
-headers: {
-"Content-Type":
-"application/json"
-},
-body:
-JSON.stringify(
-requestBody
-)
+shortForm: "basic"
 }
 );
 
 ```
+  let profile = extractProfile(payload);
+
   if (
-    !response.ok
+    profile.name ||
+    profile.avatarUrl
   ) {
-    throw new Error(
-      "HTTP " +
-        response.status
+    console.log(
+      "PROFILE RPC RESULT:",
+      node,
+      profile
     );
+
+    return profile;
   }
 
-  const payload =
-    await response.json();
+  try {
+    payload = await rpcRequest(
+      node,
+      "getuserprofile",
+      [
+        {
+          address,
+          shortForm: "basic"
+        }
+      ]
+    );
 
-  console.log(
-    "PROFILE RPC RESULT:",
-    payload
-  );
+    profile = extractProfile(payload);
 
-  return extractProfile(
-    payload
-  );
+    if (
+      profile.name ||
+      profile.avatarUrl
+    ) {
+      console.log(
+        "PROFILE RPC RESULT ARRAY PARAMS:",
+        node,
+        profile
+      );
+
+      return profile;
+    }
+  } catch (secondaryError) {
+    lastError = secondaryError;
+  }
+
+  try {
+    payload = await rpcRequest(
+      node,
+      "getaccountversions",
+      {
+        address,
+        pageStart: 0,
+        pageSize: 10
+      }
+    );
+
+    let versions = payload;
+
+    if (
+      versions &&
+      typeof versions === "object" &&
+      versions.result !== undefined
+    ) {
+      versions = versions.result;
+    }
+
+    if (
+      versions &&
+      typeof versions === "object" &&
+      versions.data !== undefined
+    ) {
+      versions = versions.data;
+    }
+
+    if (
+      Array.isArray(versions) &&
+      versions.length
+    ) {
+      const latest =
+        versions.find(
+          (item) =>
+            item &&
+            item.last === 1
+        ) ||
+        versions[0];
+
+      profile =
+        extractProfile(latest);
+
+      if (
+        profile.name ||
+        profile.avatarUrl
+      ) {
+        console.log(
+          "PROFILE FROM ACCOUNT VERSIONS:",
+          node,
+          profile
+        );
+
+        return profile;
+      }
+    }
+  } catch (versionsError) {
+    lastError = versionsError;
+  }
 } catch (error) {
-  lastError =
-    error;
+  lastError = error;
 
   console.log(
     "PROFILE NODE ERROR:",
@@ -417,24 +500,54 @@ new Error(
 );
 }
 
-export default async function handler(
-req,
-res
+async function readJsonBody(req) {
+if (
+req.body &&
+typeof req.body === "object"
 ) {
+return req.body;
+}
+
+return new Promise((resolve) => {
+let body = "";
+
+```
+req.on("data", (chunk) => {
+  body += chunk;
+});
+
+req.on("end", () => {
+  if (!body) {
+    resolve({});
+    return;
+  }
+
+  try {
+    resolve(JSON.parse(body));
+  } catch {
+    resolve({});
+  }
+});
+
+req.on("error", () => {
+  resolve({});
+});
+```
+
+});
+}
+
+async function handler(req, res) {
 try {
-const url =
-new URL(
+const url = new URL(
 req.url || "/",
-`https://${req.headers.host}`
+`https://${
+        req.headers.host || "localhost"
+      }`
 );
 
 ```
-const path =
-  url.pathname;
-
-// =====================================
-// PROFILE
-// =====================================
+const path = url.pathname;
 
 if (
   req.method === "GET" &&
@@ -455,9 +568,7 @@ if (
 
   try {
     const profile =
-      await getProfile(
-        address
-      );
+      await getProfile(address);
 
     return res.status(200).json({
       success: true,
@@ -475,14 +586,11 @@ if (
       error:
         "PROFILE_RPC_UNAVAILABLE",
       message:
-        error.message
+        error?.message ||
+        "Unknown profile error"
     });
   }
 }
-
-// =====================================
-// HEALTH
-// =====================================
 
 if (
   req.method === "GET" &&
@@ -499,10 +607,6 @@ if (
   });
 }
 
-// =====================================
-// STATS
-// =====================================
-
 if (
   req.method === "GET" &&
   path === "/api/stats"
@@ -511,14 +615,15 @@ if (
   let online = 0;
 
   for (
-    const room of
-      rooms.values()
+    const room of rooms.values()
   ) {
     if (
       room.status ===
-      "waiting"
+        "waiting" &&
+      room.expiresAt >
+        Date.now()
     ) {
-      waiting++;
+      waiting += 1;
     }
 
     online +=
@@ -530,10 +635,6 @@ if (
     waiting
   });
 }
-
-// =====================================
-// PVP JOIN
-// =====================================
 
 if (
   req.method === "POST" &&
@@ -572,10 +673,6 @@ if (
   });
 }
 
-// =====================================
-// PVP ROOM
-// =====================================
-
 const roomMatch =
   path.match(
     /^\/api\/pvp\/room\/([^/]+)$/
@@ -601,10 +698,6 @@ if (
     room
   });
 }
-
-// =====================================
-// PAYMENT
-// =====================================
 
 const paymentMatch =
   path.match(
@@ -644,10 +737,6 @@ if (
       paymentStatus(room)
   });
 }
-
-// =====================================
-// CHOICE
-// =====================================
 
 const choiceMatch =
   path.match(
@@ -720,9 +809,7 @@ if (
     });
   }
 
-  if (
-    result.finished
-  ) {
+  if (result.finished) {
     result.outcome =
       gameResult(
         result.choices[0],
@@ -781,55 +868,4 @@ return res.status(500).json({
 }
 }
 
-async function readJsonBody(
-req
-) {
-if (
-req.body &&
-typeof req.body ===
-"object"
-) {
-return req.body;
-}
-
-return new Promise(
-(resolve) => {
-let body = "";
-
-```
-  req.on(
-    "data",
-    (chunk) => {
-      body += chunk;
-    }
-  );
-
-  req.on(
-    "end",
-    () => {
-      if (!body) {
-        resolve({});
-        return;
-      }
-
-      try {
-        resolve(
-          JSON.parse(body)
-        );
-      } catch {
-        resolve({});
-      }
-    }
-  );
-
-  req.on(
-    "error",
-    () => {
-      resolve({});
-    }
-  );
-}
-```
-
-);
-}
+module.exports = handler;
