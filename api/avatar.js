@@ -1,3 +1,5 @@
+const https = require("https");
+
 module.exports = async function handler(
   req,
   res
@@ -27,15 +29,10 @@ module.exports = async function handler(
   }
 
   if (
-    target.protocol !==
-      "https:" ||
-    target.hostname !==
-      "bastyon.com" ||
-    target.port !==
-      "8092" ||
-    !target.pathname.startsWith(
-      "/i/"
-    )
+    target.protocol !== "https:" ||
+    target.hostname !== "bastyon.com" ||
+    target.port !== "8092" ||
+    !target.pathname.startsWith("/i/")
   ) {
     return res
       .status(403)
@@ -43,35 +40,124 @@ module.exports = async function handler(
   }
 
   try {
-    const response =
-      await fetch(
-        target.toString()
-      );
+    const image = await new Promise(
+      (resolve, reject) => {
+        const request =
+          https.get(
+            {
+              hostname:
+                "bastyon.com",
 
-    if (!response.ok) {
-      return res
-        .status(
-          response.status
-        )
-        .send(
-          "avatar unavailable"
+              port: 8092,
+
+              path:
+                target.pathname +
+                target.search,
+
+              method: "GET",
+
+              servername:
+                "bastyon.com",
+
+              rejectUnauthorized:
+                false,
+
+              headers: {
+                "User-Agent":
+                  "Bastyon-KNB/1.0",
+                "Accept":
+                  "image/avif,image/webp,image/apng,image/jpeg,image/png,*/*"
+              }
+            },
+            (response) => {
+              const chunks = [];
+              let totalSize = 0;
+
+              response.on(
+                "data",
+                (chunk) => {
+                  totalSize +=
+                    chunk.length;
+
+                  if (
+                    totalSize >
+                    5 * 1024 * 1024
+                  ) {
+                    request.destroy(
+                      new Error(
+                        "image too large"
+                      )
+                    );
+
+                    return;
+                  }
+
+                  chunks.push(chunk);
+                }
+              );
+
+              response.on(
+                "end",
+                () => {
+                  if (
+                    response.statusCode <
+                      200 ||
+                    response.statusCode >=
+                      300
+                  ) {
+                    reject(
+                      new Error(
+                        "HTTP " +
+                        response.statusCode
+                      )
+                    );
+
+                    return;
+                  }
+
+                  resolve({
+                    buffer:
+                      Buffer.concat(
+                        chunks
+                      ),
+
+                    contentType:
+                      response.headers[
+                        "content-type"
+                      ] ||
+                      "image/jpeg"
+                  });
+                }
+              );
+
+              response.on(
+                "error",
+                reject
+              );
+            }
+          );
+
+        request.on(
+          "error",
+          reject
         );
-    }
 
-    const contentType =
-      response.headers.get(
-        "content-type"
-      ) ||
-      "image/jpeg";
-
-    const buffer =
-      Buffer.from(
-        await response.arrayBuffer()
-      );
+        request.setTimeout(
+          15000,
+          () => {
+            request.destroy(
+              new Error(
+                "request timeout"
+              )
+            );
+          }
+        );
+      }
+    );
 
     res.setHeader(
       "Content-Type",
-      contentType
+      image.contentType
     );
 
     res.setHeader(
@@ -79,13 +165,18 @@ module.exports = async function handler(
       "public, max-age=86400, s-maxage=86400"
     );
 
+    res.setHeader(
+      "X-Content-Type-Options",
+      "nosniff"
+    );
+
     return res
       .status(200)
-      .send(buffer);
+      .send(image.buffer);
 
   } catch (error) {
     console.log(
-      "AVATAR PROXY ERROR",
+      "AVATAR PROXY ERROR:",
       error &&
       error.message
         ? error.message
