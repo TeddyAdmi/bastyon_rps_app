@@ -65,6 +65,13 @@ const WAIT_TIME_MS =
   24 * 60 * 60 * 1000;
 
 
+const VALID_CHOICES = [
+  "rock",
+  "scissors",
+  "paper"
+];
+
+
 function createRoomId() {
 
   return Math.random()
@@ -100,12 +107,96 @@ function getCleanWaitingPlayer(
       roomId
     );
 
+    roomsById.delete(
+      waiting.gameRoomId
+    );
+
     return null;
 
   }
 
 
   return waiting;
+
+}
+
+
+function publicRoom(
+  room
+) {
+
+  if (!room) {
+
+    return null;
+
+  }
+
+
+  return {
+
+    id:
+      room.id,
+
+    gameRoomId:
+      room.gameRoomId,
+
+    roomNumber:
+      room.roomNumber,
+
+    roomName:
+      room.roomName,
+
+    stake:
+      room.stake,
+
+    status:
+      room.status,
+
+    createdAt:
+      room.createdAt,
+
+    expiresAt:
+      room.expiresAt,
+
+    matchedAt:
+      room.matchedAt ||
+      null,
+
+    players:
+      room.players.map(
+        function(player) {
+
+          return {
+
+            userId:
+              player.userId,
+
+            nickname:
+              player.nickname,
+
+            hasChoice:
+              Boolean(
+                player.choice
+              )
+
+          };
+
+        }
+      ),
+
+    winnerUserId:
+      room.winnerUserId ||
+      null,
+
+    winnerNickname:
+      room.winnerNickname ||
+      null,
+
+    result:
+      room.result ||
+      null
+
+  };
 
 }
 
@@ -151,6 +242,9 @@ function createGameRoom(
       now +
       WAIT_TIME_MS,
 
+    matchedAt:
+      null,
+
     players: [
 
       {
@@ -166,7 +260,16 @@ function createGameRoom(
 
       }
 
-    ]
+    ],
+
+    winnerUserId:
+      null,
+
+    winnerNickname:
+      null,
+
+    result:
+      null
 
   };
 
@@ -179,6 +282,7 @@ function createGameRoom(
 
   waitingByRoom.set(
     roomId,
+
     {
 
       gameRoomId:
@@ -194,6 +298,7 @@ function createGameRoom(
         room.expiresAt
 
     }
+
   );
 
 
@@ -211,6 +316,10 @@ function matchPlayers(
     "matched";
 
 
+  room.matchedAt =
+    Date.now();
+
+
   room.players.push({
 
     userId:
@@ -223,10 +332,6 @@ function matchPlayers(
       null
 
   });
-
-
-  room.matchedAt =
-    Date.now();
 
 
   waitingByRoom.delete(
@@ -245,28 +350,197 @@ function matchPlayers(
 }
 
 
-function findRoomForWaitingPlayer(
-  roomId
+function getOutcome(
+  firstChoice,
+  secondChoice
 ) {
 
-  const waiting =
-    getCleanWaitingPlayer(
-      roomId
-    );
+  if (
+    firstChoice ===
+    secondChoice
+  ) {
 
-
-  if (!waiting) {
-
-    return null;
+    return "draw";
 
   }
 
 
-  return (
-    roomsById.get(
-      waiting.gameRoomId
-    ) || null
+  if (
+
+    (
+      firstChoice ===
+      "rock" &&
+
+      secondChoice ===
+      "scissors"
+    )
+
+    ||
+
+    (
+      firstChoice ===
+      "scissors" &&
+
+      secondChoice ===
+      "paper"
+    )
+
+    ||
+
+    (
+      firstChoice ===
+      "paper" &&
+
+      secondChoice ===
+      "rock"
+    )
+
+  ) {
+
+    return "first";
+
+  }
+
+
+  return "second";
+
+}
+
+
+function finishRoom(
+  room
+) {
+
+  const first =
+    room.players[0];
+
+  const second =
+    room.players[1];
+
+
+  if (
+
+    !first ||
+
+    !second ||
+
+    !first.choice ||
+
+    !second.choice
+
+  ) {
+
+    return room;
+
+  }
+
+
+  const outcome =
+    getOutcome(
+
+      first.choice,
+
+      second.choice
+
+    );
+
+
+  room.status =
+    "finished";
+
+
+  room.result =
+    outcome;
+
+
+  if (
+    outcome ===
+    "first"
+  ) {
+
+    room.winnerUserId =
+      first.userId;
+
+    room.winnerNickname =
+      first.nickname;
+
+  }
+
+  else if (
+    outcome ===
+    "second"
+  ) {
+
+    room.winnerUserId =
+      second.userId;
+
+    room.winnerNickname =
+      second.nickname;
+
+  }
+
+  else {
+
+    room.winnerUserId =
+      null;
+
+    room.winnerNickname =
+      null;
+
+  }
+
+
+  roomsById.set(
+    room.id,
+    room
   );
+
+
+  return room;
+
+}
+
+
+function findPlayerIndex(
+  room,
+  userId
+) {
+
+  return room.players.findIndex(
+    function(player) {
+
+      return (
+        player.userId ===
+        userId
+      );
+
+    }
+  );
+
+}
+
+
+function jsonError(
+  res,
+  status,
+  error,
+  message,
+  extra
+) {
+
+  return res
+    .status(status)
+    .json({
+
+      error:
+        error,
+
+      message:
+        message,
+
+      ...(extra || {})
+
+    });
 
 }
 
@@ -280,33 +554,30 @@ module.exports =
     try {
 
 
-      /* ==============================
-         METHOD
-         ============================== */
-
       if (
         req.method !==
         "POST"
       ) {
 
-        return res
-          .status(405)
-          .json({
+        return jsonError(
 
-            error:
-              "Method not allowed"
+          res,
 
-          });
+          405,
+
+          "METHOD_NOT_ALLOWED",
+
+          "Method not allowed"
+
+        );
 
       }
 
 
-      /* ==============================
-         BODY
-         ============================== */
-
       const body =
+
         req.body &&
+
         typeof req.body ===
           "object"
 
@@ -315,107 +586,19 @@ module.exports =
           : {};
 
 
-      /* ==============================
-         USER
-         ============================== */
-
-      if (!body.userId) {
-
-        return res
-          .status(400)
-          .json({
-
-            error:
-              "userId is required"
-
-          });
-
-      }
-
-
-      /* ==============================
-         ROOM
-         ============================== */
-
-      const roomId =
+      const action =
         String(
-          body.roomId ||
-          ""
+          body.action ||
+          "join"
         );
 
-
-      const roomConfig =
-        ROOM_CONFIG[
-          roomId
-        ];
-
-
-      if (!roomConfig) {
-
-        return res
-          .status(400)
-          .json({
-
-            error:
-              "INVALID_ROOM",
-
-            message:
-              "Неверная PvP-комната"
-
-          });
-
-      }
-
-
-      /* ==============================
-         STAKE
-         ============================== */
-
-      const requestedStake =
-        Number(
-          body.stake
-        );
-
-
-      if (
-
-        !Number.isFinite(
-          requestedStake
-        )
-
-        ||
-
-        requestedStake !==
-          roomConfig.stake
-
-      ) {
-
-        return res
-          .status(400)
-          .json({
-
-            error:
-              "INVALID_STAKE",
-
-            message:
-              "Ставка не соответствует комнате",
-
-            expectedStake:
-              roomConfig.stake
-
-          });
-
-      }
-
-
-      /* ==============================
-         PLAYER
-         ============================== */
 
       const userId =
-        String(
-          body.userId
-        );
+        body.userId
+          ? String(
+              body.userId
+            )
+          : "";
 
 
       const nickname =
@@ -425,104 +608,147 @@ module.exports =
         );
 
 
-      /* ==============================
-         LOOK FOR WAITING PLAYER
-         ============================== */
+      if (!userId) {
 
-      const existingWaiting =
-        getCleanWaitingPlayer(
-          roomId
+        return jsonError(
+
+          res,
+
+          400,
+
+          "USER_REQUIRED",
+
+          "userId is required"
+
         );
 
+      }
 
-      /* ==============================
-         FIRST PLAYER
-         ============================== */
 
-      if (!existingWaiting) {
+      /* =====================================
+         JOIN
+         ===================================== */
 
-        const room =
-          createGameRoom(
+      if (
+        action ===
+        "join"
+      ) {
 
-            roomId,
+        const roomId =
+          String(
+            body.roomId ||
+            ""
+          );
 
-            roomConfig,
+
+        const roomConfig =
+          ROOM_CONFIG[
+            roomId
+          ];
+
+
+        if (!roomConfig) {
+
+          return jsonError(
+
+            res,
+
+            400,
+
+            "INVALID_ROOM",
+
+            "Неверная PvP-комната"
+
+          );
+
+        }
+
+
+        const requestedStake =
+          Number(
+            body.stake
+          );
+
+
+        if (
+
+          !Number.isFinite(
+            requestedStake
+          )
+
+          ||
+
+          requestedStake !==
+            roomConfig.stake
+
+        ) {
+
+          return jsonError(
+
+            res,
+
+            400,
+
+            "INVALID_STAKE",
+
+            "Ставка не соответствует комнате",
 
             {
 
-              userId:
-                userId,
-
-              nickname:
-                nickname
+              expectedStake:
+                roomConfig.stake
 
             }
 
           );
 
-
-        return res
-          .status(200)
-          .json({
-
-            room:
-              room,
-
-            matched:
-              false,
-
-            alreadyWaiting:
-              false,
-
-            paymentRequired:
-              true,
-
-            stake:
-              roomConfig.stake,
-
-            roomId:
-              roomConfig.number,
-
-            roomName:
-              roomConfig.name,
-
-            waitHours:
-              24
-
-          });
-
-      }
+        }
 
 
-      /* ==============================
-         SAME PLAYER
-         ============================== */
-
-      if (
-        existingWaiting.userId ===
-        userId
-      ) {
-
-        const existingRoom =
-          roomsById.get(
-            existingWaiting.gameRoomId
+        const existingWaiting =
+          getCleanWaitingPlayer(
+            roomId
           );
 
 
-        if (existingRoom) {
+        /* FIRST PLAYER */
+
+        if (!existingWaiting) {
+
+          const room =
+            createGameRoom(
+
+              roomId,
+
+              roomConfig,
+
+              {
+
+                userId:
+                  userId,
+
+                nickname:
+                  nickname
+
+              }
+
+            );
+
 
           return res
             .status(200)
             .json({
 
               room:
-                existingRoom,
+                publicRoom(
+                  room
+                ),
 
               matched:
                 false,
 
               alreadyWaiting:
-                true,
+                false,
 
               paymentRequired:
                 true,
@@ -543,31 +769,144 @@ module.exports =
 
         }
 
-      }
+
+        /* SAME PLAYER */
+
+        if (
+          existingWaiting.userId ===
+          userId
+        ) {
+
+          const existingRoom =
+            roomsById.get(
+              existingWaiting.gameRoomId
+            );
 
 
-      /* ==============================
-         FIND ROOM
-         ============================== */
+          if (existingRoom) {
 
-      const waitingRoom =
-        findRoomForWaitingPlayer(
-          roomId
-        );
+            return res
+              .status(200)
+              .json({
+
+                room:
+                  publicRoom(
+                    existingRoom
+                  ),
+
+                matched:
+                  existingRoom.status ===
+                  "matched",
+
+                alreadyWaiting:
+                  existingRoom.status ===
+                  "waiting",
+
+                paymentRequired:
+                  true,
+
+                stake:
+                  roomConfig.stake,
+
+                roomId:
+                  roomConfig.number,
+
+                roomName:
+                  roomConfig.name,
+
+                waitHours:
+                  24
+
+              });
+
+          }
+
+        }
 
 
-      /* ==============================
-         NO VALID ROOM
-         ============================== */
+        const waitingRoom =
+          roomsById.get(
+            existingWaiting.gameRoomId
+          );
 
-      if (!waitingRoom) {
 
-        const room =
-          createGameRoom(
+        /* INVALID WAITING ROOM */
 
-            roomId,
+        if (
 
-            roomConfig,
+          !waitingRoom ||
+
+          waitingRoom.status !==
+            "waiting"
+
+        ) {
+
+          waitingByRoom.delete(
+            roomId
+          );
+
+
+          const newRoom =
+            createGameRoom(
+
+              roomId,
+
+              roomConfig,
+
+              {
+
+                userId:
+                  userId,
+
+                nickname:
+                  nickname
+
+              }
+
+            );
+
+
+          return res
+            .status(200)
+            .json({
+
+              room:
+                publicRoom(
+                  newRoom
+                ),
+
+              matched:
+                false,
+
+              alreadyWaiting:
+                false,
+
+              paymentRequired:
+                true,
+
+              stake:
+                roomConfig.stake,
+
+              roomId:
+                roomConfig.number,
+
+              roomName:
+                roomConfig.name,
+
+              waitHours:
+                24
+
+            });
+
+        }
+
+
+        /* SECOND PLAYER */
+
+        const matchedRoom =
+          matchPlayers(
+
+            waitingRoom,
 
             {
 
@@ -587,10 +926,12 @@ module.exports =
           .json({
 
             room:
-              room,
+              publicRoom(
+                matchedRoom
+              ),
 
             matched:
-              false,
+              true,
 
             alreadyWaiting:
               false,
@@ -615,61 +956,504 @@ module.exports =
       }
 
 
-      /* ==============================
-         MATCH SECOND PLAYER
-         ============================== */
+      /* =====================================
+         STATUS
+         ===================================== */
 
-      const matchedRoom =
-        matchPlayers(
+      if (
+        action ===
+        "status"
+      ) {
 
-          waitingRoom,
+        const gameRoomId =
+          String(
+            body.gameRoomId ||
+            ""
+          );
 
-          {
 
-            userId:
-              userId,
+        const room =
+          roomsById.get(
+            gameRoomId
+          );
 
-            nickname:
-              nickname
+
+        if (!room) {
+
+          return jsonError(
+
+            res,
+
+            404,
+
+            "ROOM_NOT_FOUND",
+
+            "Комната не найдена"
+
+          );
+
+        }
+
+
+        if (
+
+          Date.now() >
+            room.expiresAt &&
+
+          room.status ===
+            "waiting"
+
+        ) {
+
+          roomsById.delete(
+            room.id
+          );
+
+
+          const waiting =
+            waitingByRoom.get(
+              room.gameRoomId
+            );
+
+
+          if (
+
+            waiting &&
+
+            waiting.gameRoomId ===
+              room.id
+
+          ) {
+
+            waitingByRoom.delete(
+              room.gameRoomId
+            );
 
           }
 
-        );
+
+          return jsonError(
+
+            res,
+
+            410,
+
+            "ROOM_EXPIRED",
+
+            "Время ожидания истекло"
+
+          );
+
+        }
 
 
-      /* ==============================
-         RESPONSE
-         ============================== */
+        return res
+          .status(200)
+          .json({
 
-      return res
-        .status(200)
-        .json({
+            room:
+              publicRoom(
+                room
+              ),
 
-          room:
-            matchedRoom,
+            matched:
+              room.status ===
+              "matched",
 
-          matched:
-            true,
+            finished:
+              room.status ===
+              "finished"
 
-          alreadyWaiting:
-            false,
+          });
 
-          paymentRequired:
-            true,
+      }
 
-          stake:
-            roomConfig.stake,
 
-          roomId:
-            roomConfig.number,
+      /* =====================================
+         MOVE
+         ===================================== */
 
-          roomName:
-            roomConfig.name,
+      if (
+        action ===
+        "move"
+      ) {
 
-          waitHours:
-            24
+        const gameRoomId =
+          String(
+            body.gameRoomId ||
+            ""
+          );
 
-        });
+
+        const choice =
+          String(
+            body.choice ||
+            ""
+          );
+
+
+        if (
+          !VALID_CHOICES.includes(
+            choice
+          )
+        ) {
+
+          return jsonError(
+
+            res,
+
+            400,
+
+            "INVALID_CHOICE",
+
+            "Неверный ход"
+
+          );
+
+        }
+
+
+        const room =
+          roomsById.get(
+            gameRoomId
+          );
+
+
+        if (!room) {
+
+          return jsonError(
+
+            res,
+
+            404,
+
+            "ROOM_NOT_FOUND",
+
+            "Комната не найдена"
+
+          );
+
+        }
+
+
+        if (
+          room.status ===
+          "waiting"
+        ) {
+
+          return jsonError(
+
+            res,
+
+            409,
+
+            "WAITING_OPPONENT",
+
+            "Соперник ещё не найден"
+
+          );
+
+        }
+
+
+        if (
+          room.status ===
+          "finished"
+        ) {
+
+          return res
+            .status(200)
+            .json({
+
+              room:
+                publicRoom(
+                  room
+                ),
+
+              finished:
+                true
+
+            });
+
+        }
+
+
+        const playerIndex =
+          findPlayerIndex(
+
+            room,
+
+            userId
+
+          );
+
+
+        if (
+          playerIndex ===
+          -1
+        ) {
+
+          return jsonError(
+
+            res,
+
+            403,
+
+            "PLAYER_NOT_IN_ROOM",
+
+            "Игрок не находится в этой комнате"
+
+          );
+
+        }
+
+
+        const player =
+          room.players[
+            playerIndex
+          ];
+
+
+        if (
+          player.choice
+        ) {
+
+          return jsonError(
+
+            res,
+
+            409,
+
+            "ALREADY_MOVED",
+
+            "Вы уже сделали ход"
+
+          );
+
+        }
+
+
+        player.choice =
+          choice;
+
+
+        if (
+
+          room.players[0].choice &&
+
+          room.players[1].choice
+
+        ) {
+
+          finishRoom(
+            room
+          );
+
+        }
+
+
+        return res
+          .status(200)
+          .json({
+
+            room:
+              publicRoom(
+                room
+              ),
+
+            accepted:
+              true,
+
+            finished:
+              room.status ===
+              "finished"
+
+          });
+
+      }
+
+
+      /* =====================================
+         LEAVE
+         ===================================== */
+
+      if (
+        action ===
+        "leave"
+      ) {
+
+        const gameRoomId =
+          String(
+            body.gameRoomId ||
+            ""
+          );
+
+
+        const room =
+          roomsById.get(
+            gameRoomId
+          );
+
+
+        if (!room) {
+
+          return res
+            .status(200)
+            .json({
+
+              ok:
+                true
+
+            });
+
+        }
+
+
+        const playerIndex =
+          findPlayerIndex(
+
+            room,
+
+            userId
+
+          );
+
+
+        if (
+          playerIndex ===
+          -1
+        ) {
+
+          return res
+            .status(200)
+            .json({
+
+              ok:
+                true
+
+            });
+
+        }
+
+
+        /* LEAVE WAITING ROOM */
+
+        if (
+          room.status ===
+          "waiting"
+        ) {
+
+          waitingByRoom.delete(
+            room.gameRoomId
+          );
+
+          roomsById.delete(
+            room.id
+          );
+
+
+          return res
+            .status(200)
+            .json({
+
+              ok:
+                true
+
+            });
+
+        }
+
+
+        /* LEAVE MATCHED ROOM */
+
+        if (
+          room.status ===
+          "matched"
+        ) {
+
+          room.players.splice(
+            playerIndex,
+            1
+          );
+
+
+          if (
+            room.players.length <
+            2
+          ) {
+
+            room.status =
+              "waiting";
+
+
+            room.matchedAt =
+              null;
+
+
+            const remaining =
+              room.players[0];
+
+
+            if (remaining) {
+
+              waitingByRoom.set(
+
+                room.gameRoomId,
+
+                {
+
+                  gameRoomId:
+                    room.id,
+
+                  userId:
+                    remaining.userId,
+
+                  nickname:
+                    remaining.nickname,
+
+                  expiresAt:
+                    room.expiresAt
+
+                }
+
+              );
+
+            }
+
+
+            roomsById.set(
+              room.id,
+              room
+            );
+
+          }
+
+        }
+
+
+        return res
+          .status(200)
+          .json({
+
+            ok:
+              true
+
+          });
+
+      }
+
+
+      return jsonError(
+
+        res,
+
+        400,
+
+        "INVALID_ACTION",
+
+        "Неизвестное действие"
+
+      );
 
     }
 
@@ -679,7 +1463,7 @@ module.exports =
     ) {
 
       console.error(
-        "PVP JOIN ERROR:",
+        "PVP ERROR:",
         error
       );
 
