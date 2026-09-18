@@ -1,17 +1,9 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
->
-
-  <title>Игра КНБ</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>КНБ — Камень Ножницы Бумага</title>
   <script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
 
   <style>
@@ -21,10 +13,8 @@ content="width=device-width, initial-scale=1.0"
 
     body {
       margin: 0;
-      padding: 20px;
-
       min-height: 100vh;
-
+      padding: 18px 12px 30px;
       font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -32,175 +22,288 @@ content="width=device-width, initial-scale=1.0"
         Roboto,
         Arial,
         sans-serif;
-
-      background: #1a1a1a;
-
+      background:
+        radial-gradient(
+          circle at top,
+          #303030 0%,
+          #1b1b1b 34%,
+          #111111 100%
+        );
       color: #ffffff;
     }
 
     .card {
       width: 100%;
-      max-width: 420px;
-
-      margin: 20px auto;
-      padding: 20px;
-
-      background: #2a2a2a;
-
-      border-radius: 16px;
-
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px;
+      background: rgba(38, 38, 38, 0.96);
+      border: 1px solid #383838;
+      border-radius: 20px;
       box-shadow:
-        0 4px 20px
-        rgba(0, 0, 0, 0.45);
+        0 14px 40px rgba(0, 0, 0, 0.45);
     }
 
-    h1 {
-      margin: 0 0 20px;
-
-      font-size: 28px;
-
+    .app-header {
+      margin-bottom: 16px;
       text-align: center;
     }
 
-    /* =========================================
-       PROFILE
-       ========================================= */
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+      color: #9a9a9a;
+      font-size: 13px;
+    }
+
+    /* PROFILE */
 
     .profile-card {
       display: flex;
-
       align-items: center;
-
       gap: 12px;
-
       padding: 12px;
-
-      margin-bottom: 20px;
-
-      background: #1e1e1e;
-
-      border: 1px solid #333;
-
-      border-radius: 12px;
+      margin-bottom: 18px;
+      background: #1d1d1d;
+      border: 1px solid #353535;
+      border-radius: 14px;
     }
 
     .profile-avatar {
-      width: 54px;
-      height: 54px;
-
+      width: 56px;
+      height: 56px;
       flex-shrink: 0;
-
       border-radius: 50%;
-
       object-fit: cover;
-
       background: #333;
-
       border: 2px solid #00ff88;
-
       display: block;
     }
 
     .profile-info {
       min-width: 0;
-
       flex: 1;
     }
 
     .profile-name {
       font-size: 17px;
-
       font-weight: 700;
-
-      color: #fff;
-
       white-space: nowrap;
-
       overflow: hidden;
-
       text-overflow: ellipsis;
     }
 
     .profile-address {
       margin-top: 3px;
-
+      color: #858585;
       font-family: monospace;
-
       font-size: 12px;
-
-      color: #888;
-
       white-space: nowrap;
-
       overflow: hidden;
-
       text-overflow: ellipsis;
     }
 
     .profile-balance {
       margin-top: 5px;
-
-      font-size: 14px;
-
-      font-weight: 700;
-
       color: #00ff88;
+      font-size: 14px;
+      font-weight: 800;
     }
 
-    /* =========================================
-       ROOMS
-       ========================================= */
+    /* ROOMS */
 
-    .rooms {
-      display: flex;
+    .section-title {
+      margin: 4px 0 10px;
+      font-size: 16px;
+      font-weight: 800;
+    }
 
+    .rooms-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
       gap: 10px;
-
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .room-btn {
-      flex: 1;
+      position: relative;
+      width: 100%;
+      min-height: 78px;
+      padding: 12px;
+      text-align: left;
 
-      padding: 12px 8px;
+      border: 1px solid #424242;
+      border-radius: 14px;
 
-      border: 2px solid #444;
+      background:
+        linear-gradient(
+          180deg,
+          #333333 0%,
+          #2a2a2a 100%
+        );
 
-      border-radius: 10px;
-
-      background: #333;
-
-      color: #fff;
+      color: #ffffff;
 
       cursor: pointer;
 
-      font-size: 14px;
-
-      font-weight: 700;
-
       transition:
-        background 0.2s,
-        border-color 0.2s,
-        transform 0.1s;
+        transform 0.12s ease,
+        border-color 0.18s ease,
+        background 0.18s ease;
     }
 
     .room-btn:hover {
-      background: #3d3d3d;
+      background:
+        linear-gradient(
+          180deg,
+          #3a3a3a 0%,
+          #303030 100%
+        );
+
+      border-color: #5b5b5b;
+
+      transform: translateY(-1px);
     }
 
     .room-btn:active {
-      transform: scale(0.98);
+      transform: scale(0.985);
     }
 
     .room-btn.active {
-      border-color: #00ff88;
+      border: 2px solid #00ff88;
 
-      background: #1e3a29;
+      background:
+        linear-gradient(
+          180deg,
+          #1f3b2c 0%,
+          #1b2f24 100%
+        );
+
+      box-shadow:
+        inset 0 0 0 1px
+        rgba(0, 255, 136, 0.08);
     }
 
-    /* =========================================
-       GAME BUTTONS
-       ========================================= */
+    .room-number {
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      width: 24px;
+      height: 24px;
+
+      margin-right: 7px;
+
+      border-radius: 8px;
+
+      background: #1d1d1d;
+      color: #bbbbbb;
+
+      font-size: 11px;
+      font-weight: 800;
+
+      vertical-align: middle;
+    }
+
+    .room-name {
+      font-size: 14px;
+      font-weight: 800;
+      vertical-align: middle;
+    }
+
+    .room-stake {
+      margin-top: 7px;
+      color: #00ff88;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .room-mode {
+      margin-top: 3px;
+      color: #8e8e8e;
+      font-size: 11px;
+    }
+
+    .room-badge {
+      position: absolute;
+
+      top: 9px;
+      right: 9px;
+
+      padding: 3px 6px;
+
+      border-radius: 6px;
+
+      background: #222;
+      color: #8f8f8f;
+
+      font-size: 9px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+    }
+
+    .room-btn.active .room-badge {
+      background: #174b31;
+      color: #8affbf;
+    }
+
+    /* SELECTED ROOM */
+
+    .selected-room {
+      padding: 12px 14px;
+      margin-bottom: 14px;
+
+      background: #202020;
+
+      border: 1px solid #343434;
+      border-radius: 12px;
+    }
+
+    .selected-room-label {
+      color: #888;
+
+      font-size: 11px;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.6px;
+    }
+
+    .selected-room-main {
+      margin-top: 3px;
+
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .selected-room-note {
+      margin-top: 4px;
+
+      color: #a2a2a2;
+
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    /* GAME */
+
+    .game-title {
+      margin-top: 14px;
+
+      text-align: center;
+
+      font-size: 15px;
+      font-weight: 800;
+    }
 
     .buttons {
       display: flex;
@@ -209,21 +312,19 @@ content="width=device-width, initial-scale=1.0"
 
       gap: 12px;
 
-      margin: 25px 0;
+      margin: 18px 0;
     }
 
     .game-btn {
-      width: 95px;
-      height: 95px;
+      width: 100px;
+      height: 100px;
 
       padding: 10px;
 
       border: 2px solid #444;
-
-      border-radius: 14px;
+      border-radius: 16px;
 
       background: #333;
-
       color: #fff;
 
       cursor: pointer;
@@ -254,65 +355,29 @@ content="width=device-width, initial-scale=1.0"
       cursor: not-allowed;
     }
 
-    /* =========================================
-       RESULT
-       ========================================= */
+    /* RESULT */
 
     .result {
-      min-height: 70px;
+      min-height: 72px;
 
-      margin-top: 15px;
+      margin-top: 10px;
 
-      padding: 12px;
+      padding: 14px;
 
-      border-radius: 10px;
+      border-radius: 12px;
 
       background: #202020;
 
-      font-size: 16px;
+      font-size: 15px;
 
       font-weight: 700;
 
       text-align: center;
 
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
-    /* =========================================
-       STATUS
-       ========================================= */
-
-    #status {
-      margin: 15px 0 0;
-
-      color: #00ff88;
-
-      font-size: 13px;
-
-      text-align: center;
-
-      line-height: 1.4;
-    }
-
-    .error {
-      color: #ff4444 !important;
-    }
-
-    .warning {
-      color: #ffaa00 !important;
-    }
-
-    .success {
-      color: #00ff88 !important;
-    }
-
-    .muted {
-      color: #888 !important;
-    }
-
-    /* =========================================
-       PVP INFO
-       ========================================= */
+    /* PVP */
 
     .pvp-info {
       display: none;
@@ -327,11 +392,11 @@ content="width=device-width, initial-scale=1.0"
 
       border: 1px solid #333;
 
+      color: #aaa;
+
       font-size: 13px;
 
       line-height: 1.5;
-
-      color: #aaa;
 
       text-align: center;
     }
@@ -348,209 +413,651 @@ content="width=device-width, initial-scale=1.0"
       font-family: monospace;
     }
 
-    @media (max-width: 480px) {
+    /* STATUS */
+
+    #status {
+      margin: 14px 0 0;
+
+      color: #00ff88;
+
+      font-size: 12px;
+
+      text-align: center;
+
+      line-height: 1.4;
+    }
+
+    .error {
+      color: #ff5555 !important;
+    }
+
+    .warning {
+      color: #ffaa00 !important;
+    }
+
+    .success {
+      color: #00ff88 !important;
+    }
+
+    @media (max-width: 520px) {
       body {
-        padding: 10px;
+        padding:
+          10px 8px 20px;
       }
 
       .card {
-        margin: 10px auto;
-        padding: 16px;
+        padding: 14px;
+
+        border-radius: 16px;
+      }
+
+      .rooms-grid {
+        grid-template-columns: 1fr;
       }
 
       .game-btn {
-        width: 82px;
-        height: 82px;
+        width: 84px;
+        height: 84px;
 
         font-size: 36px;
       }
     }
   </style>
-
 </head>
 
 <body>
 
   <div class="card">
 
-```
-<h1>
-  🪨 ✂️ 📄 КНБ
-</h1>
+    <div class="app-header">
+      <h1>🪨 ✂️ 📄 КНБ</h1>
 
-<!-- =======================================
-     PROFILE
-     ======================================= -->
-
-<div class="profile-card">
-
-  <img
-    id="user-avatar"
-    class="profile-avatar"
-    alt="Аватар"
-  >
-
-  <div class="profile-info">
-
-    <div
-      id="user-name"
-      class="profile-name"
-    >
-      Загрузка...
+      <div class="subtitle">
+        Камень • Ножницы • Бумага
+      </div>
     </div>
 
-    <div
-      id="user-address"
-      class="profile-address"
-    >
-      Адрес: --
+
+    <!-- PROFILE -->
+
+    <div class="profile-card">
+
+      <img
+        id="user-avatar"
+        class="profile-avatar"
+        alt="Аватар"
+      >
+
+      <div class="profile-info">
+
+        <div
+          id="user-name"
+          class="profile-name"
+        >
+          Загрузка...
+        </div>
+
+        <div
+          id="user-address"
+          class="profile-address"
+        >
+          Адрес: --
+        </div>
+
+        <div
+          id="user-balance"
+          class="profile-balance"
+        >
+          Баланс загружается...
+        </div>
+
+      </div>
+
     </div>
 
-    <div
-      id="user-balance"
-      class="profile-balance"
-    >
-      Баланс загружается...
+
+    <!-- ROOMS -->
+
+    <div class="section-title">
+      Выберите комнату
     </div>
 
+
+    <div
+      class="rooms-grid"
+      id="rooms-grid"
+    >
+
+      <!-- 1 -->
+
+      <button
+        class="room-btn active"
+        data-room-id="room-1"
+        onclick="selectRoom('room-1')"
+      >
+
+        <span class="room-badge">
+          Free
+        </span>
+
+        <span class="room-number">
+          1
+        </span>
+
+        <span class="room-name">
+          Новичок
+        </span>
+
+        <div class="room-stake">
+          Бесплатно
+        </div>
+
+        <div class="room-mode">
+          🤖 Игра с компьютером
+        </div>
+
+      </button>
+
+
+      <!-- 2 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-2"
+        onclick="selectRoom('room-2')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          2
+        </span>
+
+        <span class="room-name">
+          Bronze
+        </span>
+
+        <div class="room-stake">
+          0.2 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+
+      <!-- 3 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-3"
+        onclick="selectRoom('room-3')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          3
+        </span>
+
+        <span class="room-name">
+          Silver
+        </span>
+
+        <div class="room-stake">
+          0.5 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+
+      <!-- 4 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-4"
+        onclick="selectRoom('room-4')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          4
+        </span>
+
+        <span class="room-name">
+          Gold
+        </span>
+
+        <div class="room-stake">
+          1 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+
+      <!-- 5 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-5"
+        onclick="selectRoom('room-5')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          5
+        </span>
+
+        <span class="room-name">
+          Platinum
+        </span>
+
+        <div class="room-stake">
+          2 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+
+      <!-- 6 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-6"
+        onclick="selectRoom('room-6')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          6
+        </span>
+
+        <span class="room-name">
+          Diamond
+        </span>
+
+        <div class="room-stake">
+          3 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+
+      <!-- 7 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-7"
+        onclick="selectRoom('room-7')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          7
+        </span>
+
+        <span class="room-name">
+          Master
+        </span>
+
+        <div class="room-stake">
+          4 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+
+      <!-- 8 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-8"
+        onclick="selectRoom('room-8')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          8
+        </span>
+
+        <span class="room-name">
+          Elite
+        </span>
+
+        <div class="room-stake">
+          5 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+
+      <!-- 9 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-9"
+        onclick="selectRoom('room-9')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          9
+        </span>
+
+        <span class="room-name">
+          Champion
+        </span>
+
+        <div class="room-stake">
+          10 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+
+      <!-- 10 -->
+
+      <button
+        class="room-btn"
+        data-room-id="room-10"
+        onclick="selectRoom('room-10')"
+      >
+
+        <span class="room-badge">
+          PvP
+        </span>
+
+        <span class="room-number">
+          10
+        </span>
+
+        <span class="room-name">
+          Legend
+        </span>
+
+        <div class="room-stake">
+          50 PKOIN
+        </div>
+
+        <div class="room-mode">
+          ⚔️ Между игроками
+        </div>
+
+      </button>
+
+    </div>
+
+
+    <!-- SELECTED ROOM -->
+
+    <div class="selected-room">
+
+      <div class="selected-room-label">
+        Выбрано
+      </div>
+
+      <div
+        id="selected-room-main"
+        class="selected-room-main"
+      >
+        1. Новичок — бесплатно
+      </div>
+
+      <div
+        id="selected-room-note"
+        class="selected-room-note"
+      >
+        Бесплатная игра с компьютером.
+      </div>
+
+    </div>
+
+
+    <!-- GAME -->
+
+    <div class="game-title">
+      Сделайте ход
+    </div>
+
+    <div class="buttons">
+
+      <button
+        class="game-btn"
+        id="btn-rock"
+        onclick="makeMove('rock')"
+        disabled
+        title="Камень"
+      >
+        🪨
+      </button>
+
+      <button
+        class="game-btn"
+        id="btn-scissors"
+        onclick="makeMove('scissors')"
+        disabled
+        title="Ножницы"
+      >
+        ✂️
+      </button>
+
+      <button
+        class="game-btn"
+        id="btn-paper"
+        onclick="makeMove('paper')"
+        disabled
+        title="Бумага"
+      >
+        📄
+      </button>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div
+      id="result-text"
+      class="result"
+    >
+      Выберите комнату и сделайте ваш ход!
+    </div>
+
+
+    <!-- PVP -->
+
+    <div
+      id="pvp-info"
+      class="pvp-info"
+    >
+
+      <div id="pvp-message">
+        PvP ожидает соперника
+      </div>
+
+      <div
+        id="pvp-room"
+        class="room-id"
+      ></div>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <p id="status">
+      Запуск Bastyon SDK...
+    </p>
+
   </div>
 
-</div>
-
-<!-- =======================================
-     ROOMS
-     ======================================= -->
-
-<div class="rooms">
-
-  <button
-    class="room-btn active"
-    id="mode-demo"
-    onclick="selectRoom('demo')"
-  >
-    🤖 Бесплатная
-  </button>
-
-  <button
-    class="room-btn"
-    id="mode-pvp"
-    onclick="selectRoom('pvp')"
-  >
-    ⚔️ 1 PKOIN
-  </button>
-
-</div>
-
-<!-- =======================================
-     GAME BUTTONS
-     ======================================= -->
-
-<div class="buttons">
-
-  <button
-    class="game-btn"
-    id="btn-rock"
-    onclick="makeMove('rock')"
-    disabled
-    title="Камень"
-  >
-    🪨
-  </button>
-
-  <button
-    class="game-btn"
-    id="btn-scissors"
-    onclick="makeMove('scissors')"
-    disabled
-    title="Ножницы"
-  >
-    ✂️
-  </button>
-
-  <button
-    class="game-btn"
-    id="btn-paper"
-    onclick="makeMove('paper')"
-    disabled
-    title="Бумага"
-  >
-    📄
-  </button>
-
-</div>
-
-<!-- =======================================
-     RESULT
-     ======================================= -->
-
-<div
-  class="result"
-  id="result-text"
->
-  Выберите режим и сделайте ваш ход!
-</div>
-
-<!-- =======================================
-     PVP INFO
-     ======================================= -->
-
-<div
-  id="pvp-info"
-  class="pvp-info"
->
-  <div id="pvp-message">
-    PvP ожидает соперника
-  </div>
-
-  <div
-    id="pvp-room"
-    class="room-id"
-  >
-  </div>
-</div>
-
-<!-- =======================================
-     STATUS
-     ======================================= -->
-
-<p id="status">
-  Запуск Bastyon SDK...
-</p>
-```
-
-  </div>
 
   <script>
-
-    /* =========================================
-       GLOBAL
-       ========================================= */
 
     let sdk = null;
 
     let userAddress = null;
 
-    let currentRoom = "demo";
+    let currentRoom = "room-1";
 
     let currentPvpRoom = null;
 
 
-    /* =========================================
-       DEFAULT AVATAR
-       ========================================= */
+    /* ROOMS */
+
+    const ROOMS = {
+
+      "room-1": {
+        number: 1,
+        name: "Новичок",
+        stake: 0,
+        stakeText: "бесплатно",
+        mode: "demo"
+      },
+
+      "room-2": {
+        number: 2,
+        name: "Bronze",
+        stake: 0.2,
+        stakeText: "0.2 PKOIN",
+        mode: "pvp"
+      },
+
+      "room-3": {
+        number: 3,
+        name: "Silver",
+        stake: 0.5,
+        stakeText: "0.5 PKOIN",
+        mode: "pvp"
+      },
+
+      "room-4": {
+        number: 4,
+        name: "Gold",
+        stake: 1,
+        stakeText: "1 PKOIN",
+        mode: "pvp"
+      },
+
+      "room-5": {
+        number: 5,
+        name: "Platinum",
+        stake: 2,
+        stakeText: "2 PKOIN",
+        mode: "pvp"
+      },
+
+      "room-6": {
+        number: 6,
+        name: "Diamond",
+        stake: 3,
+        stakeText: "3 PKOIN",
+        mode: "pvp"
+      },
+
+      "room-7": {
+        number: 7,
+        name: "Master",
+        stake: 4,
+        stakeText: "4 PKOIN",
+        mode: "pvp"
+      },
+
+      "room-8": {
+        number: 8,
+        name: "Elite",
+        stake: 5,
+        stakeText: "5 PKOIN",
+        mode: "pvp"
+      },
+
+      "room-9": {
+        number: 9,
+        name: "Champion",
+        stake: 10,
+        stakeText: "10 PKOIN",
+        mode: "pvp"
+      },
+
+      "room-10": {
+        number: 10,
+        name: "Legend",
+        stake: 50,
+        stakeText: "50 PKOIN",
+        mode: "pvp"
+      }
+
+    };
+
+
+    /* DEFAULT AVATAR */
 
     const DEFAULT_AVATAR =
       "data:image/svg+xml;utf8," +
-      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>" +
-      "<circle cx='50' cy='50' r='50' fill='%23333333'/>" +
-      "<circle cx='50' cy='38' r='18' fill='%23888888'/>" +
-      "<path d='M20 90c4-22 18-32 30-32s26 10 30 32' fill='%23888888'/>" +
+      "<svg xmlns='http://www.w3.org/2000/svg' " +
+      "viewBox='0 0 100 100'>" +
+      "<circle cx='50' cy='50' r='50' " +
+      "fill='%23333333'/>" +
+      "<circle cx='50' cy='38' r='18' " +
+      "fill='%23888888'/>" +
+      "<path d='M20 90c4-22 18-32 30-32s26 10 30 32' " +
+      "fill='%23888888'/>" +
       "</svg>";
 
 
-    /* =========================================
-       CHOICES
-       ========================================= */
+    /* CHOICES */
 
     const choices = {
 
@@ -563,57 +1070,66 @@ content="width=device-width, initial-scale=1.0"
     };
 
 
-    /* =========================================
-       BUTTONS
-       ========================================= */
+    /* BUTTONS */
 
     function enableButtons(enable) {
 
-      const ids = [
+      [
         "btn-rock",
         "btn-scissors",
         "btn-paper"
-      ];
 
-      ids.forEach(
-        function(id) {
+      ].forEach(function(id) {
 
-          const button =
-            document.getElementById(id);
+        const button =
+          document.getElementById(id);
 
-          if (button) {
+        if (button) {
 
-            button.disabled =
-              !enable;
-
-          }
+          button.disabled = !enable;
 
         }
-      );
+
+      });
 
     }
 
 
-    /* =========================================
-       ROOM
-       ========================================= */
+    /* ROOM */
 
-    function selectRoom(room) {
+    function selectRoom(roomId) {
 
-      currentRoom = room;
+      const room =
+        ROOMS[roomId];
+
+      if (!room) {
+        return;
+      }
+
+      currentRoom =
+        roomId;
+
 
       document
-        .getElementById("mode-demo")
-        .classList.toggle(
-          "active",
-          room === "demo"
+        .querySelectorAll(".room-btn")
+        .forEach(function(button) {
+
+          button.classList.toggle(
+            "active",
+            button.dataset.roomId === roomId
+          );
+
+        });
+
+
+      const main =
+        document.getElementById(
+          "selected-room-main"
         );
 
-      document
-        .getElementById("mode-pvp")
-        .classList.toggle(
-          "active",
-          room === "pvp"
+      const note =
+        document.getElementById(
+          "selected-room-note"
         );
 
       const result =
@@ -626,7 +1142,17 @@ content="width=device-width, initial-scale=1.0"
           "pvp-info"
         );
 
-      if (room === "demo") {
+
+      if (room.mode === "demo") {
+
+        main.innerText =
+          room.number +
+          ". " +
+          room.name +
+          " — бесплатно";
+
+        note.innerText =
+          "Бесплатная игра с компьютером.";
 
         result.innerText =
           "Бесплатная игра с компьютером.";
@@ -635,27 +1161,40 @@ content="width=device-width, initial-scale=1.0"
           "show"
         );
 
-      } else {
-
-        result.innerText =
-          "Игра между игроками — ставка 1 PKOIN.";
-
-        pvpInfo.classList.add(
-          "show"
-        );
-
+        return;
       }
+
+
+      main.innerText =
+        room.number +
+        ". " +
+        room.name +
+        " — " +
+        room.stakeText;
+
+
+      note.innerText =
+        "PvP-комната. Реальную ставку " +
+        "и отдельный матчмейкинг подключим " +
+        "следующим шагом.";
+
+
+      result.innerText =
+        "Комната выбрана: ставка " +
+        room.stakeText +
+        ".";
+
+
+      pvpInfo.classList.add(
+        "show"
+      );
 
     }
 
 
-    /* =========================================
-       ADDRESS
-       ========================================= */
+    /* ADDRESS */
 
-    function shortAddress(
-      address
-    ) {
+    function shortAddress(address) {
 
       if (!address) {
 
@@ -663,14 +1202,17 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       const text =
         String(address);
+
 
       if (text.length <= 12) {
 
         return text;
 
       }
+
 
       return (
         text.slice(0, 6) +
@@ -681,20 +1223,20 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    function showAddress(
-      address
-    ) {
+    function showAddress(address) {
 
       const element =
         document.getElementById(
           "user-address"
         );
 
+
       if (!element) {
 
         return;
 
       }
+
 
       element.innerText =
         address
@@ -704,13 +1246,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       BALANCE
-       ========================================= */
+    /* BALANCE */
 
-    function findBalance(
-      balanceData
-    ) {
+    function findBalance(balanceData) {
 
       if (
         typeof balanceData ===
@@ -721,6 +1259,7 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       if (
         !balanceData ||
         typeof balanceData !==
@@ -730,6 +1269,7 @@ content="width=device-width, initial-scale=1.0"
         return null;
 
       }
+
 
       const priority = [
 
@@ -747,12 +1287,14 @@ content="width=device-width, initial-scale=1.0"
 
       ];
 
+
       for (
         const value of priority
       ) {
 
         if (
-          typeof value === "number" &&
+          typeof value ===
+            "number" &&
           Number.isFinite(value)
         ) {
 
@@ -762,19 +1304,19 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       return null;
 
     }
 
 
-    function showBalance(
-      balanceData
-    ) {
+    function showBalance(balanceData) {
 
       const element =
         document.getElementById(
           "user-balance"
         );
+
 
       if (!element) {
 
@@ -782,15 +1324,18 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       console.log(
         "BASTYON BALANCE DATA:",
         balanceData
       );
 
+
       const balance =
         findBalance(
           balanceData
         );
+
 
       if (
         balance === null
@@ -807,10 +1352,12 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       element.innerText =
         Number(balance)
           .toFixed(4) +
         " PKOIN";
+
 
       element.classList.remove(
         "warning"
@@ -819,13 +1366,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       PROFILE DATA
-       ========================================= */
+    /* PROFILE */
 
-    function normalizeProfile(
-      payload
-    ) {
+    function normalizeProfile(payload) {
 
       if (
         !payload ||
@@ -837,16 +1380,18 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       let profile =
         payload.profile ||
         payload.result ||
         payload.data ||
         payload;
 
+
       if (
         profile &&
         typeof profile ===
-        "object" &&
+          "object" &&
         profile.profile
       ) {
 
@@ -854,6 +1399,7 @@ content="width=device-width, initial-scale=1.0"
           profile.profile;
 
       }
+
 
       if (
         Array.isArray(profile)
@@ -863,6 +1409,7 @@ content="width=device-width, initial-scale=1.0"
           profile[0] || {};
 
       }
+
 
       if (
         !profile ||
@@ -874,6 +1421,7 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       const name =
         profile.name ||
         profile.pName ||
@@ -882,6 +1430,7 @@ content="width=device-width, initial-scale=1.0"
         profile.displayName ||
         "";
 
+
       const avatar =
         profile.avatarUrl ||
         profile.avatar ||
@@ -889,6 +1438,7 @@ content="width=device-width, initial-scale=1.0"
         profile.imageUrl ||
         profile.i ||
         "";
+
 
       return {
 
@@ -909,13 +1459,9 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       PROFILE IMAGE
-       ========================================= */
+    /* AVATAR */
 
-    function normalizeAvatarUrl(
-      avatar
-    ) {
+    function normalizeAvatarUrl(avatar) {
 
       if (!avatar) {
 
@@ -923,14 +1469,17 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       let url =
         String(avatar).trim();
+
 
       if (!url) {
 
         return "";
 
       }
+
 
       if (
         url.startsWith("//")
@@ -943,6 +1492,7 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       if (
         /^https?:\/\//i.test(
           url
@@ -953,6 +1503,7 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       if (
         url.startsWith("data:")
       ) {
@@ -961,11 +1512,13 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       url =
         url.replace(
           /^\/+/,
           ""
         );
+
 
       if (
         url.startsWith("ipfs/")
@@ -978,6 +1531,7 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       return (
         "https://pocketnet.app/ipfs/" +
         url
@@ -986,9 +1540,7 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       LOAD PROFILE
-       ========================================= */
+    /* LOAD PROFILE */
 
     async function loadProfileInfo(
       address
@@ -1004,6 +1556,7 @@ content="width=device-width, initial-scale=1.0"
           "user-name"
         );
 
+
       if (!address) {
 
         nameEl.innerText =
@@ -1016,8 +1569,10 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       avatarImg.src =
         DEFAULT_AVATAR;
+
 
       try {
 
@@ -1033,15 +1588,19 @@ content="width=device-width, initial-scale=1.0"
             }
           );
 
+
         console.log(
           "PROFILE HTTP STATUS:",
           response.status
         );
 
+
         const text =
           await response.text();
 
+
         let payload = {};
+
 
         try {
 
@@ -1063,12 +1622,16 @@ content="width=device-width, initial-scale=1.0"
 
         }
 
+
         console.log(
           "BASTYON PROFILE RAW:",
           payload
         );
 
-        if (!response.ok) {
+
+        if (
+          !response.ok
+        ) {
 
           throw new Error(
             payload.error ||
@@ -1079,15 +1642,18 @@ content="width=device-width, initial-scale=1.0"
 
         }
 
+
         const profile =
           normalizeProfile(
             payload
           );
 
+
         console.log(
           "BASTYON PROFILE NORMALIZED:",
           profile
         );
+
 
         if (
           profile.name
@@ -1106,10 +1672,12 @@ content="width=device-width, initial-scale=1.0"
 
         }
 
+
         const avatarUrl =
           normalizeAvatarUrl(
             profile.avatar
           );
+
 
         if (avatarUrl) {
 
@@ -1129,6 +1697,7 @@ content="width=device-width, initial-scale=1.0"
 
             };
 
+
           avatarImg.src =
             avatarUrl;
 
@@ -1143,11 +1712,13 @@ content="width=device-width, initial-scale=1.0"
           error
         );
 
+
         nameEl.innerText =
           "Игрок " +
           String(
             address
           ).slice(0, 6);
+
 
         avatarImg.src =
           DEFAULT_AVATAR;
@@ -1157,9 +1728,7 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       ACCOUNT
-       ========================================= */
+    /* ACCOUNT */
 
     async function getAccount() {
 
@@ -1174,15 +1743,18 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       try {
 
         const account =
           await sdk.get.account();
 
+
         console.log(
           "BASTYON ACCOUNT RAW:",
           account
         );
+
 
         if (
           typeof account ===
@@ -1192,6 +1764,7 @@ content="width=device-width, initial-scale=1.0"
           return account;
 
         }
+
 
         if (
           account &&
@@ -1220,14 +1793,13 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       return null;
 
     }
 
 
-    /* =========================================
-       BALANCE
-       ========================================= */
+    /* BALANCE */
 
     async function getBalance() {
 
@@ -1242,15 +1814,18 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       try {
 
         const balance =
           await sdk.get.balance();
 
+
         console.log(
           "BASTYON BALANCE RAW:",
           balance
         );
+
 
         return balance;
 
@@ -1263,6 +1838,7 @@ content="width=device-width, initial-scale=1.0"
           error
         );
 
+
         return null;
 
       }
@@ -1270,20 +1846,22 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       LOAD BASTYON
-       ========================================= */
+    /* LOAD BASTYON */
 
     async function loadBastyonUserData() {
 
       userAddress =
         await getAccount();
 
+
       showAddress(
         userAddress
       );
 
-      if (userAddress) {
+
+      if (
+        userAddress
+      ) {
 
         await loadProfileInfo(
           userAddress
@@ -1298,6 +1876,7 @@ content="width=device-width, initial-scale=1.0"
           .innerText =
             "Гость";
 
+
         document
           .getElementById(
             "user-avatar"
@@ -1307,8 +1886,10 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
       const balanceData =
         await getBalance();
+
 
       if (
         balanceData !== null
@@ -1325,8 +1906,10 @@ content="width=device-width, initial-scale=1.0"
             "user-balance"
           );
 
+
         balanceElement.innerText =
           "Баланс недоступен";
+
 
         balanceElement.classList.add(
           "warning"
@@ -1337,9 +1920,7 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       DEMO GAME
-       ========================================= */
+    /* DEMO GAME */
 
     function playDemoMatch(
       userChoice
@@ -1350,6 +1931,7 @@ content="width=device-width, initial-scale=1.0"
           choices
         );
 
+
       const botChoice =
         keys[
           Math.floor(
@@ -1357,6 +1939,7 @@ content="width=device-width, initial-scale=1.0"
             keys.length
           )
         ];
+
 
       showResult(
         userChoice,
@@ -1367,9 +1950,7 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       PVP
-       ========================================= */
+    /* PVP */
 
     async function playPvpMatch(
       userChoice
@@ -1380,27 +1961,37 @@ content="width=device-width, initial-scale=1.0"
           "result-text"
         );
 
+
       const pvpInfo =
         document.getElementById(
           "pvp-info"
         );
+
 
       const pvpMessage =
         document.getElementById(
           "pvp-message"
         );
 
+
       const pvpRoom =
         document.getElementById(
           "pvp-room"
         );
 
+
+      const room =
+        ROOMS[currentRoom];
+
+
       result.innerText =
         "⏳ Подключение к PvP...";
+
 
       pvpInfo.classList.add(
         "show"
       );
+
 
       try {
 
@@ -1408,33 +1999,51 @@ content="width=device-width, initial-scale=1.0"
           await fetch(
             "/api/pvp/join",
             {
+
               method: "POST",
 
               headers: {
+
                 "Content-Type":
                   "application/json"
+
               },
 
-              body: JSON.stringify({
+              body:
+                JSON.stringify({
 
-                userId:
-                  userAddress ||
-                  "demo-user",
+                  userId:
+                    userAddress ||
+                    "demo-user",
 
-                nickname:
-                  document.getElementById(
-                    "user-name"
-                  ).innerText
+                  nickname:
+                    document
+                      .getElementById(
+                        "user-name"
+                      )
+                      .innerText,
 
-              })
+                  roomId:
+                    currentRoom,
+
+                  stake:
+                    room
+                      ? room.stake
+                      : 0
+
+                })
 
             }
           );
 
+
         const text =
           await response.text();
 
-        let data = null;
+
+        let data =
+          null;
+
 
         try {
 
@@ -1454,6 +2063,7 @@ content="width=device-width, initial-scale=1.0"
 
         }
 
+
         if (
           !response.ok
         ) {
@@ -1466,6 +2076,7 @@ content="width=device-width, initial-scale=1.0"
 
         }
 
+
         if (
           data &&
           data.room
@@ -1474,9 +2085,11 @@ content="width=device-width, initial-scale=1.0"
           currentPvpRoom =
             data.room;
 
+
           pvpRoom.innerText =
             "Комната: " +
             currentPvpRoom.id;
+
 
           if (
             currentPvpRoom.status ===
@@ -1484,7 +2097,9 @@ content="width=device-width, initial-scale=1.0"
           ) {
 
             pvpMessage.innerText =
-              "Комната создана. Ожидание соперника...";
+              "Комната создана. " +
+              "Ожидание соперника...";
+
 
             result.innerText =
               "⏳ Ожидание второго игрока...";
@@ -1493,6 +2108,7 @@ content="width=device-width, initial-scale=1.0"
 
             pvpMessage.innerText =
               "Соперник подключён.";
+
 
             result.innerText =
               "✅ Соперник найден.";
@@ -1515,6 +2131,7 @@ content="width=device-width, initial-scale=1.0"
           error
         );
 
+
         result.innerText =
           "❌ PvP сервер недоступен.";
 
@@ -1523,16 +2140,25 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       MOVE
-       ========================================= */
+    /* MOVE */
 
     async function makeMove(
       userChoice
     ) {
 
+      const room =
+        ROOMS[currentRoom];
+
+
+      if (!room) {
+
+        return;
+
+      }
+
+
       if (
-        currentRoom ===
+        room.mode ===
         "demo"
       ) {
 
@@ -1544,6 +2170,23 @@ content="width=device-width, initial-scale=1.0"
 
       }
 
+
+      const result =
+        document.getElementById(
+          "result-text"
+        );
+
+
+      result.innerText =
+        "Вы выбрали комнату " +
+        room.number +
+        " — " +
+        room.name +
+        " (" +
+        room.stakeText +
+        ").";
+
+
       await playPvpMatch(
         userChoice
       );
@@ -1551,9 +2194,7 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       RESULT
-       ========================================= */
+    /* RESULT */
 
     function showResult(
       userChoice,
@@ -1564,6 +2205,7 @@ content="width=device-width, initial-scale=1.0"
       let resultMessage =
         "";
 
+
       if (
         userChoice ===
         opponentChoice
@@ -1571,9 +2213,7 @@ content="width=device-width, initial-scale=1.0"
 
         resultMessage =
           "Ничья! Оба выбрали " +
-          choices[
-            userChoice
-          ];
+          choices[userChoice];
 
       }
 
@@ -1582,6 +2222,7 @@ content="width=device-width, initial-scale=1.0"
         (
           userChoice ===
             "rock" &&
+
           opponentChoice ===
             "scissors"
         )
@@ -1591,6 +2232,7 @@ content="width=device-width, initial-scale=1.0"
         (
           userChoice ===
             "scissors" &&
+
           opponentChoice ===
             "paper"
         )
@@ -1600,6 +2242,7 @@ content="width=device-width, initial-scale=1.0"
         (
           userChoice ===
             "paper" &&
+
           opponentChoice ===
             "rock"
         )
@@ -1608,13 +2251,9 @@ content="width=device-width, initial-scale=1.0"
 
         resultMessage =
           "🎉 Вы выиграли! " +
-          choices[
-            userChoice
-          ] +
+          choices[userChoice] +
           " бьет " +
-          choices[
-            opponentChoice
-          ];
+          choices[opponentChoice];
 
       }
 
@@ -1624,15 +2263,12 @@ content="width=device-width, initial-scale=1.0"
           "💥 " +
           opponentName +
           " победил! " +
-          choices[
-            opponentChoice
-          ] +
+          choices[opponentChoice] +
           " бьет " +
-          choices[
-            userChoice
-          ];
+          choices[userChoice];
 
       }
+
 
       document
         .getElementById(
@@ -1644,18 +2280,22 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /* =========================================
-       INIT
-       ========================================= */
+    /* INIT */
 
     document.addEventListener(
       "DOMContentLoaded",
       async function() {
 
+        selectRoom(
+          "room-1"
+        );
+
+
         const status =
           document.getElementById(
             "status"
           );
+
 
         if (
           !window.BastyonSdk
@@ -1665,19 +2305,26 @@ content="width=device-width, initial-scale=1.0"
             "error"
           );
 
+
           status.innerText =
             "❌ SDK Bastyon не обнаружен";
 
-          enableButtons(true);
+
+          enableButtons(
+            true
+          );
+
 
           return;
 
         }
 
+
         try {
 
           sdk =
             new window.BastyonSdk();
+
 
           if (
             typeof sdk.init ===
@@ -1688,18 +2335,25 @@ content="width=device-width, initial-scale=1.0"
 
           }
 
+
           if (
             sdk.permissions &&
-            typeof sdk.permissions.request ===
+
+            typeof
+              sdk.permissions.request ===
               "function"
           ) {
 
             try {
 
               await sdk.permissions.request([
+
                 "account",
+
                 "payment",
+
                 "rpc"
+
               ]);
 
             } catch (
@@ -1715,7 +2369,9 @@ content="width=device-width, initial-scale=1.0"
 
           }
 
+
           await loadBastyonUserData();
+
 
           if (
             typeof sdk.on ===
@@ -1733,6 +2389,7 @@ content="width=device-width, initial-scale=1.0"
                   newBalance
                 );
 
+
                 showBalance(
                   newBalance
                 );
@@ -1741,6 +2398,7 @@ content="width=device-width, initial-scale=1.0"
             );
 
           }
+
 
           if (
             typeof sdk.emit ===
@@ -1753,20 +2411,25 @@ content="width=device-width, initial-scale=1.0"
 
           }
 
+
           status.classList.remove(
             "error"
           );
+
 
           status.classList.add(
             "success"
           );
 
+
           status.innerText =
             "● Bastyon подключён";
+
 
           enableButtons(
             true
           );
+
 
         } catch (
           error
@@ -1777,9 +2440,11 @@ content="width=device-width, initial-scale=1.0"
             error
           );
 
+
           status.classList.add(
             "error"
           );
+
 
           status.innerText =
             "❌ Ошибка SDK: " +
@@ -1787,6 +2452,7 @@ content="width=device-width, initial-scale=1.0"
               error.message ||
               "Ошибка"
             );
+
 
           enableButtons(
             true
