@@ -45,10 +45,10 @@
           circle at top,
           #303030 0%,
           #1b1b1b 34%,
-          #111 100%
+          #111111 100%
         );
 
-      color: #fff;
+      color: #ffffff;
 
     }
 
@@ -68,7 +68,7 @@
           38,
           38,
           38,
-          .96
+          0.96
         );
 
       border:
@@ -83,17 +83,19 @@
           0,
           0,
           0,
-          .45
+          0.45
         );
 
     }
 
 
+    /* HEADER */
+
     .app-header {
 
-      text-align: center;
-
       margin-bottom: 16px;
+
+      text-align: center;
 
     }
 
@@ -120,6 +122,8 @@
     }
 
 
+    /* PROFILE */
+
     .profile-card {
 
       display: flex;
@@ -132,8 +136,7 @@
 
       margin-bottom: 18px;
 
-      background:
-        #1d1d1d;
+      background: #1d1d1d;
 
       border:
         1px solid #353535;
@@ -160,6 +163,8 @@
 
       border:
         2px solid #00ff88;
+
+      display: block;
 
     }
 
@@ -220,6 +225,8 @@
     }
 
 
+    /* SCREENS */
+
     .screen {
 
       display: none;
@@ -233,6 +240,8 @@
 
     }
 
+
+    /* MAIN */
 
     .section-title {
 
@@ -255,8 +264,12 @@
 
       font-size: 13px;
 
+      line-height: 1.4;
+
     }
 
+
+    /* ROOMS */
 
     .rooms-grid {
 
@@ -282,7 +295,7 @@
 
       width: 100%;
 
-      min-height: 122px;
+      min-height: 120px;
 
       padding: 14px;
 
@@ -297,18 +310,18 @@
       background:
         linear-gradient(
           180deg,
-          #333 0%,
+          #333333 0%,
           #292929 100%
         );
 
-      color: #fff;
+      color: #ffffff;
 
       cursor: pointer;
 
       transition:
-        transform .15s,
-        border-color .2s,
-        background .2s;
+        transform 0.15s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
 
     }
 
@@ -331,6 +344,16 @@
     }
 
 
+    .room-card:active {
+
+      transform:
+        scale(
+          0.98
+        );
+
+    }
+
+
     .room-card.free {
 
       border-color:
@@ -341,11 +364,14 @@
 
     .room-number {
 
-      display: inline-flex;
+      display:
+        inline-flex;
 
-      align-items: center;
+      align-items:
+        center;
 
-      justify-content: center;
+      justify-content:
+        center;
 
       width: 27px;
 
@@ -355,102 +381,141 @@
 
       border-radius: 8px;
 
-      background: #1c1c1c;
+      background:
+        #1c1c1c;
 
-      color: #cfcfcf;
+      color:
+        #cfcfcf;
 
       font-size: 11px;
 
       font-weight: 800;
 
-      vertical-align: middle;
+      vertical-align:
+        middle;
 
     }
 
 
     .room-name {
 
-      font-size: 15px;
+      font-size:
+        15px;
 
-      font-weight: 800;
+      font-weight:
+        800;
+
+      vertical-align:
+        middle;
 
     }
 
 
     .room-stake {
 
-      margin-top: 10px;
+      margin-top:
+        10px;
 
-      color: #00ff88;
+      color:
+        #00ff88;
 
-      font-size: 14px;
+      font-size:
+        14px;
 
-      font-weight: 800;
+      font-weight:
+        800;
 
     }
 
 
     .room-mode {
 
-      margin-top: 4px;
+      margin-top:
+        4px;
 
-      color: #999;
+      color:
+        #999;
 
-      font-size: 11px;
+      font-size:
+        11px;
 
     }
 
 
     .room-enter {
 
-      margin-top: 10px;
+      margin-top:
+        10px;
 
-      font-size: 11px;
+      color:
+        #ffffff;
 
-      font-weight: 700;
+      font-size:
+        11px;
+
+      font-weight:
+        700;
 
     }
 
 
     .room-badge {
 
-      position: absolute;
+      position:
+        absolute;
 
-      top: 10px;
+      top:
+        10px;
 
-      right: 10px;
+      right:
+        10px;
 
-      padding: 4px 7px;
+      padding:
+        4px 7px;
 
-      border-radius: 6px;
+      border-radius:
+        6px;
 
-      background: #1d1d1d;
+      background:
+        #1d1d1d;
 
-      color: #999;
+      color:
+        #999;
 
-      font-size: 9px;
+      font-size:
+        9px;
 
-      font-weight: 800;
+      font-weight:
+        800;
+
+      text-transform:
+        uppercase;
 
     }
 
 
     .room-card.free .room-badge {
 
-      color: #8affbf;
+      color:
+        #8affbf;
 
-      background: #174b31;
+      background:
+        #174b31;
 
     }
 
+
+    /* ROOM SCREEN */
 
     .back-button {
 
       width: 100%;
 
-      margin-bottom: 12px;
+      margin-bottom:
+        12px;
 
-      padding: 11px;
+      padding:
+        11px;
 
       border:
         1px solid #444;
@@ -458,28 +523,48 @@
       border-radius:
         11px;
 
-      background: #292929;
+      background:
+        #292929;
 
-      color: #fff;
+      color:
+        #ffffff;
 
-      cursor: pointer;
+      cursor:
+        pointer;
 
-      font-size: 13px;
+      font-size:
+        13px;
 
-      font-weight: 700;
+      font-weight:
+        700;
+
+    }
+
+
+    .back-button:hover {
+
+      background:
+        #333;
+
+      border-color:
+        #666;
 
     }
 
 
     .room-header {
 
-      padding: 18px;
+      padding:
+        18px;
 
-      margin-bottom: 14px;
+      margin-bottom:
+        14px;
 
-      text-align: center;
+      text-align:
+        center;
 
-      background: #1e1e1e;
+      background:
+        #1e1e1e;
 
       border:
         1px solid #383838;
@@ -492,57 +577,78 @@
 
     .room-header-number {
 
-      color: #888;
+      color:
+        #888;
 
-      font-size: 11px;
+      font-size:
+        11px;
 
-      font-weight: 800;
+      font-weight:
+        800;
 
-      text-transform: uppercase;
+      text-transform:
+        uppercase;
+
+      letter-spacing:
+        1px;
 
     }
 
 
     .room-header-name {
 
-      margin-top: 5px;
+      margin-top:
+        5px;
 
-      font-size: 25px;
+      font-size:
+        25px;
 
-      font-weight: 900;
+      font-weight:
+        900;
 
     }
 
 
     .room-header-stake {
 
-      margin-top: 7px;
+      margin-top:
+        7px;
 
-      color: #00ff88;
+      color:
+        #00ff88;
 
-      font-size: 18px;
+      font-size:
+        18px;
 
-      font-weight: 900;
+      font-weight:
+        900;
 
     }
 
 
     .room-header-mode {
 
-      margin-top: 5px;
+      margin-top:
+        5px;
 
-      color: #999;
+      color:
+        #999;
 
-      font-size: 12px;
+      font-size:
+        12px;
 
     }
 
 
+    /* GAME */
+
     .game-panel {
 
-      padding: 16px;
+      padding:
+        16px;
 
-      background: #202020;
+      background:
+        #202020;
 
       border:
         1px solid #343434;
@@ -555,46 +661,62 @@
 
     .game-title {
 
-      text-align: center;
+      text-align:
+        center;
 
-      font-size: 16px;
+      font-size:
+        16px;
 
-      font-weight: 800;
+      font-weight:
+        800;
 
     }
 
 
     .game-subtitle {
 
-      margin-top: 5px;
+      margin-top:
+        5px;
 
-      text-align: center;
+      text-align:
+        center;
 
-      color: #8e8e8e;
+      color:
+        #8e8e8e;
 
-      font-size: 12px;
+      font-size:
+        12px;
 
     }
 
 
     .buttons {
 
-      display: flex;
+      display:
+        flex;
 
-      justify-content: center;
+      justify-content:
+        center;
 
-      gap: 12px;
+      gap:
+        12px;
 
-      margin: 20px 0;
+      margin:
+        20px 0;
 
     }
 
 
     .game-btn {
 
-      width: 100px;
+      width:
+        100px;
 
-      height: 100px;
+      height:
+        100px;
+
+      padding:
+        10px;
 
       border:
         2px solid #444;
@@ -602,164 +724,231 @@
       border-radius:
         16px;
 
-      background: #333;
+      background:
+        #333;
 
-      color: #fff;
+      color:
+        #fff;
 
-      cursor: pointer;
+      cursor:
+        pointer;
 
-      font-size: 42px;
+      font-size:
+        42px;
+
+      transition:
+        transform .15s,
+        background .2s,
+        border-color .2s;
 
     }
 
 
     .game-btn:hover:not(:disabled) {
 
-      background: #444;
+      background:
+        #444;
 
       border-color:
         #00ff88;
 
       transform:
-        translateY(-3px);
+        translateY(
+          -3px
+        );
+
+    }
+
+
+    .game-btn:active:not(:disabled) {
+
+      transform:
+        scale(
+          .95
+        );
 
     }
 
 
     .game-btn:disabled {
 
-      opacity: .4;
+      opacity:
+        .4;
 
-      cursor: not-allowed;
+      cursor:
+        not-allowed;
 
     }
 
 
+    /* RESULT */
+
     .result {
 
-      min-height: 72px;
+      min-height:
+        72px;
 
-      margin-top: 12px;
+      margin-top:
+        12px;
 
-      padding: 14px;
+      padding:
+        14px;
 
       border-radius:
         12px;
 
-      background: #171717;
+      background:
+        #171717;
 
-      font-size: 15px;
+      font-size:
+        15px;
 
-      font-weight: 700;
+      font-weight:
+        700;
 
-      text-align: center;
+      text-align:
+        center;
 
-      line-height: 1.5;
+      line-height:
+        1.5;
 
     }
 
 
+    /* PVP */
+
     .pvp-info {
 
-      display: none;
+      display:
+        none;
 
-      margin-top: 12px;
+      margin-top:
+        12px;
 
-      padding: 12px;
+      padding:
+        12px;
 
       border-radius:
         10px;
 
-      background: #202020;
+      background:
+        #202020;
 
       border:
         1px solid #333;
 
-      color: #aaa;
+      color:
+        #aaa;
 
-      font-size: 13px;
+      font-size:
+        13px;
 
-      text-align: center;
+      line-height:
+        1.5;
 
-      line-height: 1.5;
+      text-align:
+        center;
 
     }
 
 
     .pvp-info.show {
 
-      display: block;
+      display:
+        block;
 
     }
 
 
     .room-id {
 
-      margin-top: 6px;
+      margin-top:
+        6px;
 
-      color: #00ff88;
+      color:
+        #00ff88;
 
-      font-family: monospace;
+      font-family:
+        monospace;
 
     }
 
 
     .action-button {
 
-      width: 100%;
+      width:
+        100%;
 
-      margin-top: 12px;
+      margin-top:
+        12px;
 
-      padding: 12px;
+      padding:
+        12px;
 
-      border: 0;
+      border:
+        0;
 
       border-radius:
         11px;
 
-      background: #00ff88;
+      background:
+        #00ff88;
 
-      color: #111;
+      color:
+        #111;
 
-      cursor: pointer;
+      cursor:
+        pointer;
 
-      font-size: 14px;
+      font-size:
+        14px;
 
-      font-weight: 900;
+      font-weight:
+        900;
 
     }
 
 
     #status {
 
-      margin: 14px 0 0;
+      margin:
+        14px 0 0;
 
-      color: #00ff88;
+      color:
+        #00ff88;
 
-      font-size: 12px;
+      font-size:
+        12px;
 
-      text-align: center;
+      text-align:
+        center;
+
+      line-height:
+        1.4;
 
     }
 
 
     .error {
 
-      color: #ff5555 !important;
+      color:
+        #ff5555 !important;
 
     }
 
 
     .warning {
 
-      color: #ffaa00 !important;
+      color:
+        #ffaa00 !important;
 
     }
 
 
     .success {
 
-      color: #00ff88 !important;
+      color:
+        #00ff88 !important;
 
     }
 
@@ -778,7 +967,11 @@
 
       .card {
 
-        padding: 14px;
+        padding:
+          14px;
+
+        border-radius:
+          16px;
 
       }
 
@@ -791,13 +984,24 @@
       }
 
 
+      .room-card {
+
+        min-height:
+          108px;
+
+      }
+
+
       .game-btn {
 
-        width: 84px;
+        width:
+          84px;
 
-        height: 84px;
+        height:
+          84px;
 
-        font-size: 36px;
+        font-size:
+          36px;
 
       }
 
@@ -810,8 +1014,11 @@
 
 <body>
 
+
   <div class="card">
 
+
+    <!-- HEADER -->
 
     <div class="app-header">
 
@@ -820,7 +1027,9 @@
       </h1>
 
       <div class="subtitle">
+
         Камень • Ножницы • Бумага
+
       </div>
 
     </div>
@@ -836,6 +1045,7 @@
         alt="Аватар"
       >
 
+
       <div class="profile-info">
 
         <div
@@ -845,12 +1055,14 @@
           Загрузка...
         </div>
 
+
         <div
           id="user-address"
           class="profile-address"
         >
           Адрес: --
         </div>
+
 
         <div
           id="user-balance"
@@ -865,7 +1077,7 @@
 
 
     <!-- =====================================
-         MAIN
+         MAIN SCREEN
          ===================================== -->
 
     <div
@@ -873,17 +1085,26 @@
       class="screen active"
     >
 
+
       <div class="section-title">
+
         Выберите комнату
+
       </div>
 
+
       <div class="section-description">
-        Войдите в комнату, чтобы начать игру.
+
+        Войдите в комнату,
+        чтобы начать игру.
+
       </div>
 
 
       <div class="rooms-grid">
 
+
+        <!-- 1 -->
 
         <button
           class="room-card free"
@@ -894,28 +1115,41 @@
             FREE
           </span>
 
+
           <span class="room-number">
             1
           </span>
+
 
           <span class="room-name">
             Новичок
           </span>
 
+
           <div class="room-stake">
+
             Бесплатно
+
           </div>
+
 
           <div class="room-mode">
+
             🤖 Игра с компьютером
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 2 -->
 
         <button
           class="room-card"
@@ -926,28 +1160,39 @@
             PvP
           </span>
 
+
           <span class="room-number">
             2
           </span>
+
 
           <span class="room-name">
             Bronze
           </span>
 
+
           <div class="room-stake">
             0.2 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 3 -->
 
         <button
           class="room-card"
@@ -958,28 +1203,39 @@
             PvP
           </span>
 
+
           <span class="room-number">
             3
           </span>
+
 
           <span class="room-name">
             Silver
           </span>
 
+
           <div class="room-stake">
             0.5 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 4 -->
 
         <button
           class="room-card"
@@ -990,28 +1246,39 @@
             PvP
           </span>
 
+
           <span class="room-number">
             4
           </span>
+
 
           <span class="room-name">
             Gold
           </span>
 
+
           <div class="room-stake">
             1 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 5 -->
 
         <button
           class="room-card"
@@ -1022,28 +1289,39 @@
             PvP
           </span>
 
+
           <span class="room-number">
             5
           </span>
+
 
           <span class="room-name">
             Platinum
           </span>
 
+
           <div class="room-stake">
             2 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 6 -->
 
         <button
           class="room-card"
@@ -1054,28 +1332,39 @@
             PvP
           </span>
 
+
           <span class="room-number">
             6
           </span>
+
 
           <span class="room-name">
             Diamond
           </span>
 
+
           <div class="room-stake">
             3 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 7 -->
 
         <button
           class="room-card"
@@ -1086,28 +1375,39 @@
             PvP
           </span>
 
+
           <span class="room-number">
             7
           </span>
+
 
           <span class="room-name">
             Master
           </span>
 
+
           <div class="room-stake">
             4 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 8 -->
 
         <button
           class="room-card"
@@ -1118,28 +1418,39 @@
             PvP
           </span>
 
+
           <span class="room-number">
             8
           </span>
+
 
           <span class="room-name">
             Elite
           </span>
 
+
           <div class="room-stake">
             5 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 9 -->
 
         <button
           class="room-card"
@@ -1150,28 +1461,39 @@
             PvP
           </span>
 
+
           <span class="room-number">
             9
           </span>
+
 
           <span class="room-name">
             Champion
           </span>
 
+
           <div class="room-stake">
             10 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
 
+
+        <!-- 10 -->
 
         <button
           class="room-card"
@@ -1182,27 +1504,37 @@
             PvP
           </span>
 
+
           <span class="room-number">
             10
           </span>
+
 
           <span class="room-name">
             Legend
           </span>
 
+
           <div class="room-stake">
             50 PKOIN
           </div>
 
+
           <div class="room-mode">
+
             ⚔️ Игра между игроками
+
           </div>
 
+
           <div class="room-enter">
+
             Войти в комнату →
+
           </div>
 
         </button>
+
 
       </div>
 
@@ -1210,7 +1542,7 @@
 
 
     <!-- =====================================
-         ROOM
+         ROOM SCREEN
          ===================================== -->
 
     <div
@@ -1223,85 +1555,119 @@
         class="back-button"
         onclick="leaveRoom()"
       >
+
         ← Вернуться к комнатам
+
       </button>
 
 
       <div class="room-header">
 
+
         <div
           id="room-header-number"
           class="room-header-number"
         >
+
           Комната 1
+
         </div>
+
 
         <div
           id="room-header-name"
           class="room-header-name"
         >
+
           Новичок
+
         </div>
+
 
         <div
           id="room-header-stake"
           class="room-header-stake"
         >
+
           Бесплатно
+
         </div>
+
 
         <div
           id="room-header-mode"
           class="room-header-mode"
         >
+
           🤖 Игра с компьютером
+
         </div>
+
 
       </div>
 
 
       <div class="game-panel">
 
+
         <div class="game-title">
+
           Сделайте ход
+
         </div>
+
 
         <div
           id="game-subtitle"
           class="game-subtitle"
         >
+
           Игра с компьютером
+
         </div>
 
 
         <div class="buttons">
+
 
           <button
             class="game-btn"
             id="btn-rock"
             onclick="makeMove('rock')"
             disabled
+            title="Камень"
           >
+
             🪨
+
           </button>
+
 
           <button
             class="game-btn"
             id="btn-scissors"
             onclick="makeMove('scissors')"
             disabled
+            title="Ножницы"
           >
+
             ✂️
+
           </button>
+
 
           <button
             class="game-btn"
             id="btn-paper"
             onclick="makeMove('paper')"
             disabled
+            title="Бумага"
           >
+
             📄
+
           </button>
+
 
         </div>
 
@@ -1310,7 +1676,9 @@
           id="result-text"
           class="result"
         >
+
           Сделайте свой ход.
+
         </div>
 
 
@@ -1319,16 +1687,19 @@
           class="pvp-info"
         >
 
-          <div
-            id="pvp-message"
-          >
+
+          <div id="pvp-message">
+
             PvP ожидает соперника
+
           </div>
+
 
           <div
             id="pvp-room"
             class="room-id"
           ></div>
+
 
           <button
             id="pvp-retry"
@@ -1336,24 +1707,38 @@
             onclick="startPvpSearch()"
             style="display:none"
           >
+
             Найти соперника
+
           </button>
 
+
         </div>
+
 
       </div>
 
     </div>
 
 
+    <!-- STATUS -->
+
     <p id="status">
+
       Запуск Bastyon SDK...
+
     </p>
+
 
   </div>
 
 
   <script>
+
+
+    /* =====================================
+       GLOBAL
+       ===================================== */
 
     let sdk =
       null;
@@ -1379,7 +1764,12 @@
       null;
 
 
+    /* =====================================
+       ROOMS
+       ===================================== */
+
     const ROOMS = {
+
 
       "room-1": {
 
@@ -1603,6 +1993,10 @@
     };
 
 
+    /* =====================================
+       CHOICES
+       ===================================== */
+
     const choices = {
 
       rock:
@@ -1617,31 +2011,53 @@
     };
 
 
-    const DEFAULT_AVATAR =
+    /* =====================================
+       ENABLE / DISABLE GAME BUTTONS
+       ===================================== */
 
-      "data:image/svg+xml;utf8," +
+    function enableButtons(
+      enable
+    ) {
 
-      "<svg xmlns='http://www.w3.org/2000/svg' " +
+      const ids = [
 
-      "viewBox='0 0 100 100'>" +
+        "btn-rock",
 
-      "<circle cx='50' cy='50' r='50' " +
+        "btn-scissors",
 
-      "fill='%23333333'/>" +
+        "btn-paper"
 
-      "<circle cx='50' cy='38' r='18' " +
+      ];
 
-      "fill='%23888888'/>" +
 
-      "<path d='M20 90c4-22 18-32 30-32s26 10 30 32' " +
+      ids.forEach(
+        function(id) {
 
-      "fill='%23888888'/>" +
+          const button =
+            document.getElementById(
+              id
+            );
 
-      "</svg>";
 
+          if (button) {
+
+            button.disabled =
+              !enable;
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =====================================
+       SCREEN
+       ===================================== */
 
     function showScreen(
-      id
+      screenId
     ) {
 
       document
@@ -1649,9 +2065,9 @@
           ".screen"
         )
         .forEach(
-          function(el) {
+          function(element) {
 
-            el.classList.remove(
+            element.classList.remove(
               "active"
             );
 
@@ -1659,16 +2075,26 @@
         );
 
 
-      document
-        .getElementById(
-          id
-        )
-        .classList.add(
+      const screen =
+        document.getElementById(
+          screenId
+        );
+
+
+      if (screen) {
+
+        screen.classList.add(
           "active"
         );
 
+      }
+
     }
 
+
+    /* =====================================
+       STOP POLLING
+       ===================================== */
 
     function stopPolling() {
 
@@ -1678,6 +2104,7 @@
           pollTimer
         );
 
+
         pollTimer =
           null;
 
@@ -1685,6 +2112,168 @@
 
     }
 
+
+    /* =====================================
+       ENTER ROOM
+       ===================================== */
+
+    function enterRoom(
+      roomId
+    ) {
+
+      const room =
+        ROOMS[
+          roomId
+        ];
+
+
+      if (!room) {
+
+        return;
+
+      }
+
+
+      stopPolling();
+
+
+      currentRoom =
+        roomId;
+
+
+      currentPvpRoom =
+        null;
+
+
+      currentChoice =
+        null;
+
+
+      enableButtons(
+        false
+      );
+
+
+      document
+        .getElementById(
+          "room-header-number"
+        )
+        .innerText =
+          "Комната " +
+          room.number;
+
+
+      document
+        .getElementById(
+          "room-header-name"
+        )
+        .innerText =
+          room.name;
+
+
+      document
+        .getElementById(
+          "room-header-stake"
+        )
+        .innerText =
+          room.stakeText;
+
+
+      document
+        .getElementById(
+          "room-header-mode"
+        )
+        .innerText =
+          room.modeText;
+
+
+      document
+        .getElementById(
+          "pvp-room"
+        )
+        .innerText =
+          "";
+
+
+      document
+        .getElementById(
+          "pvp-retry"
+        )
+        .style.display =
+          "none";
+
+
+      showScreen(
+        "room-screen"
+      );
+
+
+      if (
+        room.mode ===
+        "demo"
+      ) {
+
+        document
+          .getElementById(
+            "game-subtitle"
+          )
+          .innerText =
+            "🤖 Бесплатная игра с компьютером";
+
+
+        document
+          .getElementById(
+            "result-text"
+          )
+          .innerText =
+            "Сделайте свой ход.";
+
+
+        document
+          .getElementById(
+            "pvp-info"
+          )
+          .classList.remove(
+            "show"
+          );
+
+
+        enableButtons(
+          true
+        );
+
+
+        return;
+
+      }
+
+
+      document
+        .getElementById(
+          "game-subtitle"
+        )
+        .innerText =
+          "⚔️ Поиск соперника • " +
+          room.stakeText;
+
+
+      document
+        .getElementById(
+          "pvp-info"
+        )
+        .classList.add(
+          "show"
+        );
+
+
+      startPvpSearch();
+
+    }
+
+
+    /* =====================================
+       LEAVE ROOM
+       ===================================== */
 
     async function leaveRoom() {
 
@@ -1773,167 +2362,9 @@
     }
 
 
-    function enterRoom(
-      roomId
-    ) {
-
-      const room =
-        ROOMS[
-          roomId
-        ];
-
-
-      if (!room) {
-
-        return;
-
-      }
-
-
-      stopPolling();
-
-
-      currentRoom =
-        roomId;
-
-
-      currentPvpRoom =
-        null;
-
-
-      currentChoice =
-        null;
-
-
-      enableButtons(
-        false
-      );
-
-
-      document
-        .getElementById(
-          "room-header-number"
-        )
-        .innerText =
-          "Комната " +
-          room.number;
-
-
-      document
-        .getElementById(
-          "room-header-name"
-        )
-        .innerText =
-          room.name;
-
-
-      document
-        .getElementById(
-          "room-header-stake"
-        )
-        .innerText =
-          room.stakeText;
-
-
-      document
-        .getElementById(
-          "room-header-mode"
-        )
-        .innerText =
-          room.modeText;
-
-
-      document
-        .getElementById(
-          "pvp-room"
-        )
-        .innerText =
-          "";
-
-
-      if (
-        room.mode ===
-        "demo"
-      ) {
-
-        document
-          .getElementById(
-            "game-subtitle"
-          )
-          .innerText =
-            "🤖 Бесплатная игра с компьютером";
-
-
-        document
-          .getElementById(
-            "result-text"
-          )
-          .innerText =
-            "Сделайте свой ход.";
-
-
-        document
-          .getElementById(
-            "pvp-info"
-          )
-          .classList.remove(
-            "show"
-          );
-
-
-        enableButtons(
-          true
-        );
-
-      }
-
-      else {
-
-        document
-          .getElementById(
-            "game-subtitle"
-          )
-          .innerText =
-            "⚔️ Поиск соперника • " +
-            room.stakeText;
-
-
-        document
-          .getElementById(
-            "pvp-info"
-          )
-          .classList.add(
-            "show"
-          );
-
-
-        document
-          .getElementById(
-            "pvp-retry"
-          )
-          .style.display =
-            "none";
-
-
-        showScreen(
-          "room-screen"
-        );
-
-
-        startPvpSearch();
-
-
-        return;
-
-      }
-
-
-      showScreen(
-        "room-screen"
-      );
-
-    }
-
+    /* =====================================
+       PVP SEARCH
+       ===================================== */
 
     async function startPvpSearch() {
 
@@ -1970,24 +2401,21 @@
 
 
       const result =
-        document
-          .getElementById(
-            "result-text"
-          );
+        document.getElementById(
+          "result-text"
+        );
 
 
       const message =
-        document
-          .getElementById(
-            "pvp-message"
-          );
+        document.getElementById(
+          "pvp-message"
+        );
 
 
       const retry =
-        document
-          .getElementById(
-            "pvp-retry"
-          );
+        document.getElementById(
+          "pvp-retry"
+        );
 
 
       result.innerText =
@@ -1995,7 +2423,7 @@
 
 
       message.innerText =
-        "Подключение к комнате " +
+        "Подключение к " +
         room.name +
         "...";
 
@@ -2083,8 +2511,11 @@
 
 
         if (
+
           !response.ok ||
+
           !data
+
         ) {
 
           result.innerText =
@@ -2093,7 +2524,12 @@
 
 
           message.innerText =
-            "Не удалось войти в комнату.";
+            data &&
+            data.message
+
+              ? data.message
+
+              : "Не удалось войти в комнату.";
 
 
           retry.style.display =
@@ -2164,11 +2600,11 @@
 
 
         result.innerText =
-          "❌ PvP сервер недоступен.";
+          "❌ Ошибка соединения с PvP.";
 
 
         message.innerText =
-          "Проверь соединение и попробуй ещё раз.";
+          "Сервер комнаты недоступен.";
 
 
         retry.style.display =
@@ -2178,6 +2614,10 @@
 
     }
 
+
+    /* =====================================
+       PVP STATE
+       ===================================== */
 
     function updatePvpState(
       room
@@ -2204,17 +2644,15 @@
 
 
       const message =
-        document
-          .getElementById(
-            "pvp-message"
-          );
+        document.getElementById(
+          "pvp-message"
+        );
 
 
       const result =
-        document
-          .getElementById(
-            "result-text"
-          );
+        document.getElementById(
+          "result-text"
+        );
 
 
       if (
@@ -2250,24 +2688,15 @@
       ) {
 
         message.innerText =
-          "✅ Соперник найден. Сделайте ход.";
+          "✅ Соперник найден.";
 
 
-        if (
+        result.innerText =
           currentChoice
-        ) {
 
-          result.innerText =
-            "✅ Ваш ход принят. Ожидаем соперника.";
+            ? "✅ Ваш ход принят. Ожидаем соперника."
 
-        }
-
-        else {
-
-          result.innerText =
-            "🎮 Игра началась!";
-
-        }
+            : "🎮 Игра началась! Сделайте ход.";
 
 
         enableButtons(
@@ -2301,6 +2730,10 @@
 
     }
 
+
+    /* =====================================
+       STATUS POLLING
+       ===================================== */
 
     async function pollPvpStatus() {
 
@@ -2370,7 +2803,6 @@
 
       }
 
-
       catch (
         error
       ) {
@@ -2385,37 +2817,9 @@
     }
 
 
-    function playDemoMatch(
-      userChoice
-    ) {
-
-      const keys =
-        Object.keys(
-          choices
-        );
-
-
-      const botChoice =
-        keys[
-          Math.floor(
-            Math.random() *
-            keys.length
-          )
-        ];
-
-
-      showResult(
-
-        userChoice,
-
-        botChoice,
-
-        "Бот"
-
-      );
-
-    }
-
+    /* =====================================
+       PVP MOVE
+       ===================================== */
 
     async function playPvpMove(
       userChoice
@@ -2557,6 +2961,46 @@
     }
 
 
+    /* =====================================
+       DEMO GAME
+       ===================================== */
+
+    function playDemoMatch(
+      userChoice
+    ) {
+
+      const keys =
+        Object.keys(
+          choices
+        );
+
+
+      const botChoice =
+        keys[
+          Math.floor(
+            Math.random() *
+            keys.length
+          )
+        ];
+
+
+      showResult(
+
+        userChoice,
+
+        botChoice,
+
+        "Бот"
+
+      );
+
+    }
+
+
+    /* =====================================
+       MAKE MOVE
+       ===================================== */
+
     async function makeMove(
       userChoice
     ) {
@@ -2595,6 +3039,132 @@
 
     }
 
+
+    /* =====================================
+       RESULT
+       ===================================== */
+
+    function showResult(
+
+      userChoice,
+
+      opponentChoice,
+
+      opponentName
+
+    ) {
+
+      let resultMessage =
+        "";
+
+
+      if (
+        userChoice ===
+        opponentChoice
+      ) {
+
+        resultMessage =
+
+          "🤝 Ничья! Оба выбрали " +
+
+          choices[
+            userChoice
+          ];
+
+      }
+
+
+      else if (
+
+        (
+
+          userChoice ===
+            "rock" &&
+
+          opponentChoice ===
+            "scissors"
+
+        )
+
+        ||
+
+        (
+
+          userChoice ===
+            "scissors" &&
+
+          opponentChoice ===
+            "paper"
+
+        )
+
+        ||
+
+        (
+
+          userChoice ===
+            "paper" &&
+
+          opponentChoice ===
+            "rock"
+
+        )
+
+      ) {
+
+        resultMessage =
+
+          "🎉 Вы выиграли! " +
+
+          choices[
+            userChoice
+          ] +
+
+          " бьет " +
+
+          choices[
+            opponentChoice
+          ];
+
+      }
+
+
+      else {
+
+        resultMessage =
+
+          "💥 " +
+
+          opponentName +
+
+          " победил! " +
+
+          choices[
+            opponentChoice
+          ] +
+
+          " бьет " +
+
+          choices[
+            userChoice
+          ];
+
+      }
+
+
+      document
+        .getElementById(
+          "result-text"
+        )
+        .innerText =
+          resultMessage;
+
+    }
+
+
+    /* =====================================
+       FINISHED PVP
+       ===================================== */
 
     function renderFinished(
       room
@@ -2659,109 +3229,9 @@
     }
 
 
-    function showResult(
-
-      userChoice,
-
-      opponentChoice,
-
-      opponentName
-
-    ) {
-
-      let text =
-        "";
-
-
-      if (
-        userChoice ===
-        opponentChoice
-      ) {
-
-        text =
-          "Ничья! Оба выбрали " +
-          choices[
-            userChoice
-          ];
-
-      }
-
-      else if (
-
-        (
-
-          userChoice ===
-            "rock" &&
-
-          opponentChoice ===
-            "scissors"
-
-        )
-
-        ||
-
-        (
-
-          userChoice ===
-            "scissors" &&
-
-          opponentChoice ===
-            "paper"
-
-        )
-
-        ||
-
-        (
-
-          userChoice ===
-            "paper" &&
-
-          opponentChoice ===
-            "rock"
-
-        )
-
-      ) {
-
-        text =
-          "🎉 Вы выиграли! " +
-          choices[
-            userChoice
-          ] +
-          " бьет " +
-          choices[
-            opponentChoice
-          ];
-
-      }
-
-      else {
-
-        text =
-          "💥 " +
-          opponentName +
-          " победил! " +
-          choices[
-            opponentChoice
-          ] +
-          " бьет " +
-          choices[
-            userChoice
-          ];
-
-      }
-
-
-      document
-        .getElementById(
-          "result-text"
-        )
-        .innerText =
-          text;
-
-    }
-
+    /* =====================================
+       ADDRESS
+       ===================================== */
 
     function shortAddress(
       address
@@ -2819,40 +3289,50 @@
           );
 
 
-      if (element) {
+      if (!element) {
 
-        element.innerText =
-          address
-
-            ? shortAddress(
-                address
-              )
-
-            : "Адрес: не определён";
+        return;
 
       }
+
+
+      element.innerText =
+        address
+
+          ? shortAddress(
+              address
+            )
+
+          : "Адрес: не определён";
 
     }
 
 
+    /* =====================================
+       BALANCE
+       ===================================== */
+
     function findBalance(
-      data
+      balanceData
     ) {
 
       if (
-        typeof data ===
+        typeof balanceData ===
         "number"
       ) {
 
-        return data;
+        return balanceData;
 
       }
 
 
       if (
-        !data ||
-        typeof data !==
+
+        !balanceData ||
+
+        typeof balanceData !==
           "object"
+
       ) {
 
         return null;
@@ -2860,24 +3340,25 @@
       }
 
 
+      const priority = [
+
+        balanceData.actual,
+
+        balanceData.total,
+
+        balanceData.balance,
+
+        balanceData.confirmed,
+
+        balanceData.available,
+
+        balanceData.amount
+
+      ];
+
+
       for (
-
-        const value of [
-
-          data.actual,
-
-          data.total,
-
-          data.balance,
-
-          data.confirmed,
-
-          data.available,
-
-          data.amount
-
-        ]
-
+        const value of priority
       ) {
 
         if (
@@ -2906,7 +3387,7 @@
 
 
     function showBalance(
-      data
+      balanceData
     ) {
 
       const element =
@@ -2923,9 +3404,15 @@
       }
 
 
+      console.log(
+        "BASTYON BALANCE DATA:",
+        balanceData
+      );
+
+
       const balance =
         findBalance(
-          data
+          balanceData
         );
 
 
@@ -2963,6 +3450,10 @@
 
     }
 
+
+    /* =====================================
+       PROFILE
+       ===================================== */
 
     function normalizeProfile(
       payload
@@ -3093,6 +3584,10 @@
     }
 
 
+    /* =====================================
+       AVATAR
+       ===================================== */
+
     function normalizeAvatarUrl(
       avatar
     ) {
@@ -3182,6 +3677,10 @@
     }
 
 
+    /* =====================================
+       LOAD PROFILE
+       ===================================== */
+
     async function loadProfileInfo(
       address
     ) {
@@ -3243,8 +3742,50 @@
           );
 
 
-        const payload =
-          await response.json();
+        console.log(
+          "PROFILE HTTP STATUS:",
+          response.status
+        );
+
+
+        const text =
+          await response.text();
+
+
+        let payload =
+          {};
+
+
+        try {
+
+          payload =
+            JSON.parse(
+              text
+            );
+
+        }
+
+        catch (
+          parseError
+        ) {
+
+          console.warn(
+            "PROFILE NON JSON:",
+            text
+          );
+
+
+          throw new Error(
+            "Профиль вернул не JSON"
+          );
+
+        }
+
+
+        console.log(
+          "BASTYON PROFILE RAW:",
+          payload
+        );
 
 
         if (
@@ -3252,9 +3793,15 @@
         ) {
 
           throw new Error(
+
             payload.error ||
+
             payload.message ||
-            "Profile error"
+
+            "Profile HTTP " +
+
+            response.status
+
           );
 
         }
@@ -3266,19 +3813,33 @@
           );
 
 
-        nameEl.innerText =
+        console.log(
+          "BASTYON PROFILE NORMALIZED:",
+          profile
+        );
 
-          profile.name ||
 
-          (
+        if (
+          profile.name
+        ) {
+
+          nameEl.innerText =
+            profile.name;
+
+        }
+
+        else {
+
+          nameEl.innerText =
             "Игрок " +
             String(
               address
             ).slice(
               0,
               6
-            )
-          );
+            );
+
+        }
 
 
         const avatarUrl =
@@ -3292,8 +3853,15 @@
           avatarImg.onerror =
             function() {
 
+              console.warn(
+                "AVATAR LOAD ERROR:",
+                avatarUrl
+              );
+
+
               avatarImg.onerror =
                 null;
+
 
               avatarImg.src =
                 DEFAULT_AVATAR;
@@ -3308,6 +3876,7 @@
 
       }
 
+
       catch (
         error
       ) {
@@ -3319,7 +3888,6 @@
 
 
         nameEl.innerText =
-
           "Игрок " +
 
           String(
@@ -3337,6 +3905,10 @@
 
     }
 
+
+    /* =====================================
+       ACCOUNT
+       ===================================== */
 
     async function getAccount() {
 
@@ -3425,6 +3997,10 @@
     }
 
 
+    /* =====================================
+       GET BALANCE
+       ===================================== */
+
     async function getBalance() {
 
       if (
@@ -3476,6 +4052,10 @@
 
     }
 
+
+    /* =====================================
+       LOAD BASTYON DATA
+       ===================================== */
 
     async function loadBastyonUserData() {
 
@@ -3533,20 +4113,20 @@
 
       }
 
+
       else {
 
-        const el =
-          document
-            .getElementById(
-              "user-balance"
-            );
+        const balanceElement =
+          document.getElementById(
+            "user-balance"
+          );
 
 
-        el.innerText =
+        balanceElement.innerText =
           "Баланс недоступен";
 
 
-        el.classList.add(
+        balanceElement.classList.add(
           "warning"
         );
 
@@ -3554,6 +4134,37 @@
 
     }
 
+
+    /* =====================================
+       DEFAULT AVATAR
+       ===================================== */
+
+    const DEFAULT_AVATAR =
+
+      "data:image/svg+xml;utf8," +
+
+      "<svg xmlns='http://www.w3.org/2000/svg' " +
+
+      "viewBox='0 0 100 100'>" +
+
+      "<circle cx='50' cy='50' r='50' " +
+
+      "fill='%23333333'/>" +
+
+      "<circle cx='50' cy='38' r='18' " +
+
+      "fill='%23888888'/>" +
+
+      "<path d='M20 90c4-22 18-32 30-32s26 10 30 32' " +
+
+      "fill='%23888888'/>" +
+
+      "</svg>";
+
+
+    /* =====================================
+       INIT
+       ===================================== */
 
     document.addEventListener(
 
@@ -3567,6 +4178,12 @@
               "status"
             );
 
+
+        /*
+         * КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ:
+         * enableButtons теперь существует
+         * до первого вызова.
+         */
 
         enableButtons(
           false
@@ -3631,6 +4248,7 @@
 
             }
 
+
             catch (
               error
             ) {
@@ -3661,6 +4279,12 @@
                 newBalance
               ) {
 
+                console.log(
+                  "BASTYON BALANCE EVENT:",
+                  newBalance
+                );
+
+
                 showBalance(
                   newBalance
                 );
@@ -3684,6 +4308,11 @@
           }
 
 
+          status.classList.remove(
+            "error"
+          );
+
+
           status.classList.add(
             "success"
           );
@@ -3691,6 +4320,7 @@
 
           status.innerText =
             "● Bastyon подключён";
+
 
         }
 
@@ -3711,10 +4341,15 @@
 
 
           status.innerText =
+
             "❌ Ошибка SDK: " +
+
             (
+
               error.message ||
+
               "Ошибка"
+
             );
 
         }
@@ -3725,5 +4360,7 @@
 
   </script>
 
+
 </body>
+
 </html>
