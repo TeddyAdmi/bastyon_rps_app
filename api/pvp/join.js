@@ -1,6 +1,9 @@
-const rooms = new Map();
+const waitingByRoom = new Map();
+const roomsById = new Map();
+
 
 const ROOM_CONFIG = {
+
   "room-2": {
     number: 2,
     name: "Bronze",
@@ -54,203 +57,646 @@ const ROOM_CONFIG = {
     name: "Legend",
     stake: 50
   }
+
 };
+
+
+const WAIT_TIME_MS =
+  24 * 60 * 60 * 1000;
 
 
 function createRoomId() {
+
   return Math.random()
     .toString(36)
     .slice(2, 10);
+
 }
 
 
-module.exports = function handler(req, res) {
+function getCleanWaitingPlayer(
+  roomId
+) {
 
-  try {
-
-    if (req.method !== "POST") {
-
-      return res.status(405).json({
-        error: "Method not allowed"
-      });
-
-    }
+  const waiting =
+    waitingByRoom.get(
+      roomId
+    );
 
 
-    const body =
-      req.body &&
-      typeof req.body === "object"
-        ? req.body
-        : {};
+  if (!waiting) {
+
+    return null;
+
+  }
 
 
-    if (!body.userId) {
+  if (
+    Date.now() >
+    waiting.expiresAt
+  ) {
 
-      return res.status(400).json({
-        error: "userId is required"
-      });
+    waitingByRoom.delete(
+      roomId
+    );
 
-    }
+    return null;
 
-
-    const roomId =
-      String(
-        body.roomId || ""
-      );
-
-
-    const roomConfig =
-      ROOM_CONFIG[roomId];
+  }
 
 
-    if (!roomConfig) {
+  return waiting;
 
-      return res.status(400).json({
-
-        error: "INVALID_ROOM",
-
-        message:
-          "Неверная PvP-комната"
-
-      });
-
-    }
+}
 
 
-    const requestedStake =
-      Number(body.stake);
+function createGameRoom(
+  roomId,
+  config,
+  player
+) {
+
+  const gameRoomId =
+    createRoomId();
 
 
-    if (
-      !Number.isFinite(
-        requestedStake
-      ) ||
-      requestedStake !==
-        roomConfig.stake
-    ) {
-
-      return res.status(400).json({
-
-        error: "INVALID_STAKE",
-
-        message:
-          "Ставка не соответствует комнате",
-
-        expectedStake:
-          roomConfig.stake
-
-      });
-
-    }
+  const now =
+    Date.now();
 
 
-    const roomIdGenerated =
-      createRoomId();
+  const room = {
+
+    id:
+      gameRoomId,
+
+    gameRoomId:
+      roomId,
+
+    roomNumber:
+      config.number,
+
+    roomName:
+      config.name,
+
+    stake:
+      config.stake,
+
+    status:
+      "waiting",
+
+    createdAt:
+      now,
+
+    expiresAt:
+      now +
+      WAIT_TIME_MS,
+
+    players: [
+
+      {
+
+        userId:
+          player.userId,
+
+        nickname:
+          player.nickname,
+
+        choice:
+          null
+
+      }
+
+    ]
+
+  };
 
 
-    const room = {
+  roomsById.set(
+    gameRoomId,
+    room
+  );
 
-      id:
-        roomIdGenerated,
+
+  waitingByRoom.set(
+    roomId,
+    {
 
       gameRoomId:
-        roomId,
+        gameRoomId,
 
-      roomNumber:
-        roomConfig.number,
+      userId:
+        player.userId,
 
-      roomName:
-        roomConfig.name,
-
-      stake:
-        roomConfig.stake,
-
-      status:
-        "waiting",
-
-      createdAt:
-        Date.now(),
+      nickname:
+        player.nickname,
 
       expiresAt:
-        Date.now() +
-        24 * 60 * 60 * 1000,
+        room.expiresAt
 
-      players: [
+    }
+  );
 
-        {
 
-          userId:
-            String(
-              body.userId
-            ),
+  return room;
 
-          nickname:
-            String(
-              body.nickname ||
-              "Player"
-            ),
+}
 
-          choice:
-            null
+
+function matchPlayers(
+  room,
+  secondPlayer
+) {
+
+  room.status =
+    "matched";
+
+
+  room.players.push({
+
+    userId:
+      secondPlayer.userId,
+
+    nickname:
+      secondPlayer.nickname,
+
+    choice:
+      null
+
+  });
+
+
+  room.matchedAt =
+    Date.now();
+
+
+  waitingByRoom.delete(
+    room.gameRoomId
+  );
+
+
+  roomsById.set(
+    room.id,
+    room
+  );
+
+
+  return room;
+
+}
+
+
+function findRoomForWaitingPlayer(
+  roomId
+) {
+
+  const waiting =
+    getCleanWaitingPlayer(
+      roomId
+    );
+
+
+  if (!waiting) {
+
+    return null;
+
+  }
+
+
+  return (
+    roomsById.get(
+      waiting.gameRoomId
+    ) || null
+  );
+
+}
+
+
+module.exports =
+  function handler(
+    req,
+    res
+  ) {
+
+    try {
+
+
+      /* ==============================
+         METHOD
+         ============================== */
+
+      if (
+        req.method !==
+        "POST"
+      ) {
+
+        return res
+          .status(405)
+          .json({
+
+            error:
+              "Method not allowed"
+
+          });
+
+      }
+
+
+      /* ==============================
+         BODY
+         ============================== */
+
+      const body =
+        req.body &&
+        typeof req.body ===
+          "object"
+
+          ? req.body
+
+          : {};
+
+
+      /* ==============================
+         USER
+         ============================== */
+
+      if (!body.userId) {
+
+        return res
+          .status(400)
+          .json({
+
+            error:
+              "userId is required"
+
+          });
+
+      }
+
+
+      /* ==============================
+         ROOM
+         ============================== */
+
+      const roomId =
+        String(
+          body.roomId ||
+          ""
+        );
+
+
+      const roomConfig =
+        ROOM_CONFIG[
+          roomId
+        ];
+
+
+      if (!roomConfig) {
+
+        return res
+          .status(400)
+          .json({
+
+            error:
+              "INVALID_ROOM",
+
+            message:
+              "Неверная PvP-комната"
+
+          });
+
+      }
+
+
+      /* ==============================
+         STAKE
+         ============================== */
+
+      const requestedStake =
+        Number(
+          body.stake
+        );
+
+
+      if (
+
+        !Number.isFinite(
+          requestedStake
+        )
+
+        ||
+
+        requestedStake !==
+          roomConfig.stake
+
+      ) {
+
+        return res
+          .status(400)
+          .json({
+
+            error:
+              "INVALID_STAKE",
+
+            message:
+              "Ставка не соответствует комнате",
+
+            expectedStake:
+              roomConfig.stake
+
+          });
+
+      }
+
+
+      /* ==============================
+         PLAYER
+         ============================== */
+
+      const userId =
+        String(
+          body.userId
+        );
+
+
+      const nickname =
+        String(
+          body.nickname ||
+          "Player"
+        );
+
+
+      /* ==============================
+         LOOK FOR WAITING PLAYER
+         ============================== */
+
+      const existingWaiting =
+        getCleanWaitingPlayer(
+          roomId
+        );
+
+
+      /* ==============================
+         FIRST PLAYER
+         ============================== */
+
+      if (!existingWaiting) {
+
+        const room =
+          createGameRoom(
+
+            roomId,
+
+            roomConfig,
+
+            {
+
+              userId:
+                userId,
+
+              nickname:
+                nickname
+
+            }
+
+          );
+
+
+        return res
+          .status(200)
+          .json({
+
+            room:
+              room,
+
+            matched:
+              false,
+
+            alreadyWaiting:
+              false,
+
+            paymentRequired:
+              true,
+
+            stake:
+              roomConfig.stake,
+
+            roomId:
+              roomConfig.number,
+
+            roomName:
+              roomConfig.name,
+
+            waitHours:
+              24
+
+          });
+
+      }
+
+
+      /* ==============================
+         SAME PLAYER
+         ============================== */
+
+      if (
+        existingWaiting.userId ===
+        userId
+      ) {
+
+        const existingRoom =
+          roomsById.get(
+            existingWaiting.gameRoomId
+          );
+
+
+        if (existingRoom) {
+
+          return res
+            .status(200)
+            .json({
+
+              room:
+                existingRoom,
+
+              matched:
+                false,
+
+              alreadyWaiting:
+                true,
+
+              paymentRequired:
+                true,
+
+              stake:
+                roomConfig.stake,
+
+              roomId:
+                roomConfig.number,
+
+              roomName:
+                roomConfig.name,
+
+              waitHours:
+                24
+
+            });
 
         }
 
-      ]
-
-    };
+      }
 
 
-    rooms.set(
-      roomIdGenerated,
-      room
-    );
+      /* ==============================
+         FIND ROOM
+         ============================== */
+
+      const waitingRoom =
+        findRoomForWaitingPlayer(
+          roomId
+        );
 
 
-    return res.status(200).json({
+      /* ==============================
+         NO VALID ROOM
+         ============================== */
 
-      room:
+      if (!waitingRoom) {
 
-        room,
+        const room =
+          createGameRoom(
 
-      paymentRequired:
-        true,
+            roomId,
 
-      stake:
-        roomConfig.stake,
+            roomConfig,
 
-      roomId:
-        roomConfig.number,
+            {
 
-      roomName:
-        roomConfig.name,
+              userId:
+                userId,
 
-      waitHours:
-        24
+              nickname:
+                nickname
 
-    });
+            }
 
-  }
+          );
 
 
-  catch (error) {
+        return res
+          .status(200)
+          .json({
 
-    console.error(
-      "PVP JOIN ERROR:",
+            room:
+              room,
+
+            matched:
+              false,
+
+            alreadyWaiting:
+              false,
+
+            paymentRequired:
+              true,
+
+            stake:
+              roomConfig.stake,
+
+            roomId:
+              roomConfig.number,
+
+            roomName:
+              roomConfig.name,
+
+            waitHours:
+              24
+
+          });
+
+      }
+
+
+      /* ==============================
+         MATCH SECOND PLAYER
+         ============================== */
+
+      const matchedRoom =
+        matchPlayers(
+
+          waitingRoom,
+
+          {
+
+            userId:
+              userId,
+
+            nickname:
+              nickname
+
+          }
+
+        );
+
+
+      /* ==============================
+         RESPONSE
+         ============================== */
+
+      return res
+        .status(200)
+        .json({
+
+          room:
+            matchedRoom,
+
+          matched:
+            true,
+
+          alreadyWaiting:
+            false,
+
+          paymentRequired:
+            true,
+
+          stake:
+            roomConfig.stake,
+
+          roomId:
+            roomConfig.number,
+
+          roomName:
+            roomConfig.name,
+
+          waitHours:
+            24
+
+        });
+
+    }
+
+
+    catch (
       error
-    );
+    ) {
+
+      console.error(
+        "PVP JOIN ERROR:",
+        error
+      );
 
 
-    return res.status(500).json({
+      return res
+        .status(500)
+        .json({
 
-      error:
-        "SERVER_ERROR",
+          error:
+            "SERVER_ERROR",
 
-      message:
-        error.message ||
-        "Unknown error"
+          message:
+            error.message ||
+            "Unknown error"
 
-    });
+        });
 
-  }
+    }
 
-};
+  };
