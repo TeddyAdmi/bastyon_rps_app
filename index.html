@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
+
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>КНБ — Камень Ножницы Бумага</title>
+  <title>
+    КНБ — Камень Ножницы Бумага
+  </title>
 
   <script src="https://bastyon.com/js/lib/apps/sdk.js"></script>
+
 
   <style>
 
     * {
       box-sizing: border-box;
     }
+
 
     body {
 
@@ -38,10 +45,10 @@
           circle at top,
           #303030 0%,
           #1b1b1b 34%,
-          #111111 100%
+          #111 100%
         );
 
-      color: #ffffff;
+      color: #fff;
 
     }
 
@@ -56,16 +63,19 @@
 
       padding: 18px;
 
-      background: rgba(
-        38,
-        38,
-        38,
-        0.96
-      );
+      background:
+        rgba(
+          38,
+          38,
+          38,
+          .96
+        );
 
-      border: 1px solid #383838;
+      border:
+        1px solid #383838;
 
-      border-radius: 20px;
+      border-radius:
+        20px;
 
       box-shadow:
         0 14px 40px
@@ -73,19 +83,17 @@
           0,
           0,
           0,
-          0.45
+          .45
         );
 
     }
 
 
-    /* HEADER */
-
     .app-header {
 
-      margin-bottom: 16px;
-
       text-align: center;
+
+      margin-bottom: 16px;
 
     }
 
@@ -97,8 +105,6 @@
       font-size: 30px;
 
       line-height: 1.1;
-
-      letter-spacing: -0.5px;
 
     }
 
@@ -114,8 +120,6 @@
     }
 
 
-    /* PROFILE */
-
     .profile-card {
 
       display: flex;
@@ -128,11 +132,14 @@
 
       margin-bottom: 18px;
 
-      background: #1d1d1d;
+      background:
+        #1d1d1d;
 
-      border: 1px solid #353535;
+      border:
+        1px solid #353535;
 
-      border-radius: 14px;
+      border-radius:
+        14px;
 
     }
 
@@ -151,9 +158,8 @@
 
       background: #333;
 
-      border: 2px solid #00ff88;
-
-      display: block;
+      border:
+        2px solid #00ff88;
 
     }
 
@@ -214,8 +220,6 @@
     }
 
 
-    /* SCREENS */
-
     .screen {
 
       display: none;
@@ -230,11 +234,10 @@
     }
 
 
-    /* MAIN */
-
     .section-title {
 
-      margin: 4px 0 10px;
+      margin:
+        4px 0 10px;
 
       font-size: 18px;
 
@@ -245,18 +248,15 @@
 
     .section-description {
 
-      margin: 0 0 14px;
+      margin:
+        0 0 14px;
 
       color: #999;
 
       font-size: 13px;
 
-      line-height: 1.4;
-
     }
 
-
-    /* ROOMS */
 
     .rooms-grid {
 
@@ -282,31 +282,33 @@
 
       width: 100%;
 
-      min-height: 120px;
+      min-height: 122px;
 
       padding: 14px;
 
       text-align: left;
 
-      border: 1px solid #424242;
+      border:
+        1px solid #424242;
 
-      border-radius: 14px;
+      border-radius:
+        14px;
 
       background:
         linear-gradient(
           180deg,
-          #333333 0%,
+          #333 0%,
           #292929 100%
         );
 
-      color: #ffffff;
+      color: #fff;
 
       cursor: pointer;
 
       transition:
-        transform 0.15s ease,
-        border-color 0.2s ease,
-        background 0.2s ease;
+        transform .15s,
+        border-color .2s,
+        background .2s;
 
     }
 
@@ -325,14 +327,6 @@
           #383838 0%,
           #2d2d2d 100%
         );
-
-    }
-
-
-    .room-card:active {
-
-      transform:
-        scale(0.98);
 
     }
 
@@ -380,8 +374,6 @@
 
       font-weight: 800;
 
-      vertical-align: middle;
-
     }
 
 
@@ -413,8 +405,6 @@
 
       margin-top: 10px;
 
-      color: #ffffff;
-
       font-size: 11px;
 
       font-weight: 700;
@@ -442,8 +432,6 @@
 
       font-weight: 800;
 
-      text-transform: uppercase;
-
     }
 
 
@@ -456,8 +444,6 @@
     }
 
 
-    /* ROOM SCREEN */
-
     .back-button {
 
       width: 100%;
@@ -466,28 +452,21 @@
 
       padding: 11px;
 
-      border: 1px solid #444;
+      border:
+        1px solid #444;
 
-      border-radius: 11px;
+      border-radius:
+        11px;
 
       background: #292929;
 
-      color: #ffffff;
+      color: #fff;
 
       cursor: pointer;
 
       font-size: 13px;
 
       font-weight: 700;
-
-    }
-
-
-    .back-button:hover {
-
-      background: #333;
-
-      border-color: #666;
 
     }
 
@@ -502,9 +481,11 @@
 
       background: #1e1e1e;
 
-      border: 1px solid #383838;
+      border:
+        1px solid #383838;
 
-      border-radius: 15px;
+      border-radius:
+        15px;
 
     }
 
@@ -518,8 +499,6 @@
       font-weight: 800;
 
       text-transform: uppercase;
-
-      letter-spacing: 1px;
 
     }
 
@@ -559,17 +538,17 @@
     }
 
 
-    /* GAME */
-
     .game-panel {
 
       padding: 16px;
 
       background: #202020;
 
-      border: 1px solid #343434;
+      border:
+        1px solid #343434;
 
-      border-radius: 15px;
+      border-radius:
+        15px;
 
     }
 
@@ -617,11 +596,11 @@
 
       height: 100px;
 
-      padding: 10px;
+      border:
+        2px solid #444;
 
-      border: 2px solid #444;
-
-      border-radius: 16px;
+      border-radius:
+        16px;
 
       background: #333;
 
@@ -631,11 +610,6 @@
 
       font-size: 42px;
 
-      transition:
-        transform 0.15s,
-        background 0.2s,
-        border-color 0.2s;
-
     }
 
 
@@ -643,36 +617,23 @@
 
       background: #444;
 
-      border-color: #00ff88;
+      border-color:
+        #00ff88;
 
       transform:
-        translateY(
-          -3px
-        );
-
-    }
-
-
-    .game-btn:active:not(:disabled) {
-
-      transform:
-        scale(
-          0.95
-        );
+        translateY(-3px);
 
     }
 
 
     .game-btn:disabled {
 
-      opacity: 0.4;
+      opacity: .4;
 
       cursor: not-allowed;
 
     }
 
-
-    /* RESULT */
 
     .result {
 
@@ -682,7 +643,8 @@
 
       padding: 14px;
 
-      border-radius: 12px;
+      border-radius:
+        12px;
 
       background: #171717;
 
@@ -697,8 +659,6 @@
     }
 
 
-    /* PVP */
-
     .pvp-info {
 
       display: none;
@@ -707,19 +667,21 @@
 
       padding: 12px;
 
-      border-radius: 10px;
+      border-radius:
+        10px;
 
       background: #202020;
 
-      border: 1px solid #333;
+      border:
+        1px solid #333;
 
       color: #aaa;
 
       font-size: 13px;
 
-      line-height: 1.5;
-
       text-align: center;
+
+      line-height: 1.5;
 
     }
 
@@ -742,7 +704,31 @@
     }
 
 
-    /* STATUS */
+    .action-button {
+
+      width: 100%;
+
+      margin-top: 12px;
+
+      padding: 12px;
+
+      border: 0;
+
+      border-radius:
+        11px;
+
+      background: #00ff88;
+
+      color: #111;
+
+      cursor: pointer;
+
+      font-size: 14px;
+
+      font-weight: 900;
+
+    }
+
 
     #status {
 
@@ -753,8 +739,6 @@
       font-size: 12px;
 
       text-align: center;
-
-      line-height: 1.4;
 
     }
 
@@ -796,21 +780,13 @@
 
         padding: 14px;
 
-        border-radius: 16px;
-
       }
 
 
       .rooms-grid {
 
-        grid-template-columns: 1fr;
-
-      }
-
-
-      .room-card {
-
-        min-height: 108px;
+        grid-template-columns:
+          1fr;
 
       }
 
@@ -828,6 +804,7 @@
     }
 
   </style>
+
 </head>
 
 
@@ -835,8 +812,6 @@
 
   <div class="card">
 
-
-    <!-- HEADER -->
 
     <div class="app-header">
 
@@ -890,7 +865,7 @@
 
 
     <!-- =====================================
-         MAIN SCREEN
+         MAIN
          ===================================== -->
 
     <div
@@ -903,14 +878,12 @@
       </div>
 
       <div class="section-description">
-        Сначала войдите в комнату. Игра начинается уже внутри комнаты.
+        Войдите в комнату, чтобы начать игру.
       </div>
 
 
       <div class="rooms-grid">
 
-
-        <!-- ROOM 1 -->
 
         <button
           class="room-card free"
@@ -944,8 +917,6 @@
         </button>
 
 
-        <!-- ROOM 2 -->
-
         <button
           class="room-card"
           onclick="enterRoom('room-2')"
@@ -977,8 +948,6 @@
 
         </button>
 
-
-        <!-- ROOM 3 -->
 
         <button
           class="room-card"
@@ -1012,8 +981,6 @@
         </button>
 
 
-        <!-- ROOM 4 -->
-
         <button
           class="room-card"
           onclick="enterRoom('room-4')"
@@ -1045,8 +1012,6 @@
 
         </button>
 
-
-        <!-- ROOM 5 -->
 
         <button
           class="room-card"
@@ -1080,8 +1045,6 @@
         </button>
 
 
-        <!-- ROOM 6 -->
-
         <button
           class="room-card"
           onclick="enterRoom('room-6')"
@@ -1113,8 +1076,6 @@
 
         </button>
 
-
-        <!-- ROOM 7 -->
 
         <button
           class="room-card"
@@ -1148,8 +1109,6 @@
         </button>
 
 
-        <!-- ROOM 8 -->
-
         <button
           class="room-card"
           onclick="enterRoom('room-8')"
@@ -1182,8 +1141,6 @@
         </button>
 
 
-        <!-- ROOM 9 -->
-
         <button
           class="room-card"
           onclick="enterRoom('room-9')"
@@ -1215,8 +1172,6 @@
 
         </button>
 
-
-        <!-- ROOM 10 -->
 
         <button
           class="room-card"
@@ -1255,13 +1210,14 @@
 
 
     <!-- =====================================
-         ROOM SCREEN
+         ROOM
          ===================================== -->
 
     <div
       id="room-screen"
       class="screen"
     >
+
 
       <button
         class="back-button"
@@ -1325,7 +1281,6 @@
             id="btn-rock"
             onclick="makeMove('rock')"
             disabled
-            title="Камень"
           >
             🪨
           </button>
@@ -1335,7 +1290,6 @@
             id="btn-scissors"
             onclick="makeMove('scissors')"
             disabled
-            title="Ножницы"
           >
             ✂️
           </button>
@@ -1345,7 +1299,6 @@
             id="btn-paper"
             onclick="makeMove('paper')"
             disabled
-            title="Бумага"
           >
             📄
           </button>
@@ -1377,14 +1330,21 @@
             class="room-id"
           ></div>
 
+          <button
+            id="pvp-retry"
+            class="action-button"
+            onclick="startPvpSearch()"
+            style="display:none"
+          >
+            Найти соперника
+          </button>
+
         </div>
 
       </div>
 
     </div>
 
-
-    <!-- STATUS -->
 
     <p id="status">
       Запуск Bastyon SDK...
@@ -1395,24 +1355,29 @@
 
   <script>
 
-    /* =====================================
-       GLOBAL
-       ===================================== */
+    let sdk =
+      null;
 
-    let sdk = null;
 
-    let userAddress = null;
+    let userAddress =
+      null;
+
 
     let currentRoom =
       "room-1";
+
 
     let currentPvpRoom =
       null;
 
 
-    /* =====================================
-       ROOMS
-       ===================================== */
+    let pollTimer =
+      null;
+
+
+    let currentChoice =
+      null;
+
 
     const ROOMS = {
 
@@ -1420,9 +1385,11 @@
 
         number: 1,
 
-        name: "Новичок",
+        name:
+          "Новичок",
 
-        stake: 0,
+        stake:
+          0,
 
         stakeText:
           "Бесплатно",
@@ -1440,9 +1407,11 @@
 
         number: 2,
 
-        name: "Bronze",
+        name:
+          "Bronze",
 
-        stake: 0.2,
+        stake:
+          0.2,
 
         stakeText:
           "0.2 PKOIN",
@@ -1460,9 +1429,11 @@
 
         number: 3,
 
-        name: "Silver",
+        name:
+          "Silver",
 
-        stake: 0.5,
+        stake:
+          0.5,
 
         stakeText:
           "0.5 PKOIN",
@@ -1480,9 +1451,11 @@
 
         number: 4,
 
-        name: "Gold",
+        name:
+          "Gold",
 
-        stake: 1,
+        stake:
+          1,
 
         stakeText:
           "1 PKOIN",
@@ -1500,9 +1473,11 @@
 
         number: 5,
 
-        name: "Platinum",
+        name:
+          "Platinum",
 
-        stake: 2,
+        stake:
+          2,
 
         stakeText:
           "2 PKOIN",
@@ -1520,9 +1495,11 @@
 
         number: 6,
 
-        name: "Diamond",
+        name:
+          "Diamond",
 
-        stake: 3,
+        stake:
+          3,
 
         stakeText:
           "3 PKOIN",
@@ -1540,9 +1517,11 @@
 
         number: 7,
 
-        name: "Master",
+        name:
+          "Master",
 
-        stake: 4,
+        stake:
+          4,
 
         stakeText:
           "4 PKOIN",
@@ -1560,9 +1539,11 @@
 
         number: 8,
 
-        name: "Elite",
+        name:
+          "Elite",
 
-        stake: 5,
+        stake:
+          5,
 
         stakeText:
           "5 PKOIN",
@@ -1580,9 +1561,11 @@
 
         number: 9,
 
-        name: "Champion",
+        name:
+          "Champion",
 
-        stake: 10,
+        stake:
+          10,
 
         stakeText:
           "10 PKOIN",
@@ -1600,9 +1583,11 @@
 
         number: 10,
 
-        name: "Legend",
+        name:
+          "Legend",
 
-        stake: 50,
+        stake:
+          50,
 
         stakeText:
           "50 PKOIN",
@@ -1618,32 +1603,6 @@
     };
 
 
-    /* =====================================
-       DEFAULT AVATAR
-       ===================================== */
-
-    const DEFAULT_AVATAR =
-      "data:image/svg+xml;utf8," +
-
-      "<svg xmlns='http://www.w3.org/2000/svg' " +
-      "viewBox='0 0 100 100'>" +
-
-      "<circle cx='50' cy='50' r='50' " +
-      "fill='%23333333'/>" +
-
-      "<circle cx='50' cy='38' r='18' " +
-      "fill='%23888888'/>" +
-
-      "<path d='M20 90c4-22 18-32 30-32s26 10 30 32' " +
-      "fill='%23888888'/>" +
-
-      "</svg>";
-
-
-    /* =====================================
-       CHOICES
-       ===================================== */
-
     const choices = {
 
       rock:
@@ -1658,20 +1617,41 @@
     };
 
 
-    /* =====================================
-       SCREEN
-       ===================================== */
+    const DEFAULT_AVATAR =
+
+      "data:image/svg+xml;utf8," +
+
+      "<svg xmlns='http://www.w3.org/2000/svg' " +
+
+      "viewBox='0 0 100 100'>" +
+
+      "<circle cx='50' cy='50' r='50' " +
+
+      "fill='%23333333'/>" +
+
+      "<circle cx='50' cy='38' r='18' " +
+
+      "fill='%23888888'/>" +
+
+      "<path d='M20 90c4-22 18-32 30-32s26 10 30 32' " +
+
+      "fill='%23888888'/>" +
+
+      "</svg>";
+
 
     function showScreen(
-      screen
+      id
     ) {
 
       document
-        .querySelectorAll(".screen")
+        .querySelectorAll(
+          ".screen"
+        )
         .forEach(
-          function(element) {
+          function(el) {
 
-            element.classList.remove(
+            el.classList.remove(
               "active"
             );
 
@@ -1681,7 +1661,7 @@
 
       document
         .getElementById(
-          screen
+          id
         )
         .classList.add(
           "active"
@@ -1690,16 +1670,117 @@
     }
 
 
-    /* =====================================
-       ENTER ROOM
-       ===================================== */
+    function stopPolling() {
+
+      if (pollTimer) {
+
+        clearInterval(
+          pollTimer
+        );
+
+        pollTimer =
+          null;
+
+      }
+
+    }
+
+
+    async function leaveRoom() {
+
+      stopPolling();
+
+
+      if (
+
+        currentPvpRoom &&
+
+        currentRoom !==
+          "room-1"
+
+      ) {
+
+        try {
+
+          await fetch(
+
+            "/api/pvp/join",
+
+            {
+
+              method:
+                "POST",
+
+              headers: {
+
+                "Content-Type":
+                  "application/json"
+
+              },
+
+              body:
+                JSON.stringify({
+
+                  action:
+                    "leave",
+
+                  userId:
+                    userAddress ||
+                    "demo-user",
+
+                  gameRoomId:
+                    currentPvpRoom.id
+
+                })
+
+            }
+
+          );
+
+        }
+
+        catch (
+          error
+        ) {
+
+          console.warn(
+            "PVP LEAVE ERROR:",
+            error
+          );
+
+        }
+
+      }
+
+
+      currentPvpRoom =
+        null;
+
+
+      currentChoice =
+        null;
+
+
+      enableButtons(
+        false
+      );
+
+
+      showScreen(
+        "main-screen"
+      );
+
+    }
+
 
     function enterRoom(
       roomId
     ) {
 
       const room =
-        ROOMS[roomId];
+        ROOMS[
+          roomId
+        ];
 
 
       if (!room) {
@@ -1709,12 +1790,24 @@
       }
 
 
+      stopPolling();
+
+
       currentRoom =
         roomId;
 
 
       currentPvpRoom =
         null;
+
+
+      currentChoice =
+        null;
+
+
+      enableButtons(
+        false
+      );
 
 
       document
@@ -1750,38 +1843,12 @@
           room.modeText;
 
 
-      const subtitle =
-        document.getElementById(
-          "game-subtitle"
-        );
-
-
-      const result =
-        document.getElementById(
-          "result-text"
-        );
-
-
-      const pvpInfo =
-        document.getElementById(
-          "pvp-info"
-        );
-
-
-      const pvpMessage =
-        document.getElementById(
-          "pvp-message"
-        );
-
-
-      const pvpRoom =
-        document.getElementById(
+      document
+        .getElementById(
           "pvp-room"
-        );
-
-
-      pvpRoom.innerText =
-        "";
+        )
+        .innerText =
+          "";
 
 
       if (
@@ -1789,33 +1856,74 @@
         "demo"
       ) {
 
-        subtitle.innerText =
-          "🤖 Бесплатная игра с компьютером";
+        document
+          .getElementById(
+            "game-subtitle"
+          )
+          .innerText =
+            "🤖 Бесплатная игра с компьютером";
 
-        result.innerText =
-          "Сделайте свой ход.";
 
-        pvpInfo.classList.remove(
-          "show"
+        document
+          .getElementById(
+            "result-text"
+          )
+          .innerText =
+            "Сделайте свой ход.";
+
+
+        document
+          .getElementById(
+            "pvp-info"
+          )
+          .classList.remove(
+            "show"
+          );
+
+
+        enableButtons(
+          true
         );
 
       }
 
       else {
 
-        subtitle.innerText =
-          "⚔️ PvP • ставка " +
-          room.stakeText;
+        document
+          .getElementById(
+            "game-subtitle"
+          )
+          .innerText =
+            "⚔️ Поиск соперника • " +
+            room.stakeText;
 
-        result.innerText =
-          "Вы вошли в комнату. Сделайте ход.";
 
-        pvpInfo.classList.add(
-          "show"
+        document
+          .getElementById(
+            "pvp-info"
+          )
+          .classList.add(
+            "show"
+          );
+
+
+        document
+          .getElementById(
+            "pvp-retry"
+          )
+          .style.display =
+            "none";
+
+
+        showScreen(
+          "room-screen"
         );
 
-        pvpMessage.innerText =
-          "Ожидание второго игрока";
+
+        startPvpSearch();
+
+
+        return;
 
       }
 
@@ -1827,28 +1935,263 @@
     }
 
 
-    /* =====================================
-       LEAVE ROOM
-       ===================================== */
+    async function startPvpSearch() {
 
-    function leaveRoom() {
+      const room =
+        ROOMS[
+          currentRoom
+        ];
 
-      currentPvpRoom =
+
+      if (
+
+        !room ||
+
+        room.mode !==
+          "pvp"
+
+      ) {
+
+        return;
+
+      }
+
+
+      stopPolling();
+
+
+      currentChoice =
         null;
 
 
-      showScreen(
-        "main-screen"
+      enableButtons(
+        false
       );
 
 
-      document
-        .getElementById(
-          "pvp-info"
-        )
-        .classList.remove(
-          "show"
+      const result =
+        document
+          .getElementById(
+            "result-text"
+          );
+
+
+      const message =
+        document
+          .getElementById(
+            "pvp-message"
+          );
+
+
+      const retry =
+        document
+          .getElementById(
+            "pvp-retry"
+          );
+
+
+      result.innerText =
+        "⏳ Ищем соперника...";
+
+
+      message.innerText =
+        "Подключение к комнате " +
+        room.name +
+        "...";
+
+
+      retry.style.display =
+        "none";
+
+
+      try {
+
+        const response =
+          await fetch(
+
+            "/api/pvp/join",
+
+            {
+
+              method:
+                "POST",
+
+              headers: {
+
+                "Content-Type":
+                  "application/json"
+
+              },
+
+              body:
+                JSON.stringify({
+
+                  action:
+                    "join",
+
+                  userId:
+                    userAddress ||
+                    "demo-user",
+
+                  nickname:
+                    document
+                      .getElementById(
+                        "user-name"
+                      )
+                      .innerText,
+
+                  roomId:
+                    currentRoom,
+
+                  stake:
+                    room.stake
+
+                })
+
+            }
+
+          );
+
+
+        const text =
+          await response.text();
+
+
+        let data =
+          null;
+
+
+        try {
+
+          data =
+            JSON.parse(
+              text
+            );
+
+        }
+
+        catch (
+          error
+        ) {
+
+          console.warn(
+            "PVP NON JSON:",
+            text
+          );
+
+        }
+
+
+        if (
+          !response.ok ||
+          !data
+        ) {
+
+          result.innerText =
+            "❌ Ошибка PvP: " +
+            response.status;
+
+
+          message.innerText =
+            "Не удалось войти в комнату.";
+
+
+          retry.style.display =
+            "block";
+
+
+          return;
+
+        }
+
+
+        currentPvpRoom =
+          data.room ||
+          null;
+
+
+        updatePvpState(
+          data.room
         );
+
+
+        if (
+
+          currentPvpRoom &&
+
+          currentPvpRoom.status ===
+            "waiting"
+
+        ) {
+
+          pollTimer =
+            setInterval(
+
+              pollPvpStatus,
+
+              2000
+
+            );
+
+        }
+
+        else if (
+
+          currentPvpRoom &&
+
+          currentPvpRoom.status ===
+            "matched"
+
+        ) {
+
+          enableButtons(
+            true
+          );
+
+        }
+
+      }
+
+
+      catch (
+        error
+      ) {
+
+        console.error(
+          "PVP SEARCH ERROR:",
+          error
+        );
+
+
+        result.innerText =
+          "❌ PvP сервер недоступен.";
+
+
+        message.innerText =
+          "Проверь соединение и попробуй ещё раз.";
+
+
+        retry.style.display =
+          "block";
+
+      }
+
+    }
+
+
+    function updatePvpState(
+      room
+    ) {
+
+      if (!room) {
+
+        return;
+
+      }
+
+
+      currentPvpRoom =
+        room;
 
 
       document
@@ -1856,52 +2199,569 @@
           "pvp-room"
         )
         .innerText =
-          "";
+          "Комната игры: " +
+          room.id;
+
+
+      const message =
+        document
+          .getElementById(
+            "pvp-message"
+          );
+
+
+      const result =
+        document
+          .getElementById(
+            "result-text"
+          );
+
+
+      if (
+        room.status ===
+        "waiting"
+      ) {
+
+        enableButtons(
+          false
+        );
+
+
+        message.innerText =
+          "⏳ Ожидаем второго игрока...";
+
+
+        result.innerText =
+          "Ставка: " +
+          ROOMS[
+            currentRoom
+          ].stakeText +
+          " • поиск соперника";
+
+
+        return;
+
+      }
+
+
+      if (
+        room.status ===
+        "matched"
+      ) {
+
+        message.innerText =
+          "✅ Соперник найден. Сделайте ход.";
+
+
+        if (
+          currentChoice
+        ) {
+
+          result.innerText =
+            "✅ Ваш ход принят. Ожидаем соперника.";
+
+        }
+
+        else {
+
+          result.innerText =
+            "🎮 Игра началась!";
+
+        }
+
+
+        enableButtons(
+          !currentChoice
+        );
+
+
+        return;
+
+      }
+
+
+      if (
+        room.status ===
+        "finished"
+      ) {
+
+        stopPolling();
+
+
+        enableButtons(
+          false
+        );
+
+
+        renderFinished(
+          room
+        );
+
+      }
 
     }
 
 
-    /* =====================================
-       BUTTONS
-       ===================================== */
+    async function pollPvpStatus() {
 
-    function enableButtons(
-      enable
-    ) {
+      if (!currentPvpRoom) {
 
-      [
+        return;
 
-        "btn-rock",
-
-        "btn-scissors",
-
-        "btn-paper"
-
-      ].forEach(
-        function(id) {
-
-          const button =
-            document.getElementById(
-              id
-            );
+      }
 
 
-          if (button) {
+      try {
 
-            button.disabled =
-              !enable;
+        const response =
+          await fetch(
 
-          }
+            "/api/pvp/join",
+
+            {
+
+              method:
+                "POST",
+
+              headers: {
+
+                "Content-Type":
+                  "application/json"
+
+              },
+
+              body:
+                JSON.stringify({
+
+                  action:
+                    "status",
+
+                  userId:
+                    userAddress ||
+                    "demo-user",
+
+                  gameRoomId:
+                    currentPvpRoom.id
+
+                })
+
+            }
+
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+
+          response.ok &&
+
+          data.room
+
+        ) {
+
+          updatePvpState(
+            data.room
+          );
 
         }
+
+      }
+
+
+      catch (
+        error
+      ) {
+
+        console.warn(
+          "PVP STATUS ERROR:",
+          error
+        );
+
+      }
+
+    }
+
+
+    function playDemoMatch(
+      userChoice
+    ) {
+
+      const keys =
+        Object.keys(
+          choices
+        );
+
+
+      const botChoice =
+        keys[
+          Math.floor(
+            Math.random() *
+            keys.length
+          )
+        ];
+
+
+      showResult(
+
+        userChoice,
+
+        botChoice,
+
+        "Бот"
+
       );
 
     }
 
 
-    /* =====================================
-       ADDRESS
-       ===================================== */
+    async function playPvpMove(
+      userChoice
+    ) {
+
+      if (!currentPvpRoom) {
+
+        return;
+
+      }
+
+
+      currentChoice =
+        userChoice;
+
+
+      enableButtons(
+        false
+      );
+
+
+      document
+        .getElementById(
+          "result-text"
+        )
+        .innerText =
+          "⏳ Отправляем ваш ход...";
+
+
+      try {
+
+        const response =
+          await fetch(
+
+            "/api/pvp/join",
+
+            {
+
+              method:
+                "POST",
+
+              headers: {
+
+                "Content-Type":
+                  "application/json"
+
+              },
+
+              body:
+                JSON.stringify({
+
+                  action:
+                    "move",
+
+                  userId:
+                    userAddress ||
+                    "demo-user",
+
+                  gameRoomId:
+                    currentPvpRoom.id,
+
+                  choice:
+                    userChoice
+
+                })
+
+            }
+
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          currentChoice =
+            null;
+
+
+          enableButtons(
+            true
+          );
+
+
+          document
+            .getElementById(
+              "result-text"
+            )
+            .innerText =
+              "❌ " +
+              (
+                data.message ||
+                "Не удалось отправить ход"
+              );
+
+
+          return;
+
+        }
+
+
+        updatePvpState(
+          data.room
+        );
+
+      }
+
+
+      catch (
+        error
+      ) {
+
+        console.error(
+          "PVP MOVE ERROR:",
+          error
+        );
+
+
+        currentChoice =
+          null;
+
+
+        enableButtons(
+          true
+        );
+
+
+        document
+          .getElementById(
+            "result-text"
+          )
+          .innerText =
+            "❌ Ошибка отправки хода.";
+
+      }
+
+    }
+
+
+    async function makeMove(
+      userChoice
+    ) {
+
+      const room =
+        ROOMS[
+          currentRoom
+        ];
+
+
+      if (!room) {
+
+        return;
+
+      }
+
+
+      if (
+        room.mode ===
+        "demo"
+      ) {
+
+        playDemoMatch(
+          userChoice
+        );
+
+
+        return;
+
+      }
+
+
+      await playPvpMove(
+        userChoice
+      );
+
+    }
+
+
+    function renderFinished(
+      room
+    ) {
+
+      const me =
+        userAddress ||
+        "demo-user";
+
+
+      if (
+        room.result ===
+        "draw"
+      ) {
+
+        document
+          .getElementById(
+            "result-text"
+          )
+          .innerText =
+            "🤝 Ничья!";
+
+      }
+
+      else if (
+        room.winnerUserId ===
+        me
+      ) {
+
+        document
+          .getElementById(
+            "result-text"
+          )
+          .innerText =
+            "🎉 Вы выиграли!";
+
+      }
+
+      else {
+
+        document
+          .getElementById(
+            "result-text"
+          )
+          .innerText =
+            "💥 Победитель: " +
+            (
+              room.winnerNickname ||
+              "соперник"
+            );
+
+      }
+
+
+      document
+        .getElementById(
+          "pvp-message"
+        )
+        .innerText =
+          "Игра завершена.";
+
+    }
+
+
+    function showResult(
+
+      userChoice,
+
+      opponentChoice,
+
+      opponentName
+
+    ) {
+
+      let text =
+        "";
+
+
+      if (
+        userChoice ===
+        opponentChoice
+      ) {
+
+        text =
+          "Ничья! Оба выбрали " +
+          choices[
+            userChoice
+          ];
+
+      }
+
+      else if (
+
+        (
+
+          userChoice ===
+            "rock" &&
+
+          opponentChoice ===
+            "scissors"
+
+        )
+
+        ||
+
+        (
+
+          userChoice ===
+            "scissors" &&
+
+          opponentChoice ===
+            "paper"
+
+        )
+
+        ||
+
+        (
+
+          userChoice ===
+            "paper" &&
+
+          opponentChoice ===
+            "rock"
+
+        )
+
+      ) {
+
+        text =
+          "🎉 Вы выиграли! " +
+          choices[
+            userChoice
+          ] +
+          " бьет " +
+          choices[
+            opponentChoice
+          ];
+
+      }
+
+      else {
+
+        text =
+          "💥 " +
+          opponentName +
+          " победил! " +
+          choices[
+            opponentChoice
+          ] +
+          " бьет " +
+          choices[
+            userChoice
+          ];
+
+      }
+
+
+      document
+        .getElementById(
+          "result-text"
+        )
+        .innerText =
+          text;
+
+    }
+
 
     function shortAddress(
       address
@@ -1915,11 +2775,14 @@
 
 
       const text =
-        String(address);
+        String(
+          address
+        );
 
 
       if (
-        text.length <= 12
+        text.length <=
+        12
       ) {
 
         return text;
@@ -1932,13 +2795,9 @@
         text.slice(
           0,
           6
-        )
+        ) +
 
-        +
-
-        "..."
-
-        +
+        "..." +
 
         text.slice(
           -4
@@ -1954,52 +2813,46 @@
     ) {
 
       const element =
-        document.getElementById(
-          "user-address"
-        );
+        document
+          .getElementById(
+            "user-address"
+          );
 
 
-      if (!element) {
+      if (element) {
 
-        return;
+        element.innerText =
+          address
+
+            ? shortAddress(
+                address
+              )
+
+            : "Адрес: не определён";
 
       }
-
-
-      element.innerText =
-        address
-
-          ? shortAddress(
-              address
-            )
-
-          : "Адрес: не определён";
 
     }
 
 
-    /* =====================================
-       BALANCE
-       ===================================== */
-
     function findBalance(
-      balanceData
+      data
     ) {
 
       if (
-        typeof balanceData ===
+        typeof data ===
         "number"
       ) {
 
-        return balanceData;
+        return data;
 
       }
 
 
       if (
-        !balanceData ||
-        typeof balanceData !==
-        "object"
+        !data ||
+        typeof data !==
+          "object"
       ) {
 
         return null;
@@ -2007,25 +2860,24 @@
       }
 
 
-      const priority = [
-
-        balanceData.actual,
-
-        balanceData.total,
-
-        balanceData.balance,
-
-        balanceData.confirmed,
-
-        balanceData.available,
-
-        balanceData.amount
-
-      ];
-
-
       for (
-        const value of priority
+
+        const value of [
+
+          data.actual,
+
+          data.total,
+
+          data.balance,
+
+          data.confirmed,
+
+          data.available,
+
+          data.amount
+
+        ]
+
       ) {
 
         if (
@@ -2054,13 +2906,14 @@
 
 
     function showBalance(
-      balanceData
+      data
     ) {
 
       const element =
-        document.getElementById(
-          "user-balance"
-        );
+        document
+          .getElementById(
+            "user-balance"
+          );
 
 
       if (!element) {
@@ -2070,28 +2923,25 @@
       }
 
 
-      console.log(
-        "BASTYON BALANCE DATA:",
-        balanceData
-      );
-
-
       const balance =
         findBalance(
-          balanceData
+          data
         );
 
 
       if (
-        balance === null
+        balance ===
+        null
       ) {
 
         element.innerText =
           "Баланс недоступен";
 
+
         element.classList.add(
           "warning"
         );
+
 
         return;
 
@@ -2099,8 +2949,11 @@
 
 
       element.innerText =
-        Number(balance)
-          .toFixed(4) +
+        Number(
+          balance
+        ).toFixed(
+          4
+        ) +
         " PKOIN";
 
 
@@ -2111,18 +2964,17 @@
     }
 
 
-    /* =====================================
-       PROFILE
-       ===================================== */
-
     function normalizeProfile(
       payload
     ) {
 
       if (
+
         !payload ||
+
         typeof payload !==
-        "object"
+          "object"
+
       ) {
 
         return {};
@@ -2131,9 +2983,13 @@
 
 
       let profile =
+
         payload.profile ||
+
         payload.result ||
+
         payload.data ||
+
         payload;
 
 
@@ -2161,15 +3017,19 @@
       ) {
 
         profile =
-          profile[0] || {};
+          profile[0] ||
+          {};
 
       }
 
 
       if (
+
         !profile ||
+
         typeof profile !==
-        "object"
+          "object"
+
       ) {
 
         return {};
@@ -2233,10 +3093,6 @@
     }
 
 
-    /* =====================================
-       AVATAR
-       ===================================== */
-
     function normalizeAvatarUrl(
       avatar
     ) {
@@ -2262,7 +3118,9 @@
 
 
       if (
-        url.startsWith("//")
+        url.startsWith(
+          "//"
+        )
       ) {
 
         return (
@@ -2285,7 +3143,9 @@
 
 
       if (
-        url.startsWith("data:")
+        url.startsWith(
+          "data:"
+        )
       ) {
 
         return url;
@@ -2322,24 +3182,22 @@
     }
 
 
-    /* =====================================
-       LOAD PROFILE
-       ===================================== */
-
     async function loadProfileInfo(
       address
     ) {
 
       const avatarImg =
-        document.getElementById(
-          "user-avatar"
-        );
+        document
+          .getElementById(
+            "user-avatar"
+          );
 
 
       const nameEl =
-        document.getElementById(
-          "user-name"
-        );
+        document
+          .getElementById(
+            "user-name"
+          );
 
 
       if (!address) {
@@ -2385,50 +3243,8 @@
           );
 
 
-        console.log(
-          "PROFILE HTTP STATUS:",
-          response.status
-        );
-
-
-        const text =
-          await response.text();
-
-
-        let payload =
-          {};
-
-
-        try {
-
-          payload =
-            JSON.parse(
-              text
-            );
-
-        }
-
-        catch (
-          parseError
-        ) {
-
-          console.warn(
-            "PROFILE NON JSON:",
-            text
-          );
-
-
-          throw new Error(
-            "Профиль вернул не JSON"
-          );
-
-        }
-
-
-        console.log(
-          "BASTYON PROFILE RAW:",
-          payload
-        );
+        const payload =
+          await response.json();
 
 
         if (
@@ -2436,15 +3252,9 @@
         ) {
 
           throw new Error(
-
             payload.error ||
-
             payload.message ||
-
-            "Profile HTTP " +
-
-            response.status
-
+            "Profile error"
           );
 
         }
@@ -2456,33 +3266,19 @@
           );
 
 
-        console.log(
-          "BASTYON PROFILE NORMALIZED:",
-          profile
-        );
+        nameEl.innerText =
 
+          profile.name ||
 
-        if (
-          profile.name
-        ) {
-
-          nameEl.innerText =
-            profile.name;
-
-        }
-
-        else {
-
-          nameEl.innerText =
+          (
             "Игрок " +
             String(
               address
             ).slice(
               0,
               6
-            );
-
-        }
+            )
+          );
 
 
         const avatarUrl =
@@ -2491,22 +3287,13 @@
           );
 
 
-        if (
-          avatarUrl
-        ) {
+        if (avatarUrl) {
 
           avatarImg.onerror =
             function() {
 
-              console.warn(
-                "AVATAR LOAD ERROR:",
-                avatarUrl
-              );
-
-
               avatarImg.onerror =
                 null;
-
 
               avatarImg.src =
                 DEFAULT_AVATAR;
@@ -2521,7 +3308,6 @@
 
       }
 
-
       catch (
         error
       ) {
@@ -2533,6 +3319,7 @@
 
 
         nameEl.innerText =
+
           "Игрок " +
 
           String(
@@ -2550,10 +3337,6 @@
 
     }
 
-
-    /* =====================================
-       ACCOUNT
-       ===================================== */
 
     async function getAccount() {
 
@@ -2586,8 +3369,10 @@
 
 
         if (
+
           typeof account ===
           "string"
+
         ) {
 
           return account;
@@ -2640,10 +3425,6 @@
     }
 
 
-    /* =====================================
-       GET BALANCE
-       ===================================== */
-
     async function getBalance() {
 
       if (
@@ -2695,10 +3476,6 @@
 
     }
 
-
-    /* =====================================
-       LOAD BASTYON
-       ===================================== */
 
     async function loadBastyonUserData() {
 
@@ -2756,20 +3533,20 @@
 
       }
 
-
       else {
 
-        const balanceElement =
-          document.getElementById(
-            "user-balance"
-          );
+        const el =
+          document
+            .getElementById(
+              "user-balance"
+            );
 
 
-        balanceElement.innerText =
+        el.innerText =
           "Баланс недоступен";
 
 
-        balanceElement.classList.add(
+        el.classList.add(
           "warning"
         );
 
@@ -2778,430 +3555,6 @@
     }
 
 
-    /* =====================================
-       DEMO
-       ===================================== */
-
-    function playDemoMatch(
-      userChoice
-    ) {
-
-      const keys =
-        Object.keys(
-          choices
-        );
-
-
-      const botChoice =
-        keys[
-          Math.floor(
-            Math.random() *
-            keys.length
-          )
-        ];
-
-
-      showResult(
-
-        userChoice,
-
-        botChoice,
-
-        "Бот"
-
-      );
-
-    }
-
-
-    /* =====================================
-       PVP
-       ===================================== */
-
-    async function playPvpMatch(
-      userChoice
-    ) {
-
-      const room =
-        ROOMS[
-          currentRoom
-        ];
-
-
-      const result =
-        document.getElementById(
-          "result-text"
-        );
-
-
-      const pvpInfo =
-        document.getElementById(
-          "pvp-info"
-        );
-
-
-      const pvpMessage =
-        document.getElementById(
-          "pvp-message"
-        );
-
-
-      const pvpRoom =
-        document.getElementById(
-          "pvp-room"
-        );
-
-
-      result.innerText =
-        "⏳ Подключение к PvP...";
-
-
-      pvpInfo.classList.add(
-        "show"
-      );
-
-
-      try {
-
-        const response =
-          await fetch(
-
-            "/api/pvp/join",
-
-            {
-
-              method:
-                "POST",
-
-              headers: {
-
-                "Content-Type":
-                  "application/json"
-
-              },
-
-              body:
-                JSON.stringify({
-
-                  userId:
-                    userAddress ||
-                    "demo-user",
-
-
-                  nickname:
-                    document
-                      .getElementById(
-                        "user-name"
-                      )
-                      .innerText,
-
-
-                  roomId:
-                    currentRoom,
-
-
-                  stake:
-                    room
-                      ? room.stake
-                      : 0
-
-                })
-
-            }
-
-          );
-
-
-        const text =
-          await response.text();
-
-
-        let data =
-          null;
-
-
-        try {
-
-          data =
-            JSON.parse(
-              text
-            );
-
-        }
-
-        catch (
-          error
-        ) {
-
-          console.warn(
-            "PVP returned non-JSON:",
-            text
-          );
-
-        }
-
-
-        if (
-          !response.ok
-        ) {
-
-          result.innerText =
-            "❌ PvP API: " +
-            response.status;
-
-
-          return;
-
-        }
-
-
-        if (
-
-          data &&
-
-          data.room
-
-        ) {
-
-          currentPvpRoom =
-            data.room;
-
-
-          pvpRoom.innerText =
-
-            "Комната: " +
-
-            currentPvpRoom.id;
-
-
-          if (
-
-            currentPvpRoom.status ===
-            "waiting"
-
-          ) {
-
-            pvpMessage.innerText =
-
-              "Комната создана. " +
-              "Ожидание соперника...";
-
-
-            result.innerText =
-
-              "⏳ Ожидание второго игрока...";
-
-          }
-
-          else {
-
-            pvpMessage.innerText =
-              "Соперник подключён.";
-
-
-            result.innerText =
-              "✅ Соперник найден.";
-
-          }
-
-        }
-
-        else {
-
-          result.innerText =
-            "Комната PvP создана.";
-
-        }
-
-      }
-
-
-      catch (
-        error
-      ) {
-
-        console.error(
-          "PVP ERROR:",
-          error
-        );
-
-
-        result.innerText =
-          "❌ PvP сервер недоступен.";
-
-      }
-
-    }
-
-
-    /* =====================================
-       MOVE
-       ===================================== */
-
-    async function makeMove(
-      userChoice
-    ) {
-
-      const room =
-        ROOMS[
-          currentRoom
-        ];
-
-
-      if (!room) {
-
-        return;
-
-      }
-
-
-      if (
-        room.mode ===
-        "demo"
-      ) {
-
-        playDemoMatch(
-          userChoice
-        );
-
-        return;
-
-      }
-
-
-      await playPvpMatch(
-        userChoice
-      );
-
-    }
-
-
-    /* =====================================
-       RESULT
-       ===================================== */
-
-    function showResult(
-
-      userChoice,
-
-      opponentChoice,
-
-      opponentName
-
-    ) {
-
-      let resultMessage =
-        "";
-
-
-      if (
-        userChoice ===
-        opponentChoice
-      ) {
-
-        resultMessage =
-
-          "Ничья! Оба выбрали " +
-
-          choices[
-            userChoice
-          ];
-
-      }
-
-
-      else if (
-
-        (
-
-          userChoice ===
-            "rock" &&
-
-          opponentChoice ===
-            "scissors"
-
-        )
-
-        ||
-
-        (
-
-          userChoice ===
-            "scissors" &&
-
-          opponentChoice ===
-            "paper"
-
-        )
-
-        ||
-
-        (
-
-          userChoice ===
-            "paper" &&
-
-          opponentChoice ===
-            "rock"
-
-        )
-
-      ) {
-
-        resultMessage =
-
-          "🎉 Вы выиграли! " +
-
-          choices[
-            userChoice
-          ] +
-
-          " бьет " +
-
-          choices[
-            opponentChoice
-          ];
-
-      }
-
-
-      else {
-
-        resultMessage =
-
-          "💥 " +
-
-          opponentName +
-
-          " победил! " +
-
-          choices[
-            opponentChoice
-          ] +
-
-          " бьет " +
-
-          choices[
-            userChoice
-          ];
-
-      }
-
-
-      document
-        .getElementById(
-          "result-text"
-        )
-        .innerText =
-          resultMessage;
-
-    }
-
-
-    /* =====================================
-       INIT
-       ===================================== */
-
     document.addEventListener(
 
       "DOMContentLoaded",
@@ -3209,9 +3562,15 @@
       async function() {
 
         const status =
-          document.getElementById(
-            "status"
-          );
+          document
+            .getElementById(
+              "status"
+            );
+
+
+        enableButtons(
+          false
+        );
 
 
         if (
@@ -3225,11 +3584,6 @@
 
           status.innerText =
             "❌ SDK Bastyon не обнаружен";
-
-
-          enableButtons(
-            true
-          );
 
 
           return;
@@ -3277,17 +3631,13 @@
 
             }
 
-
             catch (
               error
             ) {
 
               console.warn(
-
                 "PERMISSIONS ERROR:",
-
                 error
-
               );
 
             }
@@ -3310,15 +3660,6 @@
               function(
                 newBalance
               ) {
-
-                console.log(
-
-                  "BASTYON BALANCE EVENT:",
-
-                  newBalance
-
-                );
-
 
                 showBalance(
                   newBalance
@@ -3343,11 +3684,6 @@
           }
 
 
-          status.classList.remove(
-            "error"
-          );
-
-
           status.classList.add(
             "success"
           );
@@ -3355,11 +3691,6 @@
 
           status.innerText =
             "● Bastyon подключён";
-
-
-          enableButtons(
-            true
-          );
 
         }
 
@@ -3380,21 +3711,11 @@
 
 
           status.innerText =
-
             "❌ Ошибка SDK: " +
-
             (
-
               error.message ||
-
               "Ошибка"
-
             );
-
-
-          enableButtons(
-            true
-          );
 
         }
 
